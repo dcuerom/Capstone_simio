@@ -1,0 +1,11 @@
+TipoPan,FamiliaProceso,Etapa1,Min1,Etapa2,Min2,Etapa3,Min3,Etapa4,Min4,Etapa5,Min5,Etapa6,Min6,Etapa7,Min7,KgPorBatchRef,TempHornoC,CapacidadKgPorCarroRef
+Marraqueta,Directo,Pesado y dosificación,5,Amasado,12,Reposo en masa,15,Dividido y formado,10,Fermentación final,35,Horneado,18,Enfriado y traslado,12,60,210,40
+Hallulla,Directo con materia grasa,Pesado y dosificación,5,Amasado,14,Reposo en masa,20,"Laminado, picado y formado",12,Fermentación final,30,Horneado,18,Enfriado y traslado,12,55,220,45
+Marraqueta Integral,Directo integral,Pesado y dosificación,5,Amasado,13,Reposo en masa,18,Dividido y formado,10,Fermentación final,40,Horneado,21,Enfriado y traslado,12,60,205,38
+Hallulla Integral,Directo integral con materia grasa,Pesado y dosificación,5,Amasado,15,Reposo en masa,20,"Laminado, picado y formado",12,Fermentación final,35,Horneado,18,Enfriado y traslado,12,55,210,42
+Pan Hot Dog,Enriquecido,Pesado y dosificación,5,Amasado,12,Reposo en masa,15,"Dividido, boleado y moldeado",12,Fermentación final,40,Horneado,14,Enfriado y traslado,12,55,200,35
+Ciabatta,Alta hidratación,Pesado y dosificación,5,Amasado,10,Reposo en masa,30,Dividido y formado suave,8,Fermentación final,45,Horneado,21,Enfriado y traslado,15,50,230,35
+Baguette,Francés/artesanal,Pesado y dosificación,5,Amasado,10,Reposo en masa,25,"Dividido, preformado y formado",12,Fermentación final,45,Horneado,21,Enfriado y traslado,15,45,235,32
+Dobladita,Masa grasa laminada simple,Pesado y dosificación,5,Amasado,13,Reposo en masa,15,"Laminado, corte y doblado",10,Fermentación final,20,Horneado,14,Enfriado y traslado,10,50,215,45
+Bocado de Dama,Pan pequeño enriquecido,Pesado y dosificación,5,Amasado,12,Reposo en masa,15,Dividido y boleado,10,Fermentación final,30,Horneado,14,Enfriado y traslado,10,25,200,28
+Amasado,Tradicional chileno,Pesado y dosificación,5,Amasado,15,Reposo en masa,20,Dividido y formado,10,Fermentación final,35,Horneado,18,Enfriado y traslado,12,60,210,40
