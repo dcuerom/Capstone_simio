@@ -1,0 +1,229 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{parskip}
+
+\addto\captionsspanish{%
+  \renewcommand{\tablename}{Tabla}%
+}
+
+% Colores institucionales UDD
+\definecolor{uddblue}{RGB}{0, 48, 87}
+\definecolor{uddlightblue}{RGB}{0, 114, 206}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textcolor{uddblue}{\textbf{Universidad del Desarrollo}}}
+\lhead{Informe de Planificación - Proyecto de Simulación}
+\cfoot{Página \thepage}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    
+    {\Huge \textbf{\textcolor{uddblue}{Universidad del Desarrollo}}}\\[1cm]
+    {\LARGE Facultad de Ingeniería}\\[4cm]
+    
+    {\huge \textbf{Informe Planificación}}\\[0.5cm]
+    {\Large \textbf{Modelación de Eventos Discretos en Panadería (SIMIO)}}\\[6cm]
+
+    \vfill
+    
+    \begin{flushleft}
+        \Medium
+        \begin{tabular}{ll}
+            \textbf{Profesor:} & Victor Vera\\[0.1cm]
+            \textbf{Ramo:} & Capstone Analytics\\[0.1cm]
+            \textbf{Fecha:} & 27/04/2026 \\ [0.1cm]
+            \textbf{Integrantes:}
+            & Daniel Cuero\\
+            & Gabriel Marin\\
+            & Bruno Caro\\
+            & Moises Leon\\[0.1cm]
+
+        \end{tabular}
+
+    \end{flushleft}
+    
+    \vfill
+
+    
+
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{Introducción y Contexto del Proyecto}
+El presente documento consolida la planificación estructurada en hitos y la base metodológica para el desarrollo del proyecto Capstone, consistente en la modelación y análisis mediante simulación de eventos discretos de una panadería de supermercado.
+
+La panadería produce diariamente 10 tipos de pan frescos y abastece una zona de ventas de autoservicio desde las 09:00 hasta las 21:00 horas. Debido a altos niveles de quiebre de stock, la jefatura requiere un rediseño del sistema productivo, con el objetivo de determinar de manera óptima:
+\begin{itemize}
+    \item Cantidad de trabajadores requeridos y su esquema de turnos.
+    \item Combinación óptima de roles (panaderos y manipuladores de horno).
+    \item Cantidad de hornos y máquinas de proceso (amasadoras y mezcladoras).
+    \item Horarios de operación adecuados y la secuencia de producción más eficiente.
+\end{itemize}
+
+\section{Metodología de Simulación Empleada}
+El desarrollo del modelo se rige por una adaptación de 14 pasos metodológicos para estudios de simulación:
+\begin{enumerate}
+    \item \textbf{Definición del problema y propósito:} Determinar recursos óptimos y políticas productivas.
+    \item \textbf{Delimitación del sistema:} Inclusión de producción, hornos, personal, reposición, inventario en sala y flujo de demanda.
+    \item \textbf{Levantamiento de información:} Organización de parámetros de proceso, capacidades y demanda provista en archivos estandarizados.
+    \item \textbf{Supuestos explícitos:} Establecer clarificaciones operativas en ausencia de información (ej. capacidad de enfriamiento).
+    \item \textbf{Modelo conceptual:} Desarrollo de flujogramas y lógica de decisión antes de la implementación en software.
+    \item \textbf{Nivel de detalle:} Selección de granularidad apropiada (lotes vs. kilos continuos).
+    \item \textbf{Implementación en SIMIO:} Construcción incremental basada en cinco módulos.
+    \item \textbf{Verificación:} Comprobación del comportamiento lógico y flujos de las entidades.
+    \item \textbf{Validación:} Contraste de las respuestas del modelo frente a magnitudes teóricas e históricas.
+    \item \textbf{Diseño experimental:} Definición de variables, escenarios y políticas de despacho.
+    \item \textbf{Ejecución:} Extracción de indicadores clave de rendimiento (KPIs).
+    \item \textbf{Análisis de sensibilidad:} Evaluación de la resiliencia del modelo ante cambios paramétricos.
+    \item \textbf{Decisiones:} Extracción de recomendaciones gerenciales accionables.
+    \item \textbf{Documentación:} Registro metodológico progresivo para evitar cargas documentales de última hora.
+\end{enumerate}
+
+\section{Estructura de Hitos de Desarrollo}
+El proyecto tiene un horizonte de desarrollo desde el 21 de Abril hasta el 20 de Mayo de 2026. Para gestionar eficazmente este tiempo, el trabajo se divide en 6 hitos principales:
+
+\subsection{Hito 1: Definición del Problema y Alcance}
+\textbf{Fecha:} Semana 1 (21–25 Abril)\\
+\textbf{Objetivo:} Formalizar qué preguntas responderá el modelo de simulación y qué límites físicos y lógicos comprenderá el sistema analizado, evitando un alcance difuso.
+
+\begin{table}[h!]
+    \centering
+    \caption{Actividades Hito 1}
+    \vspace{0.2cm}
+    \begin{tabular}{cp{10cm}c}
+        \toprule
+        \textbf{\#} & \textbf{Actividad} & \textbf{Días} \\
+        \midrule
+        1.1 & Definir elementos, objetivos y criterios de evaluación & Ma 21 -- Mi 22 \\
+        1.2 & Delimitar alcance: subsistemas dentro y fuera del modelo & Mi 22 -- Ju 23 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Hito 2: Base de Datos y Supuestos}
+\textbf{Fecha:} Semanas 1 y 2 (24–30 Abril)\\
+\textbf{Objetivo:} Procesar toda la información de tiempos, perfiles y lotes. Documentar los supuestos matemáticos o lógicos que cubrirán los vacíos en los datos.
+
+\begin{table}[h!]
+    \centering
+    \caption{Actividades Hito 2}
+    \vspace{0.2cm}
+    \begin{tabular}{cp{10cm}c}
+        \toprule
+        \textbf{\#} & \textbf{Actividad} & \textbf{Días} \\
+        \midrule
+        2.1 & Recolectar y organizar parámetros de proceso (archivos xlsx) & Ju 24 -- Lu 28 \\
+        2.2 & Organizar perfiles de demanda y probabilidades de elección & Vi 25 -- Ma 29 \\
+        2.3 & Formular y documentar supuestos explícitos del modelo & Ma 29 -- Mi 30 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Hito 3: Modelo Conceptual Validado}
+\textbf{Fecha:} Semanas 2 y 3 (30 Abril – 6 Mayo)\\
+\textbf{Objetivo:} Construir una abstracción del sistema (Diagramas BPMN y flujogramas) incluyendo variables de estado, entidades y recursos para guiar el desarrollo computacional.
+
+\begin{table}[h!]
+    \centering
+    \caption{Actividades Hito 3}
+    \vspace{0.2cm}
+    \begin{tabular}{cp{10cm}c}
+        \toprule
+        \textbf{\#} & \textbf{Actividad} & \textbf{Días} \\
+        \midrule
+        3.1 & Definir entidades, recursos, colas, variables de estado y eventos & Mi 30 -- Ju 1 \\
+        3.2 & Crear diagramas de flujo / BPMN y tablas de lógica de decisión & Ju 1 -- Lu 5 \\
+        3.3 & Definir granularidad: cliente, lote, kg continuo & Vi 2 -- Ma 6 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Hito 4: Modelo SIMIO Funcional}
+\textbf{Fecha:} Semanas 3 y 4 (6–14 Mayo)\\
+\textbf{Objetivo:} Traducción del modelo conceptual al entorno de Simio bajo un paradigma modular. Esta etapa abarca la programación de Inventario, Línea de Producción, Lógica Batch de Hornos, Recursos Humanos y Políticas de Reposición.
+
+\begin{table}[h!]
+    \centering
+    \caption{Actividades Hito 4}
+    \vspace{0.2cm}
+    \begin{tabular}{cp{10cm}c}
+        \toprule
+        \textbf{\#} & \textbf{Actividad} & \textbf{Días} \\
+        \midrule
+        4.1 & Módulo 1 — Inventario + demanda por cliente & Ma 6 -- Ju 8 \\
+        4.2 & Módulo 2 — Línea de producción & Mi 7 -- Vi 9 \\
+        4.3 & Módulo 3 — Horno batch & Ju 8 -- Lu 12 \\
+        4.4 & Módulo 4 — RRHH, turnos, descansos & Vi 9 -- Ma 13 \\
+        4.5 & Módulo 5 — Políticas de secuencia y reposición & Lu 12 -- Mi 14 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Hito 5: V\&V y Experimentación}
+\textbf{Fecha:} Semana 4 (13–16 Mayo)\\
+\textbf{Objetivo:} Ejecutar procesos de Verificación (comprobación del código) y Validación (comprobación con la realidad). Seguido de esto, correr los escenarios experimentales y análisis de sensibilidad.
+
+\begin{table}[h!]
+    \centering
+    \caption{Actividades Hito 5}
+    \vspace{0.2cm}
+    \begin{tabular}{cp{10cm}c}
+        \toprule
+        \textbf{\#} & \textbf{Actividad} & \textbf{Días} \\
+        \midrule
+        5.1 & Revisar lógica, flujos, animación, corridas de prueba & Ma 13 -- Mi 14 \\
+        5.2 & Comparar magnitudes esperadas, coherencia KPIs & Mi 14 -- Ju 15 \\
+        5.3 & Definir escenarios, factores, réplicas, warm-up & Ju 15 -- Vi 16 \\
+        5.4 & Correr escenarios y recopilar resultados & Vi 16 -- Lu 18 \\
+        5.5 & Probar variaciones de demanda, capacidad, mix & Vi 16 -- Lu 18 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Hito 6: Informes y Entrega}
+\textbf{Fecha:} Semana 5 (18–20 Mayo)\\
+\textbf{Objetivo:} Consolidar resultados en un Informe Técnico (orientado a la toma de decisiones gerenciales) y un Informe Académico (con foco en justificaciones metodológicas), acompañado de los ejecutables de Simio.
+
+\begin{table}[h!]
+    \centering
+    \caption{Actividades Hito 6}
+    \vspace{0.2cm}
+    \begin{tabular}{cp{10cm}c}
+        \toprule
+        \textbf{\#} & \textbf{Actividad} & \textbf{Días} \\
+        \midrule
+        6.1 & Interpretar resultados, cuellos de botella, recomendaciones & Lu 18 -- Ma 19 \\
+        6.2 & Informe técnico (gerencia) & Ma 19 -- Mi 20 \\
+        6.3 & Informe académico + anexos & Ma 19 -- Mi 20 \\
+        6.4 & Documentación transversal (cada viernes) & Transversal \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\newpage
+\section{Validación Bibliográfica}
+La estimación temporal estipulada para el desarrollo de este modelo de simulación abarca aproximadamente 4.5 semanas de dedicación estructurada. Esta estimación se alinea y encuentra validación en la literatura académica referente a la gestión de proyectos de Simulación de Eventos Discretos (DES).
+
+Según \textbf{Banks, Carson, Nelson y Nicol (2014)}\footnote{Banks, J., Carson, J. S., Nelson, B. L., \& Nicol, D. M. (2014). \textit{Discrete-Event System Simulation}. Pearson Educación.}, el ciclo de vida de un estudio de simulación experimenta una reducción dramática en sus tiempos de desarrollo cuando la recolección de datos ya ha sido pre-procesada. Dado que los tiempos paramétricos y distribuciones de demanda fueron suministrados externamente, la carga horaria se traslada al desarrollo lógico y validación.
+
+Adicionalmente, \textbf{Smith y Sturrock (2020)}\footnote{Smith, J. S., \& Sturrock, D. T. (2020). \textit{Simio and Simulation: Modeling, Analysis, Applications}. Simio LLC.} en sus textos fundamentales sobre modelación en SIMIO, recomiendan explícitamente adoptar estrategias de desarrollo "modular y ágil". El proyecto ha estructurado el \textit{Hito 4} precisamente bajo esta recomendación, fragmentando la programación del software en 5 submódulos, lo cual minimiza los cuellos de botella en la fase de "Verificación", garantizando que el plazo de un mes sea factible, realista y enfocado en la obtención de resultados fiables.
+
+\end{document}
