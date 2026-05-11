@@ -200,24 +200,30 @@ Un supermercado opera una panadería propia que abastece una zona de autoservici
 | Bocado de Dama | 0,3 | 0,5 | 1,0 | 0,600 |
 | Amasado | 0,3 | 0,8 | 2,0 | 1,033 |
 
-### 3.9 Probabilidades de elección (primera selección) por hora
+### 3.9 Probabilidades de elección (primera selección) por hora — Tabla completa
 
-Extraídas de `probabilidades_eleccion_por_hora.csv`. Suman ~1,0 en cada franja. Ejemplo para horas representativas:
+Extraídas de `probabilidades_eleccion_por_hora.csv`. Suman ~1,0 en cada franja. **Cada hora tiene una distribución discreta propia** que debe alimentar al modelo SIMIO como tabla independiente.
 
-| Tipo | 09–12 (Bajo) | 12–13 (Medio) | 18–19 (Alto) |
-|---|---|---|---|
-| Marraqueta | 0,2645 | 0,2313 | 0,1854 |
-| Hallulla | 0,2248 | 0,1966 | 0,1576 |
-| Marraqueta Int. | 0,1247 | 0,1090 | 0,0874 |
-| Hallulla Int. | 0,1164 | 0,1018 | 0,0816 |
-| Pan Hot Dog | 0,0546 | 0,1534 | 0,2501 |
-| Ciabatta | 0,0374 | 0,0525 | 0,0708 |
-| Baguette | 0,0327 | 0,0459 | 0,0619 |
-| Dobladita | 0,0720 | 0,0434 | 0,0225 |
-| Bocado de Dama | 0,0453 | 0,0273 | 0,0141 |
-| Amasado | 0,0277 | 0,0390 | 0,0687 |
+| Franja | Marraq. | Hallulla | Marr.Int | Hall.Int | HotDog | Ciabatta | Baguette | Doblad. | Boc.Dama | Amasado |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 09–10 | 0,2645 | 0,2248 | 0,1247 | 0,1164 | 0,0546 | 0,0374 | 0,0327 | 0,0720 | 0,0453 | 0,0277 |
+| 10–11 | 0,2645 | 0,2248 | 0,1247 | 0,1164 | 0,0546 | 0,0374 | 0,0327 | 0,0720 | 0,0453 | 0,0277 |
+| 11–12 | 0,2645 | 0,2248 | 0,1247 | 0,1164 | 0,0546 | 0,0374 | 0,0327 | 0,0720 | 0,0453 | 0,0277 |
+| 12–13 | 0,2313 | 0,1966 | 0,1090 | 0,1018 | 0,1534 | 0,0525 | 0,0459 | 0,0434 | 0,0273 | 0,0390 |
+| 13–14 | 0,2505 | 0,2129 | 0,1181 | 0,1102 | 0,0831 | 0,0569 | 0,0498 | 0,0470 | 0,0295 | 0,0422 |
+| 14–15 | 0,2505 | 0,2129 | 0,1181 | 0,1102 | 0,0831 | 0,0569 | 0,0498 | 0,0470 | 0,0295 | 0,0422 |
+| 15–16 | 0,2645 | 0,2248 | 0,1247 | 0,1164 | 0,0546 | 0,0374 | 0,0327 | 0,0720 | 0,0453 | 0,0277 |
+| 16–17 | 0,2645 | 0,2248 | 0,1247 | 0,1164 | 0,0546 | 0,0374 | 0,0327 | 0,0720 | 0,0453 | 0,0277 |
+| 17–18 | 0,2381 | 0,2024 | 0,1123 | 0,1048 | 0,1124 | 0,0438 | 0,0383 | 0,0649 | 0,0408 | 0,0424 |
+| 18–19 | 0,1854 | 0,1576 | 0,0874 | 0,0816 | **0,2501** | 0,0708 | 0,0619 | 0,0225 | 0,0141 | 0,0687 |
+| 19–20 | 0,1897 | 0,1612 | 0,0894 | 0,0835 | **0,2326** | 0,0724 | 0,0634 | 0,0230 | 0,0145 | 0,0703 |
+| 20–21 | 0,2584 | 0,2196 | 0,1218 | 0,1137 | 0,0762 | 0,0365 | 0,0320 | 0,0704 | 0,0442 | 0,0271 |
 
-**Observación clave**: El Pan Hot Dog pasa de 5,5% de probabilidad en horario bajo a **25%** en peak vespertino.
+**Observaciones clave**:
+- Las franjas 09–12, 15–17 comparten la **misma distribución** (6 horas idénticas).
+- El **Pan Hot Dog** pasa de 5,5% en horario bajo a **25,0%** en peak vespertino (18–19), un cambio de 4,6×.
+- **Dobladita** y **Bocado de Dama** tienen demanda **uniforme** a lo largo del día (probabilidad casi constante).
+- Cada hora debe configurarse como una **tabla de probabilidad discreta separada** en SIMIO.
 
 ### 3.10 Probabilidades condicionales (2ª y 3ª selección)
 
@@ -243,21 +249,32 @@ $$P(\text{3º} = k \mid \text{1º} = i, \text{2º} = j) = \frac{P_k}{1 - P_i - P
 
 ### 3.11 Tasa de llegada de clientes estimada
 
-| Franja | Clientes/hr | Inter-arribo (seg) | Inter-arribo (min) |
-|---|---|---|---|
-| 09:00–10:00 | ~275 | 13,1 | 0,22 |
-| 10:00–11:00 | ~275 | 13,1 | 0,22 |
-| 11:00–12:00 | ~275 | 13,1 | 0,22 |
-| 12:00–13:00 | ~439 | 8,2 | 0,14 |
-| 13:00–14:00 | ~417 | 8,6 | 0,14 |
-| 14:00–15:00 | ~417 | 8,6 | 0,14 |
-| 15:00–16:00 | ~275 | 13,1 | 0,22 |
-| 16:00–17:00 | ~275 | 13,1 | 0,22 |
-| 17:00–18:00 | ~299 | 12,0 | 0,20 |
-| 18:00–19:00 | ~819 | 4,4 | 0,07 |
-| 19:00–20:00 | ~806 | 4,5 | 0,07 |
-| 20:00–21:00 | ~279 | 12,9 | 0,22 |
-| **Total/día** | **~4.852** | | |
+**Metodología de estimación**: La tasa se calcula de forma inversa a partir de la demanda conocida en kg/hora. Para cada franja horaria:
+
+$$N_{\text{clientes/hr}} = \frac{\text{Demanda total (kg/hr)}}{E[\text{tipos}] \times \sum_{i} P_i \times E[\text{Tri}_i]}$$
+
+Donde:
+- $E[\text{tipos}]$ = 1,65 (valor esperado de tipos por cliente)
+- $P_i$ = probabilidad de elegir tipo $i$ en esa hora (tabla §3.9)
+- $E[\text{Tri}_i]$ = $(\min + \text{moda} + \max)/3$ para la distribución triangular de cada tipo
+
+Esta estimación asume que la selección "sin reemplazo" para 2º y 3º tipo no distorsiona significativamente el promedio (razonable con 10 tipos y probabilidades marginales pequeñas).
+
+| Franja | Demanda (kg) | Clientes/hr | Inter-arribo (seg) | Inter-arribo (min) |
+|---|---|---|---|---|
+| 09:00–10:00 | 449 | ~275 | 13,1 | 0,22 |
+| 10:00–11:00 | 449 | ~275 | 13,1 | 0,22 |
+| 11:00–12:00 | 449 | ~275 | 13,1 | 0,22 |
+| 12:00–13:00 | 750 | ~439 | 8,2 | 0,14 |
+| 13:00–14:00 | 689 | ~417 | 8,6 | 0,14 |
+| 14:00–15:00 | 689 | ~417 | 8,6 | 0,14 |
+| 15:00–16:00 | 449 | ~275 | 13,1 | 0,22 |
+| 16:00–17:00 | 449 | ~275 | 13,1 | 0,22 |
+| 17:00–18:00 | 499 | ~299 | 12,0 | 0,20 |
+| 18:00–19:00 | 1.451 | ~819 | 4,4 | 0,07 |
+| 19:00–20:00 | 1.417 | ~806 | 4,5 | 0,07 |
+| 20:00–21:00 | 460 | ~279 | 12,9 | 0,22 |
+| **Total/día** | **8.200** | **~4.852** | | |
 
 ### 3.12 Restricciones del horno
 
