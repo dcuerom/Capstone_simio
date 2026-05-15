@@ -1,0 +1,6 @@
+Time(Minutes);EntityID;ObjectName;ProcessID;StepName;Action
+0;--;--;--;--;Warning assigning state variable 'SrvAmasadoManual.CurrentCapacity' the value '-1'.
+0;--;--;--;--;The value of the state variable may not be negative and will be automatically adjusted to zero. However, this action may indicate a problem in the modeled logic.
+0;EntLote1.71;SrvPesado;3.OnEnteredProcessing;[Delay] ProcessingTime;Unable to get value of property 'SrvPesado.ProcessingTime'.
+0;EntLote1.71;SrvPesado;3.OnEnteredProcessing;[Delay] ProcessingTime;Row index 0 for table 'TableProceso' is out of the range of the available 10 rows.
+

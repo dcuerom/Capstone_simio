@@ -1,0 +1,11 @@
+TipoPanID,NombrePan,FamiliaID,TiempoPesado,TiempoCargaMezc,TiempoMezcladoAuto,TiempoRetiroMasa,TiempoAmasadoManual,TiempoReposo,TiempoFormado,TiempoFermentacion,TiempoHorneado,TiempoEnfriado,TiempoTraslado,KgPorBatch,CarrosPorBatch
+1,Marraqueta,2,5,2,12,1,6,15,10,35,18,8,4,60,2
+2,Hallulla,2,5,2,14,1,7,20,12,30,18,8,4,55,2
+3,Marraqueta Integral,3,5,2,13,1,6.5,18,10,40,21,8,4,60,2
+4,Hallulla Integral,2,5,2,15,1,7.5,20,12,35,18,8,4,55,2
+5,Pan Hot Dog,1,5,2,12,1,6,15,12,40,14,8,4,55,2
+6,Ciabatta,3,5,2,10,1,5,30,8,45,21,10,5,50,2
+7,Baguette,3,5,2,10,1,5,25,12,45,21,10,5,45,2
+8,Dobladita,1,5,2,13,1,6.5,15,10,20,14,7,3,50,2
+9,Bocado de Dama,1,5,2,12,1,6,15,10,30,14,7,3,25,1
+10,Amasado,2,5,2,15,1,7.5,20,10,35,18,8,4,60,2
