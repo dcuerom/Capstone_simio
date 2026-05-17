@@ -110,8 +110,51 @@ Ir a pestaña **Facility** y arrastrar desde el **[Standard Library]**:
 
 | Objeto | Nombre | Entity Type | Arrival Mode | Configuración |
 |---|---|---|---|---|
-| Source | `SrcLotes` | `EntLote` | Interarrival Time | Se controla por proceso/Timer (ver Fase 7) |
+| Source | `SrcLotes` | `EntLote` | **Interarrival Time** | 4.0 min (plan base, ver Paso 5.1b) |
+| Source | `SrcLotesReactivos` | `EntLote` | **On Event** | Lotes de emergencia por déficit (ver Paso 5.1c) |
 | Source | `SrcClientes` | `EntCliente` | **Time Varying Arrival Rate** | Rate Table = `ClienteArrivalRate` |
+
+#### Paso 5.1b — Configurar `SrcLotes` (producción base planificada)
+
+> **Enfoque Híbrido — Componente fija**: Este Source genera los ~155 lotes del plan diario en secuencia. Cada lote recibe su tipo, familia y kg desde `TablePlanProduccion`.
+
+1. Clic en `SrcLotes` → Properties
+2. **Entity Type**: `EntLote`
+3. **Arrival Mode**: `Interarrival Time`
+4. **Interarrival Time**: `4.0` (minutos — ~155 lotes en 600 min productivos)
+5. **Maximum Arrivals**: `155`
+6. **State Assignments** → **Before Exiting** → clic en `...` (Repeating Property Editor):
+
+| # | State Variable Name | New Value |
+|---|---|---|
+| 1 | `Model.MStaLotePlanActual` | `Model.MStaLotePlanActual + 1` |
+| 2 | `EntLote.EStaTipoPan` | `TablePlanProduccion[Model.MStaLotePlanActual].PlanTipoPan` |
+| 3 | `EntLote.EStaFamilia` | `TablePlanProduccion[Model.MStaLotePlanActual].PlanFamilia` |
+| 4 | `EntLote.EStaKgLote` | `TablePlanProduccion[Model.MStaLotePlanActual].PlanKgLote` |
+| 5 | `Model.MStaEnProceso[EntLote.EStaTipoPan]` | `Model.MStaEnProceso[EntLote.EStaTipoPan] + EntLote.EStaKgLote` |
+
+> **Nota**: `MStaEnProceso` rastrea los kg "en tránsito" en la línea productiva. Se decrementa cuando el lote llega a `SnkLoteTerminado` (ver Paso 7.3 en Parte 3).
+
+#### Paso 5.1c — Configurar `SrcLotesReactivos` (producción de emergencia)
+
+> **Enfoque Híbrido — Componente reactiva**: Este Source genera lotes adicionales solo cuando se detecta un déficit de inventario. Se activa mediante un Event disparado por el proceso revisor (Paso 7.0 en Parte 3).
+
+1. Clic en `SrcLotesReactivos` → Properties
+2. **Entity Type**: `EntLote`
+3. **Arrival Mode**: `On Event`
+4. **Event Name**: `EvtLoteReactivo` (crear en **Definitions → Elements → Events → Add Event**)
+5. **Entities Per Arrival**: `1`
+6. **State Assignments** → **Before Exiting**:
+
+| # | State Variable Name | New Value |
+|---|---|---|
+| 1 | `EntLote.EStaTipoPan` | `Model.MStaTipoReactivo` |
+| 2 | `EntLote.EStaFamilia` | `TableProceso[Model.MStaTipoReactivo].FamiliaID` |
+| 3 | `EntLote.EStaKgLote` | `TableProceso[Model.MStaTipoReactivo].KgPorBatch` |
+| 4 | `Model.MStaEnProceso[EntLote.EStaTipoPan]` | `Model.MStaEnProceso[EntLote.EStaTipoPan] + EntLote.EStaKgLote` |
+| 5 | `Model.MStaLotesReactivos` | `Model.MStaLotesReactivos + 1` |
+
+> **Flujo**: Ambos Sources (`SrcLotes` y `SrcLotesReactivos`) se conectan al mismo `SrvPesado`, alimentando la misma línea productiva. Los lotes reactivos se intercalan automáticamente con los planificados.
 
 **Configurar `SrcClientes` con la distribución empírica**:
 1. Clic en `SrcClientes` → Properties
