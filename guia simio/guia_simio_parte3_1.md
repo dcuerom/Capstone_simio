@@ -6,6 +6,130 @@
 
 Los Processes en SIMIO permiten implementar lógica que va más allá de las propiedades estándar de Source/Server/Sink. Se acceden desde **Definitions → Processes** o desde **Add-On Process Triggers** de cada objeto.
 
+### Paso 7.0 — Enfoque Híbrido: Control de Producción (Plan Base + Ajuste Reactivo)
+
+> **Concepto**: La producción combina dos mecanismos:
+> - **Plan base** (155 lotes en `TablePlanProduccion`): secuencia fija optimizada por familia, liberada cada ~4 min via `SrcLotes`
+> - **Ajuste reactivo** (`ProcRevisorDeficit`): cada 30 min revisa inventario y puede inyectar lotes de emergencia via `SrcLotesReactivos`
+>
+> **Ref. Reporte §5.5.1**: "Calcular déficit = demanda_esperada − inventario_actual − en_proceso"
+
+#### 7.0.1 — Crear el Element Timer
+
+1. Ir a **Definitions** → **Elements** → **Timers** → **Add Timer**
+2. Nombre: `TimerRevisorDeficit`
+3. **Time Offset**: `180` (min) — primera revisión a los 180 min (09:00, apertura de tienda)
+4. **Time Interval**: `30` (min) — revisar cada 30 minutos
+5. **Max Events**: `18` — (12 horas × 2 revisiones/hora = 24, con margen)
+
+#### 7.0.2 — Crear el Event para lotes reactivos
+
+1. Ir a **Definitions** → **Elements** → **Events** → **Add Event**
+2. Nombre: `EvtLoteReactivo`
+
+#### 7.0.3 — Crear el Process `ProcRevisorDeficit`
+
+1. Ir a **Definitions** → **Processes** → **Create Process**
+2. Nombre: `ProcRevisorDeficit`
+3. Asignar como trigger del Timer: `TimerRevisorDeficit` → **Event Name** → `ProcRevisorDeficit`
+
+**Algoritmo del proceso**:
+
+```
+1. Actualizar MStaHoraIdx (hora actual de la tienda)
+2. Para cada tipo j = 1..10:
+   Deficit[j] = DemandaEsperada_2hrs[j] − Inventario[j] − EnProceso[j]
+3. Encontrar j* = tipo con mayor déficit
+4. Si Deficit[j*] > (KgPorBatch[j*] / 2):
+   → Asignar MStaTipoReactivo = j*
+   → Fire EvtLoteReactivo  (esto crea el lote en SrcLotesReactivos)
+```
+
+**Implementación paso a paso del Process**:
+
+| Step | Tipo | Configuración |
+|------|------|---------------|
+| 1 | **Assign** | `Model.MStaHoraIdx` = `Math.Min(12, Math.Max(1, Math.Floor(Run.TimeNow / 60) - 2))` |
+
+> **Nota Step 1**: `Run.TimeNow/60 - 2` porque la producción empieza en t=0 (06:00) pero la tienda abre a las 09:00 (t=180 min). El HoraIdx 1 = 09:00.
+
+| Step | Tipo | Configuración |
+|------|------|---------------|
+| 2 | **Assign** | `Model.MStaTipoReactivo` = 0 |
+| 3 | **Assign** | Variable temporal `MStaMaxDeficit` = 0 |
+
+**Steps 4–13**: Para cada tipo j = 1 a 10, un bloque Decide+Assign:
+
+```
+Para j = 1 (Marraqueta):
+  Assign: deficit_j =
+    (TableDemandaHora[MStaHoraIdx].DemKg_T1 + TableDemandaHora[Math.Min(12,MStaHoraIdx+1)].DemKg_T1)
+    - MStaInventario[1] - MStaEnProceso[1]
+
+  Decide: deficit_j > MStaMaxDeficit
+    True →
+      Assign: MStaMaxDeficit = deficit_j
+      Assign: MStaTipoReactivo = 1
+
+Para j = 2 (Hallulla):
+  Assign: deficit_j =
+    (TableDemandaHora[MStaHoraIdx].DemKg_T2 + TableDemandaHora[Math.Min(12,MStaHoraIdx+1)].DemKg_T2)
+    - MStaInventario[2] - MStaEnProceso[2]
+
+  Decide: deficit_j > MStaMaxDeficit
+    True →
+      Assign: MStaMaxDeficit = deficit_j
+      Assign: MStaTipoReactivo = 2
+
+  ... (repetir para j = 3 hasta 10)
+```
+
+> **¿Por qué sumar 2 horas de demanda?** Porque un lote tarda ~90–120 min desde pesado hasta llegar a sala. Necesitamos anticipar la demanda a futuro.
+
+| Step | Tipo | Configuración |
+|------|------|---------------|
+| 14 | **Decide** | `Model.MStaTipoReactivo > 0 AND Model.MStaMaxDeficit > TableProceso[Model.MStaTipoReactivo].KgPorBatch * 0.5` |
+| 15 (True) | **Fire** | Event: `EvtLoteReactivo` |
+
+> **Umbral de activación (Step 14)**: Solo se inyecta un lote reactivo si el déficit es mayor a la mitad de un batch del tipo. Esto evita sobreproducción por déficits marginales.
+
+#### 7.0.4 — Diagrama del flujo híbrido completo
+
+```
+PLAN BASE (cada 4 min):                    REACTIVO (cada 30 min):
+┌──────────────┐                           ┌───────────────────┐
+│ SrcLotes     │                           │ TimerRevisorDef.  │
+│ Interarrival │                           │ ProcRevisorDeficit│
+│ TablePlanProd│                           │  ↓ calcula déficit│
+└──────┬───────┘                           │  ↓ Fire evento    │
+       │                                   └─────────┬─────────┘
+       │                                             │
+       │                                   ┌─────────▼─────────┐
+       │                                   │ SrcLotesReactivos  │
+       │                                   │ On Event           │
+       │                                   │ MStaTipoReactivo   │
+       │                                   └─────────┬──────────┘
+       │                                             │
+       └──────────────┬──────────────────────────────┘
+                      │
+                      ▼
+               ┌──────────────┐
+               │  SrvPesado   │ → línea productiva normal
+               └──────────────┘
+```
+
+#### 7.0.5 — Validación del enfoque híbrido
+
+En **Results** al final de la corrida, verificar:
+
+| Métrica | Cómo obtenerla | Valor esperado |
+|---------|---------------|----------------|
+| Lotes plan base | `MStaLotePlanActual` | 155 |
+| Lotes reactivos | `MStaLotesReactivos` | 5–15 (si > 20, el plan base está mal dimensionado) |
+| Quiebres totales | `Sum(MStaQuiebres)` | Debe ser menor que sin el reactivo |
+
+---
+
 ### Paso 7.1 — Process: Asignación de tipo de pan al cliente (con probabilidades condicionales)
 
 **Ubicación**: En `SrcClientes` → Properties → **Add-On Process Triggers** → **Before Exiting** → Crear nuevo proceso `ProcAsignarTiposCliente`
@@ -242,6 +366,9 @@ SI EStaNTipos >= 3:
 |---|---|---|
 | 1 | **Assign** | `Model.MStaInventario[EntLote.EStaTipoPan]` += `EntLote.EStaKgLote` |
 | 2 | **Assign** | `Model.MStaLotesProducidos[EntLote.EStaTipoPan]` += 1 |
+| 3 | **Assign** | `Model.MStaEnProceso[EntLote.EStaTipoPan]` -= `EntLote.EStaKgLote` |
+
+> **Step 3**: Decrementa los kg "en proceso" para que `ProcRevisorDeficit` (Paso 7.0) tenga datos precisos del pipeline productivo. Sin esto, el sistema reactivo sobreestimaría la producción pendiente.
 
 ### Paso 7.4 — Process: Inicialización de Inventario
 
