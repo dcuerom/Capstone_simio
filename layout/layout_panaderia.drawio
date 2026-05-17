@@ -1,313 +1,226 @@
-<mxfile host="app.diagrams.net" modified="2026-05-15" type="device">
-  <diagram id="layout1" name="Layout Panadería">
-    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
-      <root>
-        <mxCell id="0"/>
-        <mxCell id="1" parent="0"/>
-
-        <!-- TÍTULO -->
-        <mxCell id="t1" value="&lt;b&gt;LAYOUT PANADERÍA — Modelo SIMIO&lt;/b&gt;&lt;br&gt;Distancias lógicas para Paths" style="text;html=1;fontSize=16;align=center;" vertex="1" parent="1">
-          <mxGeometry x="500" y="10" width="500" height="40" as="geometry"/>
-        </mxCell>
-
-        <!-- ZONA PRODUCCIÓN (fondo) -->
-        <mxCell id="z1" value="ZONA DE PRODUCCIÓN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
-          <mxGeometry x="30" y="60" width="1100" height="520" as="geometry"/>
-        </mxCell>
-
-        <!-- ZONA VENTAS (fondo) -->
-        <mxCell id="z2" value="SALA DE VENTAS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
-          <mxGeometry x="1180" y="60" width="380" height="520" as="geometry"/>
-        </mxCell>
-
-        <!-- ===== ESTACIONES ===== -->
-
-        <!-- SrcLotes -->
-        <mxCell id="s0" value="&lt;b&gt;SrcLotes&lt;/b&gt;&lt;br&gt;(Source)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="60" y="120" width="100" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvPesado -->
-        <mxCell id="s1" value="&lt;b&gt;SrvPesado&lt;/b&gt;&lt;br&gt;Pesado&lt;br&gt;&lt;font color='#666'&gt;Cap: 3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="60" y="230" width="110" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvCargaMezc -->
-        <mxCell id="s2" value="&lt;b&gt;SrvCargaMezc&lt;/b&gt;&lt;br&gt;Carga Mezc.&lt;br&gt;&lt;font color='#666'&gt;Cap: 3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="220" y="230" width="110" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvMezcladoAuto -->
-        <mxCell id="s3" value="&lt;b&gt;SrvMezcladoAuto&lt;/b&gt;&lt;br&gt;Mezclado&lt;br&gt;&lt;font color='#666'&gt;Cap: 3 máq.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="220" y="330" width="110" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvRetiroMasa -->
-        <mxCell id="s4" value="&lt;b&gt;SrvRetiroMasa&lt;/b&gt;&lt;br&gt;Retiro&lt;br&gt;&lt;font color='#666'&gt;Cap: 3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="220" y="430" width="110" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvAmasadoManual -->
-        <mxCell id="s5" value="&lt;b&gt;SrvAmasadoManual&lt;/b&gt;&lt;br&gt;Amasado&lt;br&gt;&lt;font color='#666'&gt;Cap: 3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="400" y="430" width="110" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvReposo -->
-        <mxCell id="s6" value="&lt;b&gt;SrvReposo&lt;/b&gt;&lt;br&gt;Reposo&lt;br&gt;&lt;font color='#666'&gt;Cap: ∞&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="560" y="430" width="110" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvFormado -->
-        <mxCell id="s7" value="&lt;b&gt;SrvFormado&lt;/b&gt;&lt;br&gt;Formado&lt;br&gt;&lt;font color='#666'&gt;Cap: 3 mesas&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="560" y="330" width="110" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvFermentacion -->
-        <mxCell id="s8" value="&lt;b&gt;SrvFermentación&lt;/b&gt;&lt;br&gt;Cámara Ferm.&lt;br&gt;&lt;font color='#666'&gt;Cap: ∞&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="560" y="200" width="120" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvCargaHorno -->
-        <mxCell id="s9" value="&lt;b&gt;SrvCargaHorno&lt;/b&gt;&lt;br&gt;Carga&lt;br&gt;&lt;font color='#666'&gt;Manip.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="740" y="200" width="100" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvHorneado -->
-        <mxCell id="s10" value="&lt;b&gt;SrvHorneado&lt;/b&gt;&lt;br&gt;HORNO&lt;br&gt;&lt;font color='#666'&gt;Cap: 1-2&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="740" y="310" width="100" height="70" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvDescargaHorno -->
-        <mxCell id="s11" value="&lt;b&gt;SrvDescarga&lt;/b&gt;&lt;br&gt;Descarga&lt;br&gt;&lt;font color='#666'&gt;Manip.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="740" y="420" width="100" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvEnfriado -->
-        <mxCell id="s12" value="&lt;b&gt;SrvEnfriado&lt;/b&gt;&lt;br&gt;Enfriamiento&lt;br&gt;&lt;font color='#666'&gt;Cap: ∞&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="910" y="420" width="110" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SnkLoteTerminado / Inventario -->
-        <mxCell id="s13" value="&lt;b&gt;SnkLote&lt;/b&gt;&lt;br&gt;→ Inventario" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1250" y="420" width="100" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrcClientes -->
-        <mxCell id="c0" value="&lt;b&gt;SrcClientes&lt;/b&gt;&lt;br&gt;(NHPP)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1430" y="140" width="100" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvVenta -->
-        <mxCell id="c1" value="&lt;b&gt;SrvVenta&lt;/b&gt;&lt;br&gt;Autoservicio&lt;br&gt;&lt;font color='#666'&gt;Cap: ∞&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1280" y="260" width="110" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- SnkClienteSale -->
-        <mxCell id="c2" value="&lt;b&gt;SnkCliente&lt;/b&gt;&lt;br&gt;Sale" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="1">
-          <mxGeometry x="1430" y="370" width="100" height="60" as="geometry"/>
-        </mxCell>
-
-        <!-- ===== CONEXIONES (PATHS Y CONNECTORS) ===== -->
-
-        <!-- SrcLotes → SrvPesado : Connector -->
-        <mxCell id="e0" style="endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s0" target="s1" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e0l" value="Connector" style="text;fontSize=8;fillColor=none;fontColor=#999999;" vertex="1" parent="1">
-          <mxGeometry x="65" y="195" width="60" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvPesado → SrvCargaMezc : Path 3m -->
-        <mxCell id="e1" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" edge="1" source="s1" target="s2" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e1l" value="&lt;b&gt;Path 3m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" vertex="1" parent="1">
-          <mxGeometry x="170" y="240" width="55" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvCargaMezc → SrvMezcladoAuto : Connector -->
-        <mxCell id="e2" style="endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s2" target="s3" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e2l" value="Connector" style="text;fontSize=8;fillColor=none;fontColor=#999999;" vertex="1" parent="1">
-          <mxGeometry x="265" y="300" width="60" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvMezcladoAuto → SrvRetiroMasa : Connector -->
-        <mxCell id="e3" style="endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s3" target="s4" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e3l" value="Connector" style="text;fontSize=8;fillColor=none;fontColor=#999999;" vertex="1" parent="1">
-          <mxGeometry x="265" y="400" width="60" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvRetiroMasa → SrvAmasadoManual : Path 4m -->
-        <mxCell id="e4" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" edge="1" source="s4" target="s5" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e4l" value="&lt;b&gt;Path 4m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" vertex="1" parent="1">
-          <mxGeometry x="340" y="445" width="55" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvAmasadoManual → SrvReposo : Path 3m -->
-        <mxCell id="e5" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" edge="1" source="s5" target="s6" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e5l" value="&lt;b&gt;Path 3m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" vertex="1" parent="1">
-          <mxGeometry x="510" y="445" width="55" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvReposo → SrvFormado : Path 5m -->
-        <mxCell id="e6" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" edge="1" source="s6" target="s7" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e6l" value="&lt;b&gt;Path 5m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" vertex="1" parent="1">
-          <mxGeometry x="620" y="395" width="55" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvFormado → SrvFermentacion : Path 6m -->
-        <mxCell id="e7" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" edge="1" source="s7" target="s8" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e7l" value="&lt;b&gt;Path 6m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" vertex="1" parent="1">
-          <mxGeometry x="620" y="285" width="55" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvFermentacion → SrvCargaHorno : Path 8m -->
-        <mxCell id="e8" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;dashed=1;" edge="1" source="s8" target="s9" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e8l" value="&lt;b&gt;Path 8m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" vertex="1" parent="1">
-          <mxGeometry x="690" y="210" width="55" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvCargaHorno → SrvHorneado : Connector -->
-        <mxCell id="e9" style="endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s9" target="s10" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e9l" value="Connector" style="text;fontSize=8;fillColor=none;fontColor=#999999;" vertex="1" parent="1">
-          <mxGeometry x="780" y="275" width="60" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvHorneado → SrvDescargaHorno : Connector -->
-        <mxCell id="e10" style="endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;" edge="1" source="s10" target="s11" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e10l" value="Connector" style="text;fontSize=8;fillColor=none;fontColor=#999999;" vertex="1" parent="1">
-          <mxGeometry x="780" y="395" width="60" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvDescargaHorno → SrvEnfriado : Path 5m -->
-        <mxCell id="e11" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" edge="1" source="s11" target="s12" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e11l" value="&lt;b&gt;Path 5m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" vertex="1" parent="1">
-          <mxGeometry x="850" y="435" width="55" height="15" as="geometry"/>
-        </mxCell>
-
-        <!-- SrvEnfriado → SnkLote : Path 15m (traslado a sala) -->
-        <mxCell id="e12" style="endArrow=block;endFill=1;strokeColor=#cc0000;strokeWidth=3;dashed=1;" edge="1" source="s12" target="s13" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="e12l" value="&lt;b&gt;Path 15m&lt;/b&gt;&lt;br&gt;Traslado a Sala" style="text;fontSize=9;fillColor=none;fontColor=#cc0000;" vertex="1" parent="1">
-          <mxGeometry x="1060" y="430" width="90" height="30" as="geometry"/>
-        </mxCell>
-
-        <!-- Flujo Clientes -->
-        <mxCell id="ec0" style="endArrow=block;endFill=1;strokeColor=#d6b656;strokeWidth=2;" edge="1" source="c0" target="c1" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="ec1" style="endArrow=block;endFill=1;strokeColor=#d6b656;strokeWidth=2;" edge="1" source="c1" target="c2" parent="1">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-
-        <!-- ===== LEYENDA ===== -->
-        <mxCell id="lg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9f9f9;strokeColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="30" y="610" width="700" height="130" as="geometry"/>
-        </mxCell>
-        <mxCell id="lg0" value="&lt;b&gt;LEYENDA&lt;/b&gt;" style="text;fontSize=11;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="40" y="615" width="100" height="20" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lg1" value="" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="50" y="640" width="20" height="15" as="geometry"/>
-        </mxCell>
-        <mxCell id="lg1t" value="Server con Panadero (Secondary Res.)" style="text;fontSize=9;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="75" y="638" width="200" height="18" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lg2" value="" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="50" y="660" width="20" height="15" as="geometry"/>
-        </mxCell>
-        <mxCell id="lg2t" value="Server con Manipulador (Secondary Res.)" style="text;fontSize=9;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="75" y="658" width="210" height="18" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lg3" value="" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="50" y="680" width="20" height="15" as="geometry"/>
-        </mxCell>
-        <mxCell id="lg3t" value="Server sin recurso humano (proceso pasivo / Cap: ∞)" style="text;fontSize=9;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="75" y="678" width="260" height="18" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lg4" value="" style="ellipse;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="50" y="700" width="20" height="15" as="geometry"/>
-        </mxCell>
-        <mxCell id="lg4t" value="Source / Sink" style="text;fontSize=9;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="75" y="698" width="100" height="18" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lg5" value="" style="endArrow=none;strokeColor=#0050ef;strokeWidth=2;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="360" y="648" as="sourcePoint"/>
-            <mxPoint x="410" y="648" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="lg5t" value="Path (con distancia lógica, Drawn to Scale = FALSE)" style="text;fontSize=9;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="415" y="640" width="270" height="18" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lg6" value="" style="endArrow=none;strokeColor=#82b366;strokeWidth=2;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="360" y="668" as="sourcePoint"/>
-            <mxPoint x="410" y="668" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="lg6t" value="Connector (transferencia instantánea, distancia 0)" style="text;fontSize=9;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="415" y="660" width="270" height="18" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lg7" value="" style="endArrow=none;strokeColor=#cc0000;strokeWidth=3;dashed=1;" edge="1" parent="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="360" y="688" as="sourcePoint"/>
-            <mxPoint x="410" y="688" as="targetPoint"/>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="lg7t" value="Path largo — traslado a sala de ventas (15m)" style="text;fontSize=9;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="415" y="680" width="250" height="18" as="geometry"/>
-        </mxCell>
-
-        <mxCell id="lg8t" value="&lt;b&gt;Distancia total acumulada:&lt;/b&gt; 3+4+3+5+6+8+5+15 = &lt;b&gt;49 m/lote&lt;/b&gt; (~49 seg a 1 m/s)" style="text;fontSize=9;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="360" y="700" width="350" height="18" as="geometry"/>
-        </mxCell>
-
-        <!-- RECURSO LABELS -->
-        <mxCell id="r1" value="🧑‍🍳 ResPanaderoA/B/C (3+3+3)" style="text;fontSize=9;fillColor=none;fontColor=#6c8ebf;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="500" width="200" height="18" as="geometry"/>
-        </mxCell>
-        <mxCell id="r2" value="👷 ResManipulador (2)" style="text;fontSize=9;fillColor=none;fontColor=#b85450;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="740" y="490" width="150" height="18" as="geometry"/>
-        </mxCell>
-        <mxCell id="r3" value="🔄 ResPanaderoRefuerzo (2) — 14:00-22:00" style="text;fontSize=9;fillColor=none;fontColor=#9673a6;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="520" width="260" height="18" as="geometry"/>
-        </mxCell>
-
-        <!-- Máquina label -->
-        <mxCell id="m1" value="&lt;font color='#9673a6'&gt;⚙️ Equipo automático&lt;br&gt;(no requiere recurso)&lt;/font&gt;" style="text;fontSize=8;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="190" y="390" width="120" height="25" as="geometry"/>
-        </mxCell>
-
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram id="layout1" name="Layout Panadería">
+        <mxGraphModel dx="1258" dy="477" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t1" value="&lt;b&gt;LAYOUT PANADERÍA — Modelo SIMIO&lt;/b&gt;&lt;br&gt;Distancias lógicas para Paths" style="text;html=1;fontSize=16;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="10" width="500" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="z1" value="ZONA DE PRODUCCIÓN" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="60" width="1100" height="520" as="geometry"/>
+                </mxCell>
+                <mxCell id="z2" value="SALA DE VENTAS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1180" y="60" width="380" height="520" as="geometry"/>
+                </mxCell>
+                <mxCell id="s0" value="&lt;b&gt;SrcLotes&lt;/b&gt;&lt;br&gt;(Source)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="120" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="s1" value="&lt;b&gt;SrvPesado&lt;/b&gt;&lt;br&gt;Pesado&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Cap: 3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="230" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="s2" value="&lt;b&gt;SrvCargaMezc&lt;/b&gt;&lt;br&gt;Carga Mezc.&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Cap: 3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="230" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="s3" value="&lt;b&gt;SrvMezcladoAuto&lt;/b&gt;&lt;br&gt;Mezclado&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Cap: 3 máq.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="330" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="s4" value="&lt;b&gt;SrvRetiroMasa&lt;/b&gt;&lt;br&gt;Retiro&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Cap: 3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="430" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="s5" value="&lt;b&gt;SrvAmasadoManual&lt;/b&gt;&lt;br&gt;Amasado&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Cap: 3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="430" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="s6" value="&lt;b&gt;SrvReposo&lt;/b&gt;&lt;br&gt;Reposo&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Cap: ∞&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="430" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="s7" value="&lt;b&gt;SrvFormado&lt;/b&gt;&lt;br&gt;Formado&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Cap: 3 mesas&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="330" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="s8" value="&lt;b&gt;SrvFermentación&lt;/b&gt;&lt;br&gt;Cámara Ferm.&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Cap: ∞&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="200" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="s9" value="&lt;b&gt;SrvCargaHorno&lt;/b&gt;&lt;br&gt;Carga&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Manip.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="200" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="s10" value="&lt;b&gt;SrvHorneado&lt;/b&gt;&lt;br&gt;HORNO&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Cap: 1-2&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="310" width="100" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="s11" value="&lt;b&gt;SrvDescarga&lt;/b&gt;&lt;br&gt;Descarga&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Manip.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="420" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="s12" value="&lt;b&gt;SrvEnfriado&lt;/b&gt;&lt;br&gt;Enfriamiento&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Cap: ∞&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="910" y="420" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="s13" value="&lt;b&gt;SnkLote&lt;/b&gt;&lt;br&gt;→ Inventario" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1250" y="420" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="c0" value="&lt;b&gt;SrcClientes&lt;/b&gt;&lt;br&gt;(NHPP)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1430" y="140" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="c1" value="&lt;b&gt;SrvVenta&lt;/b&gt;&lt;br&gt;Autoservicio&lt;br&gt;&lt;font color=&#39;#666&#39;&gt;Cap: ∞&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1280" y="260" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2" value="&lt;b&gt;SnkCliente&lt;/b&gt;&lt;br&gt;Sale" style="ellipse;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" parent="1" vertex="1">
+                    <mxGeometry x="1430" y="370" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="e0" style="endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;" parent="1" source="s0" target="s1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e0l" value="Connector" style="text;fontSize=8;fillColor=none;fontColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="65" y="195" width="60" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" parent="1" source="s1" target="s2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1l" value="&lt;b&gt;Path 3m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" parent="1" vertex="1">
+                    <mxGeometry x="170" y="240" width="55" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" style="endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;" parent="1" source="s2" target="s3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2l" value="Connector" style="text;fontSize=8;fillColor=none;fontColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="265" y="300" width="60" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" style="endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;" parent="1" source="s3" target="s4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3l" value="Connector" style="text;fontSize=8;fillColor=none;fontColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="265" y="400" width="60" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" parent="1" source="s4" target="s5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4l" value="&lt;b&gt;Path 4m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="445" width="55" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" parent="1" source="s5" target="s6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5l" value="&lt;b&gt;Path 3m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="445" width="55" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" parent="1" source="s6" target="s7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e6l" value="&lt;b&gt;Path 5m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="395" width="55" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" parent="1" source="s7" target="s8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7l" value="&lt;b&gt;Path 6m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="285" width="55" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="e8" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;dashed=1;" parent="1" source="s8" target="s9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e8l" value="&lt;b&gt;Path 8m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" parent="1" vertex="1">
+                    <mxGeometry x="690" y="210" width="55" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="e9" style="endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;" parent="1" source="s9" target="s10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e9l" value="Connector" style="text;fontSize=8;fillColor=none;fontColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="780" y="275" width="60" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="e10" style="endArrow=block;endFill=1;strokeColor=#82b366;strokeWidth=2;" parent="1" source="s10" target="s11" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e10l" value="Connector" style="text;fontSize=8;fillColor=none;fontColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="780" y="395" width="60" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="e11" style="endArrow=block;endFill=1;strokeColor=#0050ef;strokeWidth=2;" parent="1" source="s11" target="s12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e11l" value="&lt;b&gt;Path 5m&lt;/b&gt;" style="text;fontSize=9;fillColor=none;fontColor=#0050ef;" parent="1" vertex="1">
+                    <mxGeometry x="850" y="435" width="55" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="e12" style="endArrow=block;endFill=1;strokeColor=#cc0000;strokeWidth=3;dashed=1;" parent="1" source="s12" target="s13" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e12l" value="&lt;b&gt;Path 15m&lt;/b&gt;&lt;br&gt;Traslado a Sala" style="text;fontSize=9;fillColor=none;fontColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="1060" y="430" width="90" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="ec0" style="endArrow=block;endFill=1;strokeColor=#d6b656;strokeWidth=2;" parent="1" source="c0" target="c1" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ec1" style="endArrow=block;endFill=1;strokeColor=#d6b656;strokeWidth=2;" parent="1" source="c1" target="c2" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f9f9f9;strokeColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="30" y="610" width="700" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg0" value="&lt;b&gt;LEYENDA&lt;/b&gt;" style="text;fontSize=11;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="615" width="100" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg1" value="" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="640" width="20" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg1t" value="Server con Panadero (Secondary Res.)" style="text;fontSize=9;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="75" y="638" width="200" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg2" value="" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="660" width="20" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg2t" value="Server con Manipulador (Secondary Res.)" style="text;fontSize=9;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="75" y="658" width="210" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg3" value="" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="680" width="20" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg3t" value="Server sin recurso humano (proceso pasivo / Cap: ∞)" style="text;fontSize=9;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="75" y="678" width="260" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg4" value="" style="ellipse;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="700" width="20" height="15" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg4t" value="Source / Sink" style="text;fontSize=9;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="75" y="698" width="100" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg5" value="" style="endArrow=none;strokeColor=#0050ef;strokeWidth=2;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="360" y="648" as="sourcePoint"/>
+                        <mxPoint x="410" y="648" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="lg5t" value="Path (con distancia lógica, Drawn to Scale = FALSE)" style="text;fontSize=9;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="415" y="640" width="270" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg6" value="" style="endArrow=none;strokeColor=#82b366;strokeWidth=2;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="360" y="668" as="sourcePoint"/>
+                        <mxPoint x="410" y="668" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="lg6t" value="Connector (transferencia instantánea, distancia 0)" style="text;fontSize=9;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="415" y="660" width="270" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg7" value="" style="endArrow=none;strokeColor=#cc0000;strokeWidth=3;dashed=1;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="360" y="688" as="sourcePoint"/>
+                        <mxPoint x="410" y="688" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="lg7t" value="Path largo — traslado a sala de ventas (15m)" style="text;fontSize=9;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="415" y="680" width="250" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="lg8t" value="&lt;b&gt;Distancia total acumulada:&lt;/b&gt; 3+4+3+5+6+8+5+15 = &lt;b&gt;49 m/lote&lt;/b&gt; (~49 seg a 1 m/s)" style="text;fontSize=9;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="700" width="350" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="r1" value="🧑‍🍳 ResPanaderoA/B/C (3+3+3)" style="text;fontSize=9;fillColor=none;fontColor=#6c8ebf;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="500" width="200" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="r2" value="👷 ResManipulador (2)" style="text;fontSize=9;fillColor=none;fontColor=#b85450;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="490" width="150" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="r3" value="🔄 ResPanaderoRefuerzo (2) — 14:00-22:00" style="text;fontSize=9;fillColor=none;fontColor=#9673a6;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="520" width="260" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="m1" value="&lt;font color=&#39;#9673a6&#39;&gt;⚙️ Equipo automático&lt;br&gt;(no requiere recurso)&lt;/font&gt;" style="text;fontSize=8;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="390" width="120" height="25" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>
