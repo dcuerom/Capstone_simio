@@ -6,53 +6,201 @@
 
 Los Processes en SIMIO permiten implementar lógica que va más allá de las propiedades estándar de Source/Server/Sink. Se acceden desde **Definitions → Processes** o desde **Add-On Process Triggers** de cada objeto.
 
-### Paso 7.1 — Process: Asignación de tipo de pan al cliente
+### Paso 7.1 — Process: Asignación de tipo de pan al cliente (con probabilidades condicionales)
 
 **Ubicación**: En `SrcClientes` → Properties → **Add-On Process Triggers** → **Before Exiting** → Crear nuevo proceso `ProcAsignarTiposCliente`
 
-Este proceso calcula el índice de hora actual y asigna tipos de pan usando las probabilidades horarias.
+> **Ref. Reporte §3.10**: La selección del 2º y 3er tipo de pan se realiza **sin reemplazo** usando probabilidades condicionales:
+>
+> P(2º = j | 1º = i) = Pⱼ / (1 − Pᵢ),  j ≠ i
+>
+> P(3º = k | 1º = i, 2º = j) = Pₖ / (1 − Pᵢ − Pⱼ),  k ≠ i,j
+>
+> **Ref. Workbook §7.2**: Se implementa mediante **Assign** y **Decide** steps dentro del Process, usando `Random.Uniform(0,1)` y un recorrido acumulativo que excluye los tipos ya seleccionados.
 
-#### Pasos del Process:
+Este proceso calcula el índice de hora actual, asigna el primer tipo con probabilidades marginales y luego asigna el 2º/3er tipo con **probabilidades condicionales exactas** (sin reemplazo).
 
-1. **Assign** — Calcular índice de hora:
-   - State Variable: `Model.MStaHoraIdx`
-   - Value: `Math.Floor((Run.TimeNow - DateTime.FromString("09:00")) / DateTime.FromString("01:00")) + 1`
-   - *(Alternativa simplificada)*: `Math.Floor(Run.TimeNow / 60) + 1` si la simulación empieza en t=0 correspondiente a 09:00
+#### Diagrama conceptual del Process
 
-2. **Assign** — Nº de tipos a comprar:
-   - State Variable: `EntCliente.EStaNTipos`
-   - Value: `Random.Discrete(1, 0.50, 2, 0.85, 3, 1.00)`
+```
+[Assign HoraIdx] → [Assign NTipos] → [Assign Tipo1] → [Assign Kg1]
+                                                           ↓
+                                              [Decide: NTipos >= 2?]
+                                                  ↓ True           ↓ False → FIN
+                                [Assign ProbRest1]
+                                [Assign Rand2 = U(0,1) * ProbRest1]
+                                [Assign Tipo2 via scan condicional]
+                                [Assign Kg2]
+                                          ↓
+                              [Decide: NTipos >= 3?]
+                                  ↓ True           ↓ False → FIN
+                    [Assign ProbRest2]
+                    [Assign Rand3 = U(0,1) * ProbRest2]
+                    [Assign Tipo3 via scan condicional]
+                    [Assign Kg3]
+                          ↓
+                         FIN
+```
 
-3. **Assign** — Tipo 1 (primera selección):
-   - State Variable: `EntCliente.EStaTipo1`
-   - Value: Usar distribución discreta acumulada basada en `TableProbEleccion[MStaHoraIdx]`:
-   ```
-   Random.Discrete(
-     1, TableProbEleccion[MStaHoraIdx].PMarraqueta,
-     2, TableProbEleccion[MStaHoraIdx].PMarraqueta + TableProbEleccion[MStaHoraIdx].PHallulla,
-     3, ...(suma acumulada hasta PMarrInt)...,
-     ...
-     10, 1.0
-   )
-   ```
+#### Pasos del Process — Detalle completo
 
-   > **Nota práctica**: SIMIO acepta `Random.Discrete` en forma acumulada. Se deben precalcular las probabilidades acumuladas en columnas adicionales de `TableProbEleccion` para simplificar la expresión.
+**Grupo A: Hora y número de tipos**
 
-4. **Assign** — Cantidad tipo 1:
-   - State Variable: `EntCliente.EStaKg1`
-   - Value: `Random.Triangular(TableCompra[EntCliente.EStaTipo1].TriMin, TableCompra[EntCliente.EStaTipo1].TriModa, TableCompra[EntCliente.EStaTipo1].TriMax)`
+| Step | Tipo | State Variable | Value |
+|------|------|---------------|-------|
+| A1 | **Assign** | `Model.MStaHoraIdx` | `Math.Floor(Run.TimeNow / 60) + 1` |
+| A2 | **Assign** | `EntCliente.EStaNTipos` | `Random.Discrete(1, 0.50, 2, 0.85, 3, 1.00)` |
 
-5. **Decide** — ¿Compra 2º tipo?
-   - Condition: `EntCliente.EStaNTipos >= 2`
-   - **True branch**: Assign `EStaTipo2` y `EStaKg2` (con probabilidad condicional sin reemplazo)
-   - **False branch**: Continuar
+> **Nota A1**: La simulación empieza en t=0 correspondiente a 09:00. `Run.TimeNow` está en minutos, por lo que `Math.Floor(Run.TimeNow / 60) + 1` da el índice 1-12 de la tabla `TableProbEleccion`. Se debe acotar con `Math.Min(12, Math.Max(1, ...))` para seguridad.
 
-6. **Decide** — ¿Compra 3er tipo?
-   - Condition: `EntCliente.EStaNTipos >= 3`
-   - **True branch**: Assign `EStaTipo3` y `EStaKg3`
-   - **False branch**: Continuar
+**Grupo B: Primera selección (probabilidades marginales)**
 
-> **Simplificación recomendada**: Para el 2º y 3er tipo, usar la misma distribución horaria (las probabilidades condicionales son muy similares a las marginales dado que hay 10 tipos). Si se requiere exactitud, precalcular las condicionales en tablas adicionales.
+| Step | Tipo | State Variable | Value |
+|------|------|---------------|-------|
+| B1 | **Assign** | `EntCliente.EStaTipo1` | *(ver expresión completa abajo)* |
+| B2 | **Assign** | `EntCliente.EStaKg1` | `Random.Triangular(TableCompra[EntCliente.EStaTipo1].TriMin, TableCompra[EntCliente.EStaTipo1].TriModa, TableCompra[EntCliente.EStaTipo1].TriMax)` |
+
+**Expresión para B1** — `Random.Discrete` con probabilidades acumuladas:
+
+```
+Random.Discrete(
+  1, TableProbEleccion[Model.MStaHoraIdx].PMarraqueta,
+  2, TableProbEleccion[Model.MStaHoraIdx].PMarraqueta + TableProbEleccion[Model.MStaHoraIdx].PHallulla,
+  3, TableProbEleccion[Model.MStaHoraIdx].PMarraqueta + TableProbEleccion[Model.MStaHoraIdx].PHallulla + TableProbEleccion[Model.MStaHoraIdx].PMarrInt,
+  4, TableProbEleccion[Model.MStaHoraIdx].PMarraqueta + TableProbEleccion[Model.MStaHoraIdx].PHallulla + TableProbEleccion[Model.MStaHoraIdx].PMarrInt + TableProbEleccion[Model.MStaHoraIdx].PHallInt,
+  5, TableProbEleccion[Model.MStaHoraIdx].PMarraqueta + TableProbEleccion[Model.MStaHoraIdx].PHallulla + TableProbEleccion[Model.MStaHoraIdx].PMarrInt + TableProbEleccion[Model.MStaHoraIdx].PHallInt + TableProbEleccion[Model.MStaHoraIdx].PHotDog,
+  6, TableProbEleccion[Model.MStaHoraIdx].PMarraqueta + TableProbEleccion[Model.MStaHoraIdx].PHallulla + TableProbEleccion[Model.MStaHoraIdx].PMarrInt + TableProbEleccion[Model.MStaHoraIdx].PHallInt + TableProbEleccion[Model.MStaHoraIdx].PHotDog + TableProbEleccion[Model.MStaHoraIdx].PCiabatta,
+  7, TableProbEleccion[Model.MStaHoraIdx].PMarraqueta + TableProbEleccion[Model.MStaHoraIdx].PHallulla + TableProbEleccion[Model.MStaHoraIdx].PMarrInt + TableProbEleccion[Model.MStaHoraIdx].PHallInt + TableProbEleccion[Model.MStaHoraIdx].PHotDog + TableProbEleccion[Model.MStaHoraIdx].PCiabatta + TableProbEleccion[Model.MStaHoraIdx].PBaguette,
+  8, TableProbEleccion[Model.MStaHoraIdx].PMarraqueta + TableProbEleccion[Model.MStaHoraIdx].PHallulla + TableProbEleccion[Model.MStaHoraIdx].PMarrInt + TableProbEleccion[Model.MStaHoraIdx].PHallInt + TableProbEleccion[Model.MStaHoraIdx].PHotDog + TableProbEleccion[Model.MStaHoraIdx].PCiabatta + TableProbEleccion[Model.MStaHoraIdx].PBaguette + TableProbEleccion[Model.MStaHoraIdx].PDobladita,
+  9, TableProbEleccion[Model.MStaHoraIdx].PMarraqueta + TableProbEleccion[Model.MStaHoraIdx].PHallulla + TableProbEleccion[Model.MStaHoraIdx].PMarrInt + TableProbEleccion[Model.MStaHoraIdx].PHallInt + TableProbEleccion[Model.MStaHoraIdx].PHotDog + TableProbEleccion[Model.MStaHoraIdx].PCiabatta + TableProbEleccion[Model.MStaHoraIdx].PBaguette + TableProbEleccion[Model.MStaHoraIdx].PDobladita + TableProbEleccion[Model.MStaHoraIdx].PBocDama,
+  10, 1.0
+)
+```
+
+> **Tip SIMIO**: Si la expresión es demasiado larga, agregar **columnas de probabilidades acumuladas** (`CumPMarraqueta`, `CumPHallulla`, ...) a `TableProbEleccion` y referenciar directamente: `Random.Discrete(1, TableProbEleccion[h].CumPMarraqueta, 2, TableProbEleccion[h].CumPHallulla, ..., 10, 1.0)`.
+
+---
+
+**Grupo C: Segunda selección — Probabilidad condicional sin reemplazo**
+
+> **Lógica matemática**: Se genera un U(0,1), se escala por `(1 - P_tipo1)`, y se recorre acumulativamente las probabilidades de los tipos restantes (saltando el tipo1). Este "scan condicional" implementa exactamente P(2º = j | 1º = i) = Pⱼ / (1 − Pᵢ).
+
+| Step | Tipo | Configuración |
+|------|------|---------------|
+| C0 | **Decide** | Condition: `EntCliente.EStaNTipos >= 2` — Si False, saltar al final |
+| C1 | **Assign** | `EntCliente.EStaProbRest1` = `1.0 - TableProbEleccion[Model.MStaHoraIdx].P[EntCliente.EStaTipo1]` *(ver nota abajo)* |
+| C2 | **Assign** | `EntCliente.EStaRand2` = `Random.Uniform(0, 1) * EntCliente.EStaProbRest1` |
+| C3 | **Assign** | `EntCliente.EStaTipo2` = 0 *(inicializar)* |
+| C4–C13 | **10× Decide+Assign** | Scan condicional (ver detalle abajo) |
+| C14 | **Assign** | `EntCliente.EStaKg2` = `Random.Triangular(TableCompra[EntCliente.EStaTipo2].TriMin, TableCompra[EntCliente.EStaTipo2].TriModa, TableCompra[EntCliente.EStaTipo2].TriMax)` |
+
+**Nota sobre C1**: En SIMIO no se puede indexar dinámicamente por nombre de columna. Se usa una **función auxiliar** con condicionales:
+
+```
+Expresión para EStaProbRest1:
+1.0 - (
+  Math.If(EntCliente.EStaTipo1 == 1, TableProbEleccion[Model.MStaHoraIdx].PMarraqueta,
+  Math.If(EntCliente.EStaTipo1 == 2, TableProbEleccion[Model.MStaHoraIdx].PHallulla,
+  Math.If(EntCliente.EStaTipo1 == 3, TableProbEleccion[Model.MStaHoraIdx].PMarrInt,
+  Math.If(EntCliente.EStaTipo1 == 4, TableProbEleccion[Model.MStaHoraIdx].PHallInt,
+  Math.If(EntCliente.EStaTipo1 == 5, TableProbEleccion[Model.MStaHoraIdx].PHotDog,
+  Math.If(EntCliente.EStaTipo1 == 6, TableProbEleccion[Model.MStaHoraIdx].PCiabatta,
+  Math.If(EntCliente.EStaTipo1 == 7, TableProbEleccion[Model.MStaHoraIdx].PBaguette,
+  Math.If(EntCliente.EStaTipo1 == 8, TableProbEleccion[Model.MStaHoraIdx].PDobladita,
+  Math.If(EntCliente.EStaTipo1 == 9, TableProbEleccion[Model.MStaHoraIdx].PBocDama,
+  TableProbEleccion[Model.MStaHoraIdx].PAmasado)))))))))
+)
+```
+
+**Detalle del scan condicional (C4–C13)** — Para cada tipo candidato j = 1,2,...,10:
+
+```
+Para j = 1 (Marraqueta):
+  Decide: EntCliente.EStaTipo1 != 1 AND EntCliente.EStaTipo2 == 0
+    True → Assign: acumulador temporal
+      Decide: EStaRand2 <= TableProbEleccion[h].PMarraqueta
+        True → Assign: EStaTipo2 = 1
+        False → Assign: EStaRand2 = EStaRand2 - TableProbEleccion[h].PMarraqueta
+
+Para j = 2 (Hallulla):
+  Decide: EntCliente.EStaTipo1 != 2 AND EntCliente.EStaTipo2 == 0
+    True →
+      Decide: EStaRand2 <= TableProbEleccion[h].PHallulla
+        True → Assign: EStaTipo2 = 2
+        False → Assign: EStaRand2 = EStaRand2 - TableProbEleccion[h].PHallulla
+
+  ... (repetir para j = 3 hasta 10)
+```
+
+> **Simplificación práctica en SIMIO**: En lugar de 10 bloques Decide anidados, se puede implementar con una **cadena de Decide lineales**. Cada Decide verifica:
+> 1. ¿El tipo j ya fue seleccionado como tipo 1? → Si sí, saltar.
+> 2. ¿El rand residual es ≤ P(j)? → Si sí, asignar EStaTipo2 = j.
+> 3. Si no, restar P(j) del rand y continuar al siguiente tipo.
+>
+> El último tipo sin verificar recibe automáticamente la selección (caso "catch-all").
+
+**Implementación compacta alternativa** (si SIMIO permite expresiones largas):
+
+```
+EStaTipo2 = expresión con Math.If anidados:
+
+Math.If(EStaTipo1 != 1 AND EStaRand2 <= P1, 1,
+Math.If(EStaTipo1 != 1 AND EStaTipo2 == 0, EStaRand2 - P1, ...))
+```
+
+> **Recomendación**: Usar la **cadena de Decide** (enfoque visual en el Process) ya que es más debuggeable y transparente. Cada Decide tiene dos ramas claras.
+
+---
+
+**Grupo D: Tercera selección — Probabilidad condicional doble**
+
+| Step | Tipo | Configuración |
+|------|------|---------------|
+| D0 | **Decide** | Condition: `EntCliente.EStaNTipos >= 3` — Si False, saltar al final |
+| D1 | **Assign** | `EntCliente.EStaProbRest2` = `EStaProbRest1 - P(tipo2)` *(misma lógica que C1 pero restando P del tipo2)* |
+| D2 | **Assign** | `EntCliente.EStaRand3` = `Random.Uniform(0, 1) * EntCliente.EStaProbRest2` |
+| D3 | **Assign** | `EntCliente.EStaTipo3` = 0 |
+| D4–D13 | **10× Decide+Assign** | Scan condicional idéntico al Grupo C, pero ahora excluye **tanto tipo1 como tipo2** |
+| D14 | **Assign** | `EntCliente.EStaKg3` = `Random.Triangular(...)` |
+
+**Condición del Decide en D4–D13** (para tipo candidato j):
+```
+EntCliente.EStaTipo1 != j AND EntCliente.EStaTipo2 != j AND EntCliente.EStaTipo3 == 0
+```
+
+---
+
+#### Resumen del algoritmo de selección condicional
+
+```
+1. Generar NTipos ∈ {1, 2, 3} con P(1)=0.50, P(2)=0.35, P(3)=0.15
+
+2. TIPO 1 — Selección marginal:
+   Usar Random.Discrete con probabilidades acumuladas de la hora actual
+
+3. TIPO 2 (si NTipos ≥ 2) — Selección condicional:
+   a. ProbRest1 = 1 - P(Tipo1)
+   b. Rand2 = U(0,1) × ProbRest1
+   c. Para cada tipo j ≠ Tipo1:
+      Si Rand2 ≤ P(j): Tipo2 = j → SALIR
+      Sino: Rand2 = Rand2 - P(j) → siguiente j
+
+4. TIPO 3 (si NTipos ≥ 3) — Selección condicional doble:
+   a. ProbRest2 = ProbRest1 - P(Tipo2)
+   b. Rand3 = U(0,1) × ProbRest2
+   c. Para cada tipo k ≠ Tipo1, k ≠ Tipo2:
+      Si Rand3 ≤ P(k): Tipo3 = k → SALIR
+      Sino: Rand3 = Rand3 - P(k) → siguiente k
+```
+
+> **Validación**: Para la hora 09:00, si Tipo1 = Marraqueta (P=0.2645), las probabilidades condicionales del Tipo2 deben ser:
+> - Hallulla: 0.2248 / (1-0.2645) = **0.3056** ✓
+> - Marraqueta Int.: 0.1247 / 0.7355 = **0.1695** ✓
+> - Hallulla Int.: 0.1164 / 0.7355 = **0.1582** ✓
+>
+> Esto coincide con la tabla del reporte §3.10.
+
+> **Ref. Workbook §7.2–7.3**: El patrón Assign → Decide → Assign es el estándar de SIMIO para lógica ramificada en Processes. Los Add-On Process Triggers de tipo "Before Exiting" en el Source garantizan que la entidad ya tiene todos sus atributos asignados antes de entrar al flujo del modelo.
 
 ### Paso 7.2 — Process: Lógica de Venta (todo-o-nada)
 
