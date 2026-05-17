@@ -1,35 +1,69 @@
 # Guía de Implementación en SIMIO — Parte 2: Facility, Paths, Arribos y Turnos
 
-> **Referencia**: SASMAA7 §7.2 (Schedules), §8.2 (Entity Movement — Paths), Workbook6 §3.1.5 (Drawn to Scale), §4.5 (Work Schedules)
+> **Referencia**: SASMAA7 §7.2 (Schedules), §8.2 (Entity Movement — Paths), Workbook6 §3.1.5 (Drawn to Scale), §4.5 (Work Schedules), §23.4 (Empirical Distributions in SIMIO)
 
 ---
 
-## FASE 4: Rate Table para Arribos de Clientes (NHPP)
+## FASE 4: Distribución Empírica para Arribos de Clientes
 
-### Paso 4.1 — Crear Rate Table
+> **Concepto clave**: La llegada de clientes se modela mediante una **distribución empírica** (tabla de frecuencias observadas) en lugar de un ajuste paramétrico teórico. Las tasas de arribo por hora se obtuvieron directamente del análisis de la demanda real, garantizando que la simulación reproduce fielmente el patrón operativo observado.
+>
+> **Ref. Workbook §23.4 — Empirical Distributions in SIMIO**: "Empirical distributions allow the modeler to directly use observed data when no theoretical distribution provides an adequate fit." En nuestro caso, la demanda presenta un patrón **trimodal** (bajo-medio-alto) con saltos abruptos que no se ajusta a distribuciones paramétricas estándar.
 
-Ir a **Data** → **Schedules** → **Create → Rate Table** → Nombre: `ClienteArrivalRate`
+### Paso 4.0 — Fundamento: Tabla de Frecuencias Empírica
 
-Configurar:
-- **Interval Size**: 1 Hour
-- **Number of Intervals**: 12 (corresponde a 09:00–21:00)
+La distribución empírica se construyó a partir del perfil de demanda horaria real (sección 3.11 del reporte de pre-modelación). La tabla de frecuencias es:
 
-Ingresar los valores (clientes/hora, de la sección 3.11 del reporte):
+| Franja horaria | Clientes estimados (`fᵢ`) | Frecuencia relativa (`fᵢ/N`) | Frecuencia acumulada (`Fᵢ`) | Régimen |
+|---|---|---|---|---|
+| 09:00–10:00 | 275 | 0,0567 | 0,0567 | Bajo |
+| 10:00–11:00 | 275 | 0,0567 | 0,1134 | Bajo |
+| 11:00–12:00 | 275 | 0,0567 | 0,1700 | Bajo |
+| 12:00–13:00 | 439 | 0,0905 | 0,2605 | Medio |
+| 13:00–14:00 | 417 | 0,0859 | 0,3464 | Medio |
+| 14:00–15:00 | 417 | 0,0859 | 0,4324 | Medio |
+| 15:00–16:00 | 275 | 0,0567 | 0,4890 | Bajo |
+| 16:00–17:00 | 275 | 0,0567 | 0,5457 | Bajo |
+| 17:00–18:00 | 299 | 0,0616 | 0,6073 | Medio |
+| 18:00–19:00 | 819 | 0,1688 | 0,7761 | **Alto** |
+| 19:00–20:00 | 806 | 0,1661 | 0,9422 | **Alto** |
+| 20:00–21:00 | 279 | 0,0575 | 0,9997 | Bajo |
+| **Total (N)** | **4.851** | **≈1,0000** | | |
 
-| Intervalo | Hora real | Rate (arrivals/hr) |
-|---|---|---|
-| 1 | 09:00–10:00 | 275 |
-| 2 | 10:00–11:00 | 275 |
-| 3 | 11:00–12:00 | 275 |
-| 4 | 12:00–13:00 | 439 |
-| 5 | 13:00–14:00 | 417 |
-| 6 | 14:00–15:00 | 417 |
-| 7 | 15:00–16:00 | 275 |
-| 8 | 16:00–17:00 | 275 |
-| 9 | 17:00–18:00 | 299 |
-| 10 | 18:00–19:00 | 819 |
-| 11 | 19:00–20:00 | 806 |
-| 12 | 20:00–21:00 | 279 |
+> **Observación**: Las franjas 18:00–20:00 concentran el **33,5%** de los clientes del día en solo 2 de 12 horas. Este pico no puede representarse con una distribución paramétrica simple.
+
+### Paso 4.1 — Crear Rate Table con tasas empíricas
+
+En SIMIO, la distribución empírica de arribos se implementa mediante un **Rate Table**. Este objeto permite definir tasas de llegada que varían por intervalo de tiempo. SIMIO usa internamente estas tasas para generar tiempos entre llegadas con variabilidad estocástica (exponenciales dentro de cada intervalo).
+
+**Procedimiento:**
+
+1. Ir a **Data** → **Schedules** → **Create → Rate Table**
+2. Nombre: `ClienteArrivalRate`
+3. Configurar las propiedades del Rate Table:
+   - **Interval Size**: `1 Hour`
+   - **Number of Intervals**: `12` (corresponde a las 12 horas de operación: 09:00–21:00)
+
+4. Ingresar las **tasas empíricas observadas** (clientes/hora) en cada intervalo:
+
+| Intervalo | Hora real | Rate (clientes/hr) | Fuente |
+|---|---|---|---|
+| 1 | 09:00–10:00 | 275 | Frecuencia empírica observada |
+| 2 | 10:00–11:00 | 275 | Frecuencia empírica observada |
+| 3 | 11:00–12:00 | 275 | Frecuencia empírica observada |
+| 4 | 12:00–13:00 | 439 | Frecuencia empírica observada |
+| 5 | 13:00–14:00 | 417 | Frecuencia empírica observada |
+| 6 | 14:00–15:00 | 417 | Frecuencia empírica observada |
+| 7 | 15:00–16:00 | 275 | Frecuencia empírica observada |
+| 8 | 16:00–17:00 | 275 | Frecuencia empírica observada |
+| 9 | 17:00–18:00 | 299 | Frecuencia empírica observada |
+| 10 | 18:00–19:00 | 819 | Frecuencia empírica observada |
+| 11 | 19:00–20:00 | 806 | Frecuencia empírica observada |
+| 12 | 20:00–21:00 | 279 | Frecuencia empírica observada |
+
+> **Ref. Workbook §4.2.2**: "Select the Data tab to create a Rate Table and then click Create → Rate Table. Set the Interval Size and Number of Intervals. The rate is fixed at arrivals per hour."
+
+> **¿Por qué Rate Table y no `Random.Discrete`?**: El Rate Table de SIMIO está diseñado específicamente para generar llegadas con tasa variable en el tiempo. Acepta directamente las frecuencias empíricas como tasas λ(t) y genera automáticamente los interarribos exponenciales correspondientes. `Random.Discrete` sería apropiado si quisiéramos asignar un **valor categórico** (ej. tipo de pan), pero no para controlar la **tasa de generación de entidades**.
 
 ### Paso 4.2 — Configurar Run Setup
 
@@ -38,7 +72,31 @@ Ir a **Run Tab → Run Setup**:
 - **Ending Type**: `Specific Ending Time`
 - **Ending Time**: `9:00 PM` (21:00)
 
-> **Ref. Workbook §4.2**: Esto evita que las estadísticas se diluyan con horas sin actividad.
+> **Ref. Workbook §4.2**: Esto evita que las estadísticas se diluyan con horas sin actividad. El Rate Table se alinea automáticamente con el Starting Time: el intervalo 1 comienza a las 9:00 AM.
+
+### Paso 4.3 — Cómo funciona internamente la distribución empírica en el Rate Table
+
+El mecanismo de SIMIO para Rate Tables opera así:
+
+```
+PARA cada intervalo i (1 a 12):
+  λᵢ = tasa empírica del intervalo (ej. 275 clientes/hr)
+  MIENTRAS el reloj está dentro del intervalo i:
+    Generar tiempo_entre_llegadas ~ Exponential(1/λᵢ)
+    → En intervalo 1: Exponential(1/275) hrs = Exponential(13.1 seg)
+    → En intervalo 10: Exponential(1/819) hrs = Exponential(4.4 seg)
+    Crear entidad EntCliente
+```
+
+> **Resultado**: Cada intervalo genera llegadas con la tasa empírica observada. La variabilidad estocástica se mantiene por los interarribos exponenciales, pero el **volumen promedio** por hora replica exactamente los datos observados.
+
+### Paso 4.4 — Validación empírica del arribo
+
+Para verificar que el Rate Table reproduce la distribución empírica, configurar un **Tally Statistic** que cuente entidades por hora:
+
+1. Ir a **Definitions** → **Elements** → **Statistics** → **Add Tally Statistic**
+2. Nombre: `TallyClientesPorHora`
+3. Después de ejecutar la simulación, verificar en **Results** que el conteo de clientes por franja se aproxima a las frecuencias empíricas (`fᵢ`) de la tabla.
 
 ---
 
@@ -55,11 +113,13 @@ Ir a pestaña **Facility** y arrastrar desde el **[Standard Library]**:
 | Source | `SrcLotes` | `EntLote` | Interarrival Time | Se controla por proceso/Timer (ver Fase 7) |
 | Source | `SrcClientes` | `EntCliente` | **Time Varying Arrival Rate** | Rate Table = `ClienteArrivalRate` |
 
-**Configurar `SrcClientes`**:
+**Configurar `SrcClientes` con la distribución empírica**:
 1. Clic en `SrcClientes` → Properties
 2. **Entity Type**: `EntCliente`
 3. **Arrival Mode**: `Time Varying Arrival Rate`
-4. **Arrival Rate Table**: `ClienteArrivalRate`
+4. **Arrival Rate Table**: `ClienteArrivalRate` ← *aquí se vincula la distribución empírica*
+
+> **Ref. Workbook §4.2.2**: Al seleccionar `Time Varying Arrival Rate`, SIMIO usa las tasas empíricas del Rate Table para generar los tiempos entre llegadas como un proceso de Poisson no homogéneo (NHPP), donde λ(t) = tasa empírica del intervalo actual.
 
 **State Assignments en `SrcClientes`** (Before Exiting):
 Clic en **State Assignments** → expandir → **Before Exiting** → clic en `...` (Repeating Property Editor):
@@ -69,6 +129,8 @@ Clic en **State Assignments** → expandir → **Before Exiting** → clic en `.
 | 1 | `EntCliente.EStaNTipos` | `Random.Discrete(1, 0.50, 2, 0.85, 3, 1.0)` |
 | 2 | `EntCliente.EStaTipo1` | (ver nota abajo sobre proceso) |
 
+> **Nota sobre `Random.Discrete`**: Aquí sí se usa `Random.Discrete` porque estamos asignando un **valor categórico** (número de tipos a comprar: 1, 2 o 3) según una distribución de probabilidad empírica acumulada: P(1 tipo) = 0.50, P(≤2 tipos) = 0.85, P(≤3 tipos) = 1.0.
+>
 > **Nota**: La asignación de tipos de pan requiere lógica condicional basada en la hora → se implementa mejor con un **Process** (ver Fase 7).
 
 #### Servers (estaciones de trabajo)

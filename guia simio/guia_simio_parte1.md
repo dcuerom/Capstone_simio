@@ -95,7 +95,9 @@ Ir a pestaña **Data** → **Tables** → **Add Data Table** → Nombre: `TableP
 
 **Data** → **Add Data Table** → Nombre: `TableProbEleccion`
 
-**Columnas**: `HoraID` (Integer), `PMarraqueta` (Real), `PHallulla` (Real), `PMarrInt` (Real), `PHallInt` (Real), `PHotDog` (Real), `PCiabatta` (Real), `PBaguette` (Real), `PDobladita` (Real), `PBocDama` (Real), `PAmasado` (Real)
+**Columnas**: `HoraID` (Integer), y para cada tipo de pan **dos columnas**:
+- `PMarraqueta` (Real) — probabilidad marginal
+- `PHallulla` (Real), `PMarrInt` (Real), `PHallInt` (Real), `PHotDog` (Real), `PCiabatta` (Real), `PBaguette` (Real), `PDobladita` (Real), `PBocDama` (Real), `PAmasado` (Real)
 
 **12 filas** (una por hora, datos de la sección 3.9 del reporte):
 
@@ -113,6 +115,31 @@ Ir a pestaña **Data** → **Tables** → **Add Data Table** → Nombre: `TableP
 | 10  | 10     | 0.1854  | 0.1576    | 0.0874   | 0.0816   | 0.2501  | 0.0708    | 0.0619    | 0.0225  | 0.0141   | 0.0687   |
 | 11  | 11     | 0.1897  | 0.1612    | 0.0894   | 0.0835   | 0.2326  | 0.0724    | 0.0634    | 0.0230  | 0.0145   | 0.0703   |
 | 12  | 12     | 0.2584  | 0.2196    | 0.1218   | 0.1137   | 0.0762  | 0.0365    | 0.0320    | 0.0704  | 0.0442   | 0.0271   |
+
+#### Paso 2.2b — Variables auxiliares para probabilidad condicional (2ª/3ª selección)
+
+> **Ref. teórica (sección 3.10 del reporte)**: Cuando un cliente compra 2 o 3 tipos **diferentes**, la selección del 2º tipo se realiza **sin reemplazo**:
+>
+> P(2º = j | 1º = i) = Pⱼ / (1 − Pᵢ), para j ≠ i
+>
+> P(3º = k | 1º = i, 2º = j) = Pₖ / (1 − Pᵢ − Pⱼ), para k ≠ i,j
+>
+> Esto se implementa en SIMIO usando **variables de estado temporales** dentro de un Process (ver Paso 7.1), **no** con tablas precalculadas, ya que el cálculo depende de qué tipo se eligió previamente.
+
+**Variables de estado adicionales en `EntCliente`** (agregar a las ya definidas en Paso 1.2):
+
+Ir a **Navigation Panel** → clic en `EntCliente` → pestaña **Definitions** → **States**:
+
+| State Variable                          | Tipo          | Nombre               | Uso                                                        |
+| --------------------------------------- | ------------- | -------------------- | ---------------------------------------------------------- |
+| Prob. restante después del 1er tipo    | Discrete Real | `EStaProbRest1`    | Almacena `1 − P(tipo1)` para normalizar                   |
+| Prob. restante después del 2do tipo    | Discrete Real | `EStaProbRest2`    | Almacena `1 − P(tipo1) − P(tipo2)` para normalizar        |
+| Número aleatorio para 2ª selección    | Discrete Real | `EStaRand2`        | U(0,1) escalado para selección condicional                |
+| Número aleatorio para 3ª selección    | Discrete Real | `EStaRand3`        | U(0,1) escalado para selección condicional                |
+
+> **¿Por qué no precalcular las condicionales en tablas?** Con 10 tipos × 12 horas × 10 posibles primeras selecciones = 1.200 filas solo para el 2º tipo, más 10.800 para el 3º. El enfoque algorítmico (calcular en el Process) es mucho más manejable y flexible.
+>
+> **Ref. Workbook §7.2**: "Add-On Process Triggers" y "Assign Step" permiten realizar cálculos arbitrarios sobre state variables de la entidad antes de que esta salga del Source, exactamente lo que necesitamos para el muestreo condicional.
 
 ### Paso 2.3 — Tabla de Compra por Tipo (distribuciones triangulares) ✅
 

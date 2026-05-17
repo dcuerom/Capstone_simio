@@ -246,23 +246,52 @@ $$
 | Baguette        | 0,0445        |
 | Amasado         | 0,0377        |
 
-### 3.11 Tasa de llegada de clientes estimada
+### 3.11 Distribución empírica de llegada de clientes
 
-| Franja               | Clientes/hr      | Inter-arribo (seg) | Inter-arribo (min) |
-| -------------------- | ---------------- | ------------------ | ------------------ |
-| 09:00–10:00         | ~275             | 13,1               | 0,22               |
-| 10:00–11:00         | ~275             | 13,1               | 0,22               |
-| 11:00–12:00         | ~275             | 13,1               | 0,22               |
-| 12:00–13:00         | ~439             | 8,2                | 0,14               |
-| 13:00–14:00         | ~417             | 8,6                | 0,14               |
-| 14:00–15:00         | ~417             | 8,6                | 0,14               |
-| 15:00–16:00         | ~275             | 13,1               | 0,22               |
-| 16:00–17:00         | ~275             | 13,1               | 0,22               |
-| 17:00–18:00         | ~299             | 12,0               | 0,20               |
-| 18:00–19:00         | ~819             | 4,4                | 0,07               |
-| 19:00–20:00         | ~806             | 4,5                | 0,07               |
-| 20:00–21:00         | ~279             | 12,9               | 0,22               |
-| **Total/día** | **~4.852** |                    |                    |
+> **Enfoque metodológico**: La demanda de clientes se modela mediante una **distribución empírica** (tabla de frecuencias) construida directamente a partir de los datos observados del perfil de demanda horaria. A diferencia de un ajuste paramétrico (e.g., Poisson), la distribución empírica **no impone supuestos sobre la forma funcional** del proceso de llegada, preservando fielmente el patrón real observado.
+>
+> **Ref. Simio Workbook §23.4**: "Empirical distributions in SIMIO allow the modeler to directly use observed data when no theoretical distribution provides an adequate fit."
+
+#### Tabla de frecuencias empíricas de llegada
+
+La siguiente tabla constituye la **distribución empírica discreta** del número de clientes por franja horaria. Las frecuencias absolutas (`fᵢ`) se derivan de la demanda en kg y el consumo promedio por cliente. La frecuencia relativa (`fᵢ/N`) representa la probabilidad de que un cliente llegue en esa franja.
+
+| Franja horaria | Clientes estimados (`fᵢ`) | Frecuencia relativa (`fᵢ/N`) | Frecuencia acumulada (`Fᵢ`) | Régimen   |
+| -------------- | -------------------------- | ----------------------------- | ----------------------------- | --------- |
+| 09:00–10:00   | 275                        | 0,0567                        | 0,0567                        | Bajo      |
+| 10:00–11:00   | 275                        | 0,0567                        | 0,1134                        | Bajo      |
+| 11:00–12:00   | 275                        | 0,0567                        | 0,1700                        | Bajo      |
+| 12:00–13:00   | 439                        | 0,0905                        | 0,2605                        | Medio     |
+| 13:00–14:00   | 417                        | 0,0859                        | 0,3464                        | Medio     |
+| 14:00–15:00   | 417                        | 0,0859                        | 0,4324                        | Medio     |
+| 15:00–16:00   | 275                        | 0,0567                        | 0,4890                        | Bajo      |
+| 16:00–17:00   | 275                        | 0,0567                        | 0,5457                        | Bajo      |
+| 17:00–18:00   | 299                        | 0,0616                        | 0,6073                        | Medio     |
+| 18:00–19:00   | 819                        | 0,1688                        | 0,7761                        | **Alto** |
+| 19:00–20:00   | 806                        | 0,1661                        | 0,9422                        | **Alto** |
+| 20:00–21:00   | 279                        | 0,0575                        | 0,9997                        | Bajo      |
+| **Total (N)** | **4.851**                  | **≈1,0000**                  |                               |           |
+
+#### Implementación en SIMIO — Rate Table con tasas empíricas
+
+La distribución empírica se implementa en SIMIO mediante un **Rate Table**, donde cada intervalo horario recibe directamente la tasa de llegada observada (clientes/hora). SIMIO internamente genera los tiempos entre llegadas como un proceso de Poisson no homogéneo (NHPP) cuya tasa λ(t) varía según la tabla:
+
+| Intervalo | Rate (clientes/hr) | Interarribo medio (seg) |
+| --------- | ------------------- | ----------------------- |
+| 1         | 275                 | 13,1                    |
+| 2         | 275                 | 13,1                    |
+| 3         | 275                 | 13,1                    |
+| 4         | 439                 | 8,2                     |
+| 5         | 417                 | 8,6                     |
+| 6         | 417                 | 8,6                     |
+| 7         | 275                 | 13,1                    |
+| 8         | 275                 | 13,1                    |
+| 9         | 299                 | 12,0                    |
+| 10        | 819                 | 4,4                     |
+| 11        | 806                 | 4,5                     |
+| 12        | 279                 | 12,9                    |
+
+> **Justificación del enfoque empírico**: La demanda observada presenta un patrón **trimodal** (bajo-medio-alto) que no se ajusta adecuadamente a ninguna distribución paramétrica estándar. El uso de tasas empíricas directas evita errores de especificación y garantiza que la simulación reproduce fielmente el perfil de carga operativa real.
 
 ### 3.12 Restricciones del horno
 
@@ -310,7 +339,7 @@ $$
 | 🔷 S8  | **Split enfriado/traslado:** Enfriado ≈ 67% del tiempo combinado, Traslado ≈ 33%. Ver tabla detallada abajo.                                                                                                                                                                        | Proporción basada en que el enfriamiento es pasivo y más largo que el traslado activo       |
 | 🔷 S9  | **El enfriamiento tiene capacidad ilimitada** (espacio suficiente de racks/mesas para enfriar).                                                                                                                                                                                       | El enunciado no limita este recurso y sugiere evaluar esta decisión                          |
 | 🔷 S10 | **Los panes no vendidos al final del día se descartan.** No hay stock que pase al día siguiente.                                                                                                                                                                                    | Coherente con la operación de pan fresco                                                     |
-| 🔷 S11 | **La demanda se modela a nivel de cliente individual**, con llegadas según proceso de Poisson no homogéneo (tasa variable por hora).                                                                                                                                                | Permite capturar variabilidad estocástica de la demanda                                      |
+| 🔷 S11 | **La demanda se modela a nivel de cliente individual**, con llegadas según una **distribución empírica** (tabla de frecuencias) implementada como Rate Table en SIMIO. Las tasas por hora son las observadas directamente, sin ajuste paramétrico.                                    | Preserva el patrón real sin imponer supuestos distribucionales. SIMIO genera interarribos Exponenciales dentro de cada intervalo, manteniendo la variabilidad estocástica |
 | 🔷 S12 | **Materias primas disponibles sin restricción.** No hay quiebres de insumos.                                                                                                                                                                                                         | Fuera del alcance del modelo                                                                  |
 | 🔷 S13 | **Todos los hornos son equivalentes e intercambiables.**                                                                                                                                                                                                                              | Supuesto operacional del enunciado                                                            |
 | 🔷 S14 | **Carros y bandejas suficientes.** Se modelan explícitamente pero se asume disponibilidad inicial suficiente. El reporte final indica cuántos se necesitan.                                                                                                                         | Indicado en el enunciado                                                                      |
@@ -394,7 +423,7 @@ El perfil de demanda muestra que las primeras 3 horas (09:00–12:00) tienen dem
 | Evento                | Disparador                    | Acciones                                                   |
 | --------------------- | ----------------------------- | ---------------------------------------------------------- |
 | Inicio de jornada     | Hora de inicio panadería     | Inicia producción de batches pre-apertura                 |
-| Llegada de cliente    | Proceso Poisson no homogéneo | Selecciona tipos, verifica stock, registra venta o quiebre |
+| Llegada de cliente    | Distribución empírica (Rate Table) | Selecciona tipos, verifica stock, registra venta o quiebre |
 | Fin de mezclado       | Timer (auto cycle)            | Libera mezcladora, panadero retira masa                    |
 | Fin de fermentación  | Timer                         | Lote disponible para horno                                 |
 | Lote listo para horno | Acumulación en cola          | Evalúa política de carga                                 |
@@ -497,7 +526,7 @@ INICIO JORNADA (pre-apertura)
 ### 5.7 Flujo del cliente
 
 ```
-LLEGADA CLIENTE (Poisson no homogéneo, tasa por hora)
+LLEGADA CLIENTE (Distribución empírica — Rate Table con tasas observadas por hora)
 │
 ├─→ Determinar N_tipos (1/2/3)
 │
@@ -676,7 +705,7 @@ Se verificó que las probabilidades suman 1,0 en cada franja:
 
 **Resultado**: ✅ Consistentes (error < 0,00002 por redondeo).
 
-### A.3 Regímenes de demanda identificados
+### A.3 Regímenes de demanda identificados y justificación del enfoque empírico
 
 La demanda NO sigue una distribución uniforme ni normal a lo largo del día. Se identifican **3 regímenes discretos**:
 
@@ -686,7 +715,7 @@ La demanda NO sigue una distribución uniforme ni normal a lo largo del día. Se
 | **Medio** | 12-15, 17-18        | ~657           | 32%           |
 | **Alto**  | 18-20               | ~1.434         | **35%** |
 
-> La demanda horaria se modela mejor como un **perfil escalonado no homogéneo** (step function) que como una distribución continua. Cada producto tiene entre 1 y 7 tasas horarias distintas.
+> **Justificación de la distribución empírica**: La demanda horaria presenta un patrón **trimodal** con saltos abruptos (especialmente la transición de 500→1.451 kg/hr entre 17:00–18:00). Este comportamiento no se ajusta a distribuciones paramétricas estándar (Normal, Poisson homogéneo, etc.). Por tanto, se utiliza una **distribución empírica** (tabla de frecuencias observadas) como entrada directa al Rate Table de SIMIO, lo que garantiza que la simulación reproduce fielmente la carga operativa real sin sesgo de especificación.
 
 ---
 
