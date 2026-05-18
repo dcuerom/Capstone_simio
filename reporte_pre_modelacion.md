@@ -94,6 +94,24 @@ Un supermercado opera una panadería propia que abastece una zona de autoservici
 | Bocado de Dama      | 5      | 12              | 15     | 10      | 30          | 14       | 10              | 96                    | 25       |
 | Amasado             | 5      | 15              | 20     | 10      | 35          | 18       | 12              | 115                   | 60       |
 
+#### Derivación de §3.2 — Ciclo total y Kg/Batch
+
+> **Fuente**: `parametros_proceso_panaderia.csv`, columnas `Min1`…`Min7` y `KgPorBatchRef`.
+
+**Kg/Batch**: Se toma directamente de la columna `KgPorBatchRef` del CSV. Ejemplo: Marraqueta → `KgPorBatchRef = 60`.
+
+**Ciclo total**: Suma aritmética de los 7 tiempos de etapa del CSV. Ejemplo para Marraqueta:
+
+$$
+\text{Ciclo}_{\text{Marraqueta}} = \underbrace{5}_{\text{Pesado}} + \underbrace{12}_{\text{Mezclado}} + \underbrace{15}_{\text{Reposo}} + \underbrace{10}_{\text{Formado}} + \underbrace{35}_{\text{Ferm.}} + \underbrace{18}_{\text{Horneado}} + \underbrace{12}_{\text{Enfr.+Trasl.}} = 107 \text{ min}
+$$
+
+**Nota sobre la Etapa 2 ("Amasado" en el CSV)**: El enunciado (Sección II.A) especifica que "el panadero ingresa los ingredientes (2 min), luego la máquina opera en ciclo automático (que es el tiempo indicado [en el CSV]), luego el panadero retira la masa (1 min)". Por tanto, el valor `Min2` del CSV corresponde al **ciclo automático de mezclado** (🔶 S1). Los 2+1 = 3 min de overhead manual se modelan como etapas separadas (carga/retiro) que requieren al panadero.
+
+**Kg/Bandeja**: Se calcula como `CapacidadKgPorCarroRef / 18` (18 bandejas por carro según el enunciado §III.D). Ejemplo: Marraqueta → `40 / 18 = 2,22 kg/bandeja`.
+
+---
+
 ### 3.3 Demanda diaria por tipo
 
 | Tipo                | Demanda (kg/día) | % del total    |
@@ -109,6 +127,16 @@ Un supermercado opera una panadería propia que abastece una zona de autoservici
 | Baguette            | 350               | 4,3%           |
 | Bocado de Dama      | 220               | 2,7%           |
 | **TOTAL**     | **8.200**   | **100%** |
+
+#### Derivación de §3.3 — Demanda y porcentajes
+
+> **Fuente**: Los valores de demanda diaria (kg/día) provienen directamente del enunciado del problema (Sección E.1 de `base_information.md`).
+
+**Porcentaje del total**: Se calcula como `Demanda_tipo / 8.200 × 100`. Ejemplo:
+
+$$
+\%_{\text{Marraqueta}} = \frac{2.000}{8.200} \times 100 = 24{,}4\%
+$$
 
 ### 3.4 Perfil de demanda horaria (kg/hora)
 
@@ -133,6 +161,25 @@ Un supermercado opera una panadería propia que abastece una zona de autoservici
 - **Medio** (~657 kg/hr): mediodía y pre-peak → 4 horas
 - **Alto** (~1.434 kg/hr): peak vespertino 18:00–20:00 → 2 horas (**35% de la demanda diaria en 2 horas**)
 
+#### Derivación de §3.4 — Perfil de demanda horaria
+
+> **Fuente**: `perfil_demanda_por_hora_panaderia.csv` — cada fila tiene la demanda en kg por tipo para una franja horaria.
+
+**Total kg por franja**: Suma de las 10 columnas de tipo de pan en cada fila del CSV. Ejemplo para 09:00–10:00:
+
+$$
+\text{Total}_{09\text{-}10} = 126{,}19 + 107{,}26 + 50{,}48 + 50{,}48 + 26{,}06 + 15{,}13 + 13{,}24 + 29{,}17 + 18{,}33 + 12{,}43 = 448{,}8 \text{ kg}
+$$
+
+**% diario**: Se calcula como `Total_franja / 8.200 × 100`. Ejemplo: `448,8 / 8.200 = 5,5%`.
+
+**Clasificación de régimen**: Se agruparon las franjas por nivel de intensidad:
+- **Bajo**: franjas con ~449 kg/hr (09–12, 15–17, 20–21)
+- **Medio**: franjas con ~500–750 kg/hr (12–15, 17–18)
+- **Alto**: franjas con >1.400 kg/hr (18–20)
+
+> **Validación**: Σ de todas las franjas = 8.200 kg ✓ (coincide con la demanda diaria total del enunciado).
+
 ### 3.5 Lotes de producción requeridos por día
 
 | Tipo                | Demanda kg      | Kg/Batch | Batches/día  |
@@ -149,6 +196,26 @@ Un supermercado opera una panadería propia que abastece una zona de autoservici
 | Amasado             | 380             | 60       | 7             |
 | **TOTAL**     | **8.200** | —       | **155** |
 
+#### Derivación de §3.5 — Lotes de producción
+
+> **Fuente**: `Demanda` del enunciado (§E.1) y `KgPorBatchRef` de `parametros_proceso_panaderia.csv`.
+
+**Fórmula**: Cada tipo requiere `⌈Demanda / Kg_por_Batch⌉` batches (redondeo al entero superior).
+
+$$
+\text{Batches}_{\text{Marraqueta}} = \left\lceil \frac{2.000}{60} \right\rceil = \lceil 33{,}3 \rceil = 34
+$$
+
+$$
+\text{Batches}_{\text{Hallulla}} = \left\lceil \frac{1.700}{55} \right\rceil = \lceil 30{,}9 \rceil = 31
+$$
+
+$$
+\text{Batches}_{\text{Bocado de Dama}} = \left\lceil \frac{220}{25} \right\rceil = \lceil 8{,}8 \rceil = 9
+$$
+
+Se redondea al entero superior porque no se pueden producir fracciones de batch.
+
 ### 3.6 Corridas de horno por familia (capacidad 1.200 kg/corrida)
 
 | Familia         | Tipos incluidos                              | Kg totales      | Corridas mín. | Tiempo hornear | Tiempo total/corrida* |
@@ -159,6 +226,32 @@ Un supermercado opera una panadería propia que abastece una zona de autoservici
 | **TOTAL** |                                              | **8.200** | **9**    |                |                       |
 
 *Tiempo total/corrida = carga (5 min) + horneado + descarga (5 min), sin setup.
+
+#### Derivación de §3.6 — Corridas de horno
+
+> **Fuente**: Familias de horneado del enunciado (§III.B), demanda (§E.1) y capacidad del horno (§III.D: 1.200 kg/corrida).
+
+**Paso 1 — Kg totales por familia**: Suma de la demanda diaria de todos los tipos de cada familia:
+
+$$
+\text{Fam 1} = \underbrace{1.200}_{\text{Hot Dog}} + \underbrace{350}_{\text{Dobladita}} + \underbrace{220}_{\text{Bocado}} = 1.770 \text{ kg}
+$$
+
+$$
+\text{Fam 2} = \underbrace{2.000}_{\text{Marraq.}} + \underbrace{1.700}_{\text{Hallulla}} + \underbrace{800}_{\text{Hall. Int.}} + \underbrace{380}_{\text{Amasado}} = 4.880 \text{ kg}
+$$
+
+$$
+\text{Fam 3} = \underbrace{800}_{\text{Marraq. Int.}} + \underbrace{400}_{\text{Ciabatta}} + \underbrace{350}_{\text{Baguette}} = 1.550 \text{ kg}
+$$
+
+**Paso 2 — Corridas mínimas**: `⌈Kg_familia / 1.200⌉`.
+
+$$
+\text{Corridas Fam 2} = \left\lceil \frac{4.880}{1.200} \right\rceil = \lceil 4{,}07 \rceil = 5
+$$
+
+**Paso 3 — Tiempo total/corrida**: `Carga (5 min) + Horneado (14/18/21 min) + Descarga (5 min)`. Tiempos de carga/descarga vienen del enunciado §III.E.
 
 ### 3.7 Carros y bandejas por batch de producción
 
@@ -174,6 +267,30 @@ Un supermercado opera una panadería propia que abastece una zona de autoservici
 | Dobladita           | 50       | 45       | 2,50       | 20             | 2            |
 | Bocado de Dama      | 25       | 28       | 1,56       | 17             | 1            |
 | Amasado             | 60       | 40       | 2,22       | 27             | 2            |
+
+#### Derivación de §3.7 — Carros y bandejas
+
+> **Fuente**: `parametros_proceso_panaderia.csv`, columna `CapacidadKgPorCarroRef`, y enunciado §III.D (18 bandejas por carro).
+
+**Kg/Carro**: Tomado directamente de `CapacidadKgPorCarroRef` en el CSV. Ejemplo: Marraqueta → 40 kg/carro.
+
+**Kg/Bandeja**: Cada carro tiene 18 bandejas (enunciado §III.D), por tanto:
+
+$$
+\text{Kg/Bandeja}_{\text{Marraqueta}} = \frac{\text{CapacidadKgPorCarroRef}}{18} = \frac{40}{18} = 2{,}22 \text{ kg}
+$$
+
+**Bandejas/Batch**: `⌈Kg_Batch / Kg_Bandeja⌉`. Ejemplo:
+
+$$
+\text{Bandejas}_{\text{Marraqueta}} = \left\lceil \frac{60}{2{,}22} \right\rceil = \lceil 27{,}0 \rceil = 27
+$$
+
+**Carros/Batch**: `⌈Kg_Batch / Kg_Carro⌉`. Ejemplo:
+
+$$
+\text{Carros}_{\text{Marraqueta}} = \left\lceil \frac{60}{40} \right\rceil = \lceil 1{,}5 \rceil = 2
+$$
 
 ### 3.8 Distribuciones de compra por cliente
 
@@ -201,6 +318,36 @@ Un supermercado opera una panadería propia que abastece una zona de autoservici
 | Bocado de Dama      | 0,3       | 0,5       | 1,0       | 0,600     |
 | Amasado             | 0,3       | 0,8       | 2,0       | 1,033     |
 
+#### Derivación de §3.8 — Distribuciones de compra
+
+> **Fuente**: Enunciado §E.2 de `base_information.md`.
+
+**Número de tipos**: Las probabilidades (50%, 35%, 15%) vienen directamente del enunciado. El valor esperado se calcula como:
+
+$$
+E[\text{tipos}] = 1 \times 0{,}50 + 2 \times 0{,}35 + 3 \times 0{,}15 = 0{,}50 + 0{,}70 + 0{,}45 = 1{,}65
+$$
+
+**Parámetros triangulares**: Mín, Moda y Máx se toman del enunciado §E.2. Por defecto `Mín = 0,3 kg` y `Máx = 2,0 kg`, salvo excepciones indicadas en el enunciado (Hot Dog máx 3 kg; Hallulla Integral, Ciabatta y Dobladita máx 1,5 kg; Baguette y Bocado de Dama máx 1 kg).
+
+**E[X] — Media de la distribución triangular**: Se calcula con la fórmula estándar:
+
+$$
+E[X] = \frac{\text{mín} + \text{moda} + \text{máx}}{3}
+$$
+
+Ejemplo para Marraqueta:
+
+$$
+E[X]_{\text{Marraqueta}} = \frac{0{,}3 + 1{,}0 + 2{,}0}{3} = \frac{3{,}3}{3} = 1{,}100 \text{ kg}
+$$
+
+Ejemplo para Pan Hot Dog (con máx = 3,0 kg):
+
+$$
+E[X]_{\text{Hot Dog}} = \frac{0{,}3 + 1{,}0 + 3{,}0}{3} = \frac{4{,}3}{3} = 1{,}433 \text{ kg}
+$$
+
 ### 3.9 Probabilidades de elección (primera selección) por hora
 
 Extraídas de `probabilidades_eleccion_por_hora.csv`. Suman ~1,0 en cada franja. Ejemplo para horas representativas:
@@ -219,6 +366,14 @@ Extraídas de `probabilidades_eleccion_por_hora.csv`. Suman ~1,0 en cada franja.
 | Amasado         | 0,0277        | 0,0390         | 0,0687        |
 
 **Observación clave**: El Pan Hot Dog pasa de 5,5% de probabilidad en horario bajo a **25%** en peak vespertino.
+
+#### Derivación de §3.9 — Probabilidades de elección
+
+> **Fuente**: `probabilidades_eleccion_por_hora.csv` — datos provistos directamente en el enunciado del problema.
+
+Estas probabilidades fueron **proporcionadas como dato de entrada** (enunciado §E.2: *"El archivo probabilidades_eleccion_por_hora.xlsx indica por cada hora la probabilidad de elección del primer tipo de pan que el cliente escoge"*). No son calculadas por el modelador.
+
+Se verificó que suman ~1,0 por franja (error < 0,00002 por redondeo).
 
 ### 3.10 Probabilidades condicionales (2ª y 3ª selección)
 
@@ -245,6 +400,34 @@ $$
 | Ciabatta        | 0,0508        |
 | Baguette        | 0,0445        |
 | Amasado         | 0,0377        |
+
+#### Derivación de §3.10 — Probabilidades condicionales
+
+> **Fuente**: Derivación propia del modelador a partir de `probabilidades_eleccion_por_hora.csv` y el enunciado §E.2.
+
+El enunciado indica que el cliente escoge un 2º o 3er tipo *"diferentes a los ya escogidos, siguiendo las mismas proporciones de probabilidad de decisión"*. Esto implica una **selección sin reemplazo**, donde se redistribuye la probabilidad del tipo ya elegido entre los restantes.
+
+**Fórmula**: Si el 1er tipo elegido fue $i$ con probabilidad $P_i$, la probabilidad de elegir $j \neq i$ como 2º tipo es:
+
+$$
+P(\text{2º} = j \mid \text{1º} = i) = \frac{P_j}{1 - P_i}
+$$
+
+**Ejemplo numérico** (09:00, 1º = Marraqueta con $P_{\text{Marraq}} = 0{,}2645$):
+
+$$
+P(\text{2º} = \text{Hallulla}) = \frac{0{,}2248}{1 - 0{,}2645} = \frac{0{,}2248}{0{,}7355} = 0{,}3056 \checkmark
+$$
+
+$$
+P(\text{2º} = \text{Marraq. Int.}) = \frac{0{,}1247}{0{,}7355} = 0{,}1695 \checkmark
+$$
+
+Para el 3er tipo, se excluyen los dos ya elegidos:
+
+$$
+P(\text{3º} = k \mid \text{1º}=i, \text{2º}=j) = \frac{P_k}{1 - P_i - P_j}, \quad k \neq i,j
+$$
 
 ### 3.11 Distribución empírica de llegada de clientes
 
@@ -293,6 +476,92 @@ La distribución empírica se implementa en SIMIO mediante un **Rate Table**, do
 
 > **Justificación del enfoque empírico**: La demanda observada presenta un patrón **trimodal** (bajo-medio-alto) que no se ajusta adecuadamente a ninguna distribución paramétrica estándar. El uso de tasas empíricas directas evita errores de especificación y garantiza que la simulación reproduce fielmente el perfil de carga operativa real.
 
+#### Derivación de §3.11 — Cálculo de clientes por hora (paso a paso)
+
+> **Fuentes**: `perfil_demanda_por_hora_panaderia.csv` (kg/hora por tipo), `probabilidades_eleccion_por_hora.csv` (prob. de elección), parámetros triangulares del enunciado §E.2, y probabilidad de N tipos (§E.2).
+
+El problema proporciona la demanda en **kg por hora**, pero la simulación necesita la llegada de **clientes por hora**. La conversión requiere estimar cuántos kg compra un cliente promedio, lo cual depende de la hora (porque las probabilidades de elección cambian por franja).
+
+**Paso 1 — E[kg por evento de compra de un tipo] ponderado por hora**:
+
+Para cada franja horaria $h$, se pondera la media triangular de cada tipo por su probabilidad de elección en esa hora:
+
+$$
+E[\text{kg/tipo}]_h = \sum_{i=1}^{10} P_i(h) \times E[X_i]
+$$
+
+donde $P_i(h)$ viene del CSV de probabilidades y $E[X_i] = (\text{mín}_i + \text{moda}_i + \text{máx}_i) / 3$.
+
+**Ejemplo para 09:00–10:00**:
+
+$$
+E[\text{kg/tipo}]_{09} = (0{,}2645 \times 1{,}100) + (0{,}2248 \times 1{,}100) + (0{,}1247 \times 0{,}933) + \cdots = 0{,}9891 \text{ kg}
+$$
+
+**Paso 2 — E[kg por cliente]**:
+
+Multiplicar por el número esperado de tipos que compra un cliente:
+
+$$
+E[\text{kg/cliente}]_h = E[\text{tipos}] \times E[\text{kg/tipo}]_h = 1{,}65 \times E[\text{kg/tipo}]_h
+$$
+
+Ejemplo 09:00: $E[\text{kg/cliente}]_{09} = 1{,}65 \times 0{,}9891 = 1{,}6320$ kg.
+
+**Paso 3 — Clientes por hora**:
+
+Dividir la demanda total de la franja (suma de las 10 columnas del CSV de demanda) entre el consumo esperado por cliente:
+
+$$
+\text{Clientes}_h = \left\lfloor \frac{\text{Demanda total}_h}{E[\text{kg/cliente}]_h} \right\rceil
+$$
+
+**Ejemplo completo para 09:00–10:00**:
+
+$$
+\text{Demanda}_{09} = 126{,}19 + 107{,}26 + 50{,}48 + \cdots + 12{,}43 = 448{,}8 \text{ kg}
+$$
+
+$$
+\text{Clientes}_{09} = \frac{448{,}8}{1{,}6320} = 275 \text{ clientes}
+$$
+
+**Ejemplo para 18:00–19:00 (peak)**:
+
+$$
+E[\text{kg/tipo}]_{18} = (0{,}1854 \times 1{,}100) + (0{,}1576 \times 1{,}100) + \cdots + (0{,}0687 \times 1{,}033) = 1{,}0733
+$$
+
+$$
+E[\text{kg/cliente}]_{18} = 1{,}65 \times 1{,}0733 = 1{,}7710 \text{ kg}
+$$
+
+$$
+\text{Clientes}_{18} = \frac{1.451{,}3}{1{,}7710} = 819 \text{ clientes}
+$$
+
+**Paso 4 — Tabla resumen de la derivación por hora**:
+
+| Franja | Demanda (kg) | E[kg/tipo] | E[kg/cliente] | Clientes |
+|---|---|---|---|---|
+| 09–10 | 448,8 | 0,9891 | 1,6320 | 275 |
+| 10–11 | 448,8 | 0,9891 | 1,6320 | 275 |
+| 11–12 | 448,8 | 0,9891 | 1,6320 | 275 |
+| 12–13 | 750,1 | 1,0347 | 1,7072 | 439 |
+| 13–14 | 689,4 | 1,0016 | 1,6526 | 417 |
+| 14–15 | 689,4 | 1,0016 | 1,6526 | 417 |
+| 15–16 | 448,8 | 0,9891 | 1,6320 | 275 |
+| 16–17 | 448,8 | 0,9891 | 1,6320 | 275 |
+| 17–18 | 499,5 | 1,0123 | 1,6702 | 299 |
+| 18–19 | 1.451,3 | 1,0733 | 1,7710 | 819 |
+| 19–20 | 1.416,5 | 1,0649 | 1,7571 | 806 |
+| 20–21 | 459,9 | 0,9993 | 1,6488 | 279 |
+| **Total** | **8.200** | | | **4.851** |
+
+> **Nota**: El E[kg/cliente] varía por hora porque las probabilidades de elección cambian (p.ej., en el peak vespertino aumenta la probabilidad de Hot Dog, cuya media triangular es mayor: 1,433 kg vs. ~0,6–1,1 kg de otros tipos).
+
+**Interarribo medio**: Se calcula como `3.600 / clientes_por_hora`. Ejemplo 09:00: `3.600/275 = 13,1 seg`.
+
 ### 3.12 Restricciones del horno
 
 | Parámetro                    | Valor                              |
@@ -305,6 +574,17 @@ La distribución empírica se implementa en SIMIO mediante un **Rate Table**, do
 | Setup cambio familia          | 5 min                              |
 | Carga/Descarga                | 5 min c/u (1 manipulador)          |
 
+#### Derivación de §3.12 — Restricciones del horno
+
+> **Fuente**: Enunciado §III.C–G de `base_information.md`.
+
+Todos los valores se toman directamente del enunciado:
+- **1.200 kg** = 6 carros × (18 bandejas × Kg/bandeja promedio), enunciado §III.D
+- **600 kg (50%)** = carga mínima recomendada, enunciado §III.G
+- **5 min setup** al cambiar familia, enunciado §III.F
+- **5 min carga/descarga** c/u, enunciado §III.E
+- **15 min espera máxima**, enunciado §III.G
+
 ### 3.13 Turnos de trabajo
 
 | Parámetro                       | Valor                                      |
@@ -314,6 +594,16 @@ La distribución empírica se implementa en SIMIO mediante un **Rate Table**, do
 | Descansos                        | 2 × 15 min                                |
 | **Tiempo productivo neto** | **6 hrs 45 min = 405 min**           |
 | Escalonamiento                   | Obligatorio (≥1 persona/función siempre) |
+
+#### Derivación de §3.13 — Tiempo productivo neto
+
+> **Fuente**: Enunciado §II.D de `base_information.md`.
+
+El enunciado establece: jornada de 8 horas, colación de 45 min, y 2 descansos de 15 min. El tiempo productivo neto se calcula como:
+
+$$
+\text{Productivo} = 8 \text{ hrs} - 45 \text{ min} - 2 \times 15 \text{ min} = 480 - 45 - 30 = 405 \text{ min} = 6\text{h } 45\text{m}
+$$
 
 ## 4. Supuestos Explícitos
 
@@ -359,6 +649,16 @@ La distribución empírica se implementa en SIMIO mediante un **Rate Table**, do
 | Bocado de Dama      | 10          | 7              | 3                     | Ayudante         |
 | Amasado             | 12          | 8              | 4                     | Ayudante         |
 
+#### Derivación de §4.3 — Split enfriado/traslado
+
+> **Fuente**: El tiempo total "Enfriado y traslado" viene de `Min7` en `parametros_proceso_panaderia.csv`. La partición interna es supuesto del modelador (🔷 S8).
+
+**Fórmula de split**: Enfriado ≈ 67% del total, Traslado ≈ 33% (redondeado a enteros). Ejemplo para Marraqueta (Total = 12 min):
+
+$$
+\text{Enfriado} = \lfloor 12 \times 0{,}67 \rfloor = 8 \text{ min}, \quad \text{Traslado} = 12 - 8 = 4 \text{ min}
+$$
+
 ### 4.4 Inventario objetivo para las 09:00
 
 El perfil de demanda muestra que las primeras 3 horas (09:00–12:00) tienen demanda idéntica (~449 kg/hr). Se propone como inventario inicial al menos **1,5× la demanda de la primera hora** por tipo, para absorber variabilidad:
@@ -378,6 +678,32 @@ El perfil de demanda muestra que las primeras 3 horas (09:00–12:00) tienen dem
 | **TOTAL**     | **448,8**     | **673,2**                | **18 batches**            |
 
 > El ciclo más largo pre-apertura es Ciabatta/Baguette (134/133 min). Para tener stock a las 09:00, la panadería debe iniciar operaciones **no más tarde de las 06:45** (considerando ~135 min de ciclo completo).
+
+#### Derivación de §4.4 — Inventario objetivo
+
+> **Fuentes**: `perfil_demanda_por_hora_panaderia.csv` (demanda 1ª hora por tipo) y `KgPorBatchRef` del CSV de parámetros.
+
+**Paso 1 — Demanda de la 1ª hora por tipo**: Se toma la fila `09:00-10:00` del CSV de demanda. Ejemplo: Marraqueta = 126,19 kg.
+
+**Paso 2 — Inventario objetivo**: Se aplica un factor de seguridad de 1,5×:
+
+$$
+\text{Inv. obj.}_{\text{Marraqueta}} = 126{,}19 \times 1{,}5 = 189{,}3 \text{ kg}
+$$
+
+> El factor 1,5× se justifica porque: (a) la demanda tiene variabilidad estocástica (distribución triangular por compra), y (b) se requiere margen para que la producción en curso reponga stock antes de agotar el inventario inicial.
+
+**Paso 3 — Batches pre-apertura**: `⌈Inv_objetivo / Kg_Batch⌉`.
+
+$$
+\text{Batches}_{\text{Marraqueta}} = \left\lceil \frac{189{,}3}{60} \right\rceil = \lceil 3{,}16 \rceil = 4 \text{ batches} = 240 \text{ kg}
+$$
+
+**Paso 4 — Hora de inicio de operaciones**: El ciclo productivo más largo es Ciabatta (134 min). Para que este batch esté listo a las 09:00:
+
+$$
+\text{Inicio} = 09{:}00 - 134 \text{ min} \approx 06{:}46 \implies \text{inicio no más tarde de } 06{:}45
+$$
 
 ---
 
@@ -720,6 +1046,34 @@ Estos cubren los tres pools (Producción, Gestión de Hornos, Sala de Ventas) co
 | Traslado a sala                      | 155 batches × ~4 min = 620 min            |
 | Total manipulador-min/día           | **710 min (11,8 hrs)**               |
 | Mínimo manipuladores (turno único) | ⌈11,8 / 6,75⌉ =**2 manipuladores** |
+
+#### Derivación de §6.2 — Cálculos de carga de recursos
+
+> **Fuentes**: Tiempos de `parametros_proceso_panaderia.csv`, batches de §3.5, tiempos del enunciado (§II.A, §III.E), y tiempo productivo neto de §3.13.
+
+**Mezcladora**: Cada batch ocupa la mezcladora durante `carga (2 min) + ciclo_auto (Min2 del CSV) + retiro (1 min)`:
+
+$$
+\text{Ciclo mezcladora}_{\text{Marraqueta}} = 2 + 12 + 1 = 15 \text{ min}
+$$
+
+Total = Σ (ciclo × batches). Ejemplo parcial: Marraqueta: 15 × 34 = 510 min, Hallulla: 17 × 31 = 527 min, ..., Amasado: 18 × 7 = 126 min. **Total = 2.442 min**.
+
+Utilización con N mezcladoras (jornada ~16 hrs = 960 min): `2.442 / (N × 960)`. Con 3: 85%.
+
+**Panadero**: Tiempo "hands-on" por batch = `pesado (5) + carga_mezcladora (2) + retiro (1) + formado (Min4 del CSV)`:
+
+$$
+\text{Hands-on}_{\text{Marraqueta}} = 5 + 2 + 1 + 10 = 18 \text{ min} \times 34 = 612 \text{ min}
+$$
+
+Total sin amasado manual = 2.926 min. Mínimo panaderos = `⌈2.926 / 405⌉` = `⌈7,2⌉` = 8 (donde 405 min = tiempo productivo neto por turno).
+
+Con amasado manual (🔷 S6: ~50% del tiempo de mezclado auto): +988 min → 3.914 min → `⌈3.914/405⌉` = 10 panaderos.
+
+**Horno**: 9 corridas × (carga 5 + horneado + descarga 5). Sin setup: Fam1: 2×24 = 48, Fam2: 5×28 = 140, Fam3: 2×31 = 62 → **250 min**. Con setup peor caso (+5 min por cambio de familia, máx 8 cambios): 250 + 45 = **295 min**. Utilización: 295/960 = 31%.
+
+**Manipulador**: Horno: 9 × (5+5) = 90 min. Traslado: Σ(traslado × batches) usando tiempos del split S8 → **620 min**. Total: 710 min = 11,8 hrs → `⌈11,8/6,75⌉` = 2.
 
 ### 6.3 Elementos que NO requieren modelado detallado
 
