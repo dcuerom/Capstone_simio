@@ -53,17 +53,19 @@ Necesitas saber **cuándo entró el primer lote de la cola actual** para calcula
 
 > Este array guardará el `Run.TimeNow` en el momento en que el primer lote de cada familia llegó a `SrvCargaHorno`. Permite calcular `Run.TimeNow - MStaTimerHorno[familia]` para saber cuánto llevan esperando.
 
-### 1.3 — Crear el State `MStaHornoOcupado`
+### 1.3 — Crear el State `MStaHornosEnUso`
 
-Para evitar disparar dos corridas simultáneas, se necesita un flag que indica si el horno ya está procesando.
+Para evitar disparar más corridas de las que la capacidad física permite (especialmente cuando hay múltiples hornos), se necesita un contador de hornos actualmente en ciclo.
 
 1. Ir a **Definitions** → **States** → **Add State**
 
 | Propiedad | Valor |
 |---|---|
-| **Name** | `MStaHornoOcupado` |
-| **Type** | `Discrete (Boolean)` |
-| **Initial Value** | `False` |
+| **Name** | `MStaHornosEnUso` |
+| **Type** | `Discrete (Integer)` |
+| **Initial Value** | `0` |
+
+> *Nota:* Al usar un Integer en lugar de un Boolean, la lógica escala automáticamente si experimentas con 1, 2 o más hornos (`PropNumHornos`).
 
 ---
 
@@ -90,13 +92,13 @@ El diagrama lógico completo es:
         ↓
 [Step 4 — Decide: ¿Cola >= 600 kg?]
      Sí ↓                         No ↓
-[Step 5T — Decide: ¿Horno libre?]  [Step 5F — Decide: ¿Tiempo espera >= 15 min?]
+[Step 5T — Decide: ¿Hay hornos libres?]  [Step 5F — Decide: ¿Tiempo espera >= 15 min?]
      Sí ↓    No ↓ (FIN)               Sí ↓                 No ↓ (FIN)
-[Step 6 — Iniciar corrida]         [Step 6 — Decide: ¿Horno libre?]
+[Step 6 — Iniciar corrida]         [Step 6 — Decide: ¿Hay hornos libres?]
                                        Sí ↓    No ↓ (FIN)
                                   [Step 7 — Iniciar corrida anticipada]
                                   
-[Iniciar corrida = Assign: resetear cola + MStaHornoOcupado=True + Fire evento]
+[Iniciar corrida = Assign: resetear cola + MStaHornosEnUso++ + Fire evento]
 ```
 
 ### 2.3 — Detalle paso a paso de cada Step
@@ -155,15 +157,17 @@ El diagrama lógico completo es:
 
 ---
 
-#### **Step 5T — Decide: ¿Horno libre?** *(rama de capacidad completa)*
+#### **Step 5T — Decide: ¿Hay hornos libres?** *(rama de capacidad completa)*
 
 | Campo | Valor |
 |---|---|
 | **Type** | Decide |
-| **Condition** | `Model.MStaHornoOcupado == False` |
+| **Condition** | `Model.MStaHornosEnUso < PropNumHornos` |
+
+> *Nota:* `PropNumHornos` es la Referenced Property creada para controlar la cantidad de hornos en tus experimentos (típicamente 1 o 2). También puedes usar directamente `SrvHorneado.Capacity.Average` si no usas la propiedad referenciada.
 
 **Rama True → Step 6 (Iniciar corrida completa)**
-**Rama False → FIN** *(el lote queda en cola; cuando el horno se libere, el próximo lote en salir de SrvFermentacion disparará el proceso nuevamente)*
+**Rama False → FIN** *(el lote queda en cola; cuando un horno se libere, el próximo lote en salir de SrvFermentacion disparará el proceso nuevamente)*
 
 ---
 
@@ -183,12 +187,12 @@ El diagrama lógico completo es:
 
 ---
 
-#### **Step 5F bis — Decide: ¿Horno libre?** *(para corrida anticipada)*
+#### **Step 5F bis — Decide: ¿Hay hornos libres?** *(para corrida anticipada)*
 
 | Campo | Valor |
 |---|---|
 | **Type** | Decide |
-| **Condition** | `Model.MStaHornoOcupado == False` |
+| **Condition** | `Model.MStaHornosEnUso < PropNumHornos` |
 
 **Rama True → Step 6 (Iniciar corrida anticipada)**
 **Rama False → FIN**
@@ -203,7 +207,7 @@ Este bloque se compone de 3 Assign consecutivos + 1 Fire:
 |---|---|---|---|
 | 6a | **Assign** | `Model.MStaColaHorno[EntLote.EStaFamilia]` | `0` |
 | 6b | **Assign** | `Model.MStaTimerHorno[EntLote.EStaFamilia]` | `0` |
-| 6c | **Assign** | `Model.MStaHornoOcupado` | `True` |
+| 6c | **Assign** | `Model.MStaHornosEnUso` | `Model.MStaHornosEnUso + 1` |
 | 6d | **Fire** | Event: `EvtIniciarCorrida` | *(ver Parte 3)* |
 
 > **¿Por qué resetear la cola a 0 antes de Fire?** Evita doble conteo. El evento `EvtIniciarCorrida` será el disparador que mueve al lote a través de `SrvCargaHorno → SrvHorneado`. Los nuevos lotes que lleguen mientras el horno procesa empezarán a acumular desde 0 en `MStaColaHorno`.
@@ -230,13 +234,14 @@ Este bloque se compone de 3 Assign consecutivos + 1 Fire:
 │                        True ↓              ↓ False                  │
 │                  ┌───────────────┐  ┌──────────────────┐           │
 │                  │ Step 5T       │  │ Step 5F (Decide) │           │
-│                  │ ¿Horno libre? │  │ Espera >= 15min? │           │
+│                  │ Hornos libres?│  │ Espera >= 15min? │           │
 │                  └───────────────┘  └──────────────────┘           │
 │           True ↓       ↓ False  True ↓           ↓ False           │
 │        ┌────────┐     FIN   ┌─────────┐          FIN               │
 │        │Step 6  │           │Step 5Fbis│                            │
-│        │Corrida │           │¿Horno?  │                            │
-│        │completa│           └─────────┘                            │
+│        │Corrida │           │Hornos   │                            │
+│        │completa│           │libres?  │                            │
+│        └────────┘           └─────────┘                            │
 │        └────────┘    True ↓       ↓ False                          │
 │             ↑      ┌────────┐    FIN                                │
 │             └──────│Step 6  │                                       │
@@ -280,13 +285,13 @@ En lugar de un Processing Time estático, `SrvCargaHorno` actuará como punto de
 
 #### Process `ProcHornoCompleto` (en `SnkLoteTerminado` o al final de `SrvHorneado`)
 
-Este process libera el flag cuando el horneado termina:
+Este process libera un cupo de horno cuando el ciclo de horneado termina:
 
 | Step | Type | Configuración |
 |---|---|---|
-| 1 | **Assign** | `Model.MStaHornoOcupado` = `False` |
+| 1 | **Assign** | `Model.MStaHornosEnUso` = `Math.Max(0, Model.MStaHornosEnUso - 1)` |
 
-> **Ubicación correcta del trigger**: Asociar este Process al **Exited** de `SrvHorneado` (o al **Entered** de `SrvDescargaHorno`). Así, el flag se libera cuando el horno termina su ciclo completo.
+> **Ubicación correcta del trigger**: Asociar este Process al **Exited** de `SrvHorneado` (o al **Entered** de `SrvDescargaHorno`). Así, se resta 1 a los hornos en uso, permitiendo que el siguiente lote en cola dispare una nueva corrida.
 
 ---
 
@@ -304,7 +309,7 @@ Trigger: **Exited** de `SrvFermentacion`
 | 2 | **Decide** | `MStaColaHorno[EStaFamilia] >= 600` |
 | 3T (True) | **Assign** | Resetear cola + flag |
 | 3F (False) | **Delay** | `15 - (Run.TimeNow - MStaTimerHorno[EStaFamilia])` minutos |
-| 4 (post-Delay) | **Decide** | `MStaHornoOcupado == False AND MStaColaHorno[EStaFamilia] > 0` |
+| 4 (post-Delay) | **Decide** | `Model.MStaHornosEnUso < PropNumHornos AND MStaColaHorno[EStaFamilia] > 0` |
 | 5 (True) | **Assign** | Iniciar corrida anticipada |
 
 > **⚠️ Limitación del Delay en Process**: El token que ejecuta el Delay bloquea ese "hilo" del proceso durante 15 min. Si llegan más lotes mientras tanto, crearán tokens adicionales que también ejecutarán el Delay. Esto puede generar corridas duplicadas. Por eso **se recomienda la Opción con Event** para mayor precisión.
@@ -321,7 +326,7 @@ Ir a **Definitions → States** y crear todos los siguientes antes de construir 
 |---|---|---|---|---|
 | `MStaColaHorno` | Real Array | 3 | 0 | Kg acumulados por familia en cola del horno |
 | `MStaTimerHorno` | Real Array | 3 | 0 | Tiempo (min) en que llegó el primer lote de cada familia |
-| `MStaHornoOcupado` | Boolean | — | False | Flag: horno en ciclo activo |
+| `MStaHornosEnUso` | Discrete (Integer)| — | 0 | Contador de hornos en ciclo activo |
 
 ---
 
@@ -336,14 +341,14 @@ Agregar en **Drawing Tab → Status Label**:
 | `Cola Horno F1` | `Model.MStaColaHorno[1]` |
 | `Cola Horno F2` | `Model.MStaColaHorno[2]` |
 | `Cola Horno F3` | `Model.MStaColaHorno[3]` |
-| `Horno Ocupado` | `Model.MStaHornoOcupado` |
+| `Hornos Ocupados` | `Model.MStaHornosEnUso` |
 | `Timer F1` | `Run.TimeNow - Model.MStaTimerHorno[1]` |
 
 Durante la animación, deberías observar:
 - `ColaHorno[f]` sube con cada lote que sale de `SrvFermentacion`
-- Cuando llega a 600 (o a 15 min de espera), `MStaHornoOcupado` cambia a `True`
+- Cuando llega a 600 (o a 15 min de espera) y hay capacidad, `MStaHornosEnUso` se incrementa en 1.
 - `ColaHorno[f]` se resetea a 0
-- Al terminar `SrvHorneado`, `MStaHornoOcupado` vuelve a `False`
+- Al terminar `SrvHorneado`, `MStaHornosEnUso` se reduce en 1.
 
 ### 6.2 — Qué verificar en Results
 
@@ -368,14 +373,14 @@ ProcPoliticaCargaHorno
     ├─ Acumula kg en MStaColaHorno[familia]
     ├─ Decide: ¿Primera vez? → registrar MStaTimerHorno
     ├─ Decide: ¿Cola >= 600?
-    │    SÍ → Decide ¿Horno libre? → Fire EvtIniciarCorrida
+    │    SÍ → Decide ¿Hay hornos libres? → Fire EvtIniciarCorrida
     │    NO → Decide ¿15 min esperados?
-    │              SÍ → Decide ¿Horno libre? → Fire EvtIniciarCorrida
+    │              SÍ → Decide ¿Hay hornos libres? → Fire EvtIniciarCorrida
     │              NO → FIN (esperar más lotes)
-    └─ Fire resetea cola + marca MStaHornoOcupado = True
+    └─ Fire resetea cola + Incrementa MStaHornosEnUso (+1)
 
 SrvHorneado (Exited trigger)
     ↓
 ProcHornoCompleto
-    └─ MStaHornoOcupado = False
+    └─ Decrementa MStaHornosEnUso (-1)
 ```
