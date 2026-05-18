@@ -96,6 +96,7 @@ Ir a pestaña **Data** → **Tables** → **Add Data Table** → Nombre: `TableP
 **Data** → **Add Data Table** → Nombre: `TableProbEleccion`
 
 **Columnas**: `HoraID` (Integer), y para cada tipo de pan **dos columnas**:
+
 - `PMarraqueta` (Real) — probabilidad marginal
 - `PHallulla` (Real), `PMarrInt` (Real), `PHallInt` (Real), `PHotDog` (Real), `PCiabatta` (Real), `PBaguette` (Real), `PDobladita` (Real), `PBocDama` (Real), `PAmasado` (Real)
 
@@ -116,7 +117,7 @@ Ir a pestaña **Data** → **Tables** → **Add Data Table** → Nombre: `TableP
 | 11  | 11     | 0.1897  | 0.1612    | 0.0894   | 0.0835   | 0.2326  | 0.0724    | 0.0634    | 0.0230  | 0.0145   | 0.0703   |
 | 12  | 12     | 0.2584  | 0.2196    | 0.1218   | 0.1137   | 0.0762  | 0.0365    | 0.0320    | 0.0704  | 0.0442   | 0.0271   |
 
-#### Paso 2.2b — Variables auxiliares para probabilidad condicional (2ª/3ª selección)
+#### Paso 2.2b — Variables auxiliares para probabilidad condicional (2ª/3ª selección) ❓🛐
 
 > **Ref. teórica (sección 3.10 del reporte)**: Cuando un cliente compra 2 o 3 tipos **diferentes**, la selección del 2º tipo se realiza **sin reemplazo**:
 >
@@ -130,12 +131,12 @@ Ir a pestaña **Data** → **Tables** → **Add Data Table** → Nombre: `TableP
 
 Ir a **Navigation Panel** → clic en `EntCliente` → pestaña **Definitions** → **States**:
 
-| State Variable                          | Tipo          | Nombre               | Uso                                                        |
-| --------------------------------------- | ------------- | -------------------- | ---------------------------------------------------------- |
-| Prob. restante después del 1er tipo    | Discrete Real | `EStaProbRest1`    | Almacena `1 − P(tipo1)` para normalizar                   |
-| Prob. restante después del 2do tipo    | Discrete Real | `EStaProbRest2`    | Almacena `1 − P(tipo1) − P(tipo2)` para normalizar        |
-| Número aleatorio para 2ª selección    | Discrete Real | `EStaRand2`        | U(0,1) escalado para selección condicional                |
-| Número aleatorio para 3ª selección    | Discrete Real | `EStaRand3`        | U(0,1) escalado para selección condicional                |
+| State Variable                        | Tipo          | Nombre            | Uso                                                    |
+| ------------------------------------- | ------------- | ----------------- | ------------------------------------------------------ |
+| Prob. restante después del 1er tipo  | Discrete Real | `EStaProbRest1` | Almacena `1 − P(tipo1)` para normalizar             |
+| Prob. restante después del 2do tipo  | Discrete Real | `EStaProbRest2` | Almacena `1 − P(tipo1) − P(tipo2)` para normalizar |
+| Número aleatorio para 2ª selección | Discrete Real | `EStaRand2`     | U(0,1) escalado para selección condicional            |
+| Número aleatorio para 3ª selección | Discrete Real | `EStaRand3`     | U(0,1) escalado para selección condicional            |
 
 > **¿Por qué no precalcular las condicionales en tablas?** Con 10 tipos × 12 horas × 10 posibles primeras selecciones = 1.200 filas solo para el 2º tipo, más 10.800 para el 3º. El enfoque algorítmico (calcular en el Process) es mucho más manejable y flexible.
 >
@@ -160,7 +161,7 @@ Ir a **Navigation Panel** → clic en `EntCliente` → pestaña **Definitions** 
 
 > Para generar cantidad: `Random.Triangular(TableCompra[tipo].TriMin, TableCompra[tipo].TriModa, TableCompra[tipo].TriMax)`
 
-### Paso 2.4 — Tabla de Plan de Producción (secuencia base fija)
+### Paso 2.4 — Tabla de Plan de Producción (secuencia base fija) ✅
 
 > **Ref. Reporte §3.5**: Se requieren ~155 lotes/día. Esta tabla define la **secuencia base** de producción, agrupada por familia para minimizar setups de horno. Es la componente "fija" del enfoque híbrido.
 
@@ -168,44 +169,45 @@ Ir a **Navigation Panel** → clic en `EntCliente` → pestaña **Definitions** 
 
 **Columnas**:
 
-| Columna | Tipo | Descripción |
-|---------|------|-------------|
-| `PlanRow` | Integer | Número secuencial 1–155 |
-| `PlanTipoPan` | Integer | ID del tipo (1–10) |
-| `PlanFamilia` | Integer | Familia de horneado (1–3), redundante pero útil para filtrar |
-| `PlanKgLote` | Real | Kg del batch (de `TableProceso`) |
-| `PlanHoraLib` | Real | Hora de liberación en minutos desde inicio simulación (t=0 = 06:00) |
-| `PlanEsReactivo` | Integer | 0 = lote planificado, 1 = lote inyectado reactivamente |
+| Columna            | Tipo    | Descripción                                                          |
+| ------------------ | ------- | --------------------------------------------------------------------- |
+| `PlanRow`        | Integer | Número secuencial 1–155                                             |
+| `PlanTipoPan`    | Integer | ID del tipo (1–10)                                                   |
+| `PlanFamilia`    | Integer | Familia de horneado (1–3), redundante pero útil para filtrar        |
+| `PlanKgLote`     | Real    | Kg del batch (de `TableProceso`)                                    |
+| `PlanHoraLib`    | Real    | Hora de liberación en minutos desde inicio simulación (t=0 = 06:00) |
+| `PlanEsReactivo` | Integer | 0 = lote planificado, 1 = lote inyectado reactivamente                |
 
 **Criterio de secuenciamiento**: Los lotes se ordenan por:
+
 1. **Hora de liberación** (ascendente) — para que la producción sea continua
 2. **Familia** (agrupados) — para minimizar setups del horno
 3. **Demanda descendente** dentro de familia — los tipos de mayor demanda primero
 
 **Primeras filas de ejemplo** (total: 155 filas):
 
-| Row | PlanTipoPan | PlanFamilia | PlanKgLote | PlanHoraLib | Nota |
-|-----|------------|-------------|-----------|-------------|------|
-| 1 | 1 (Marraqueta) | 2 | 60 | 0 | Pre-apertura bloque Fam2 |
-| 2 | 1 (Marraqueta) | 2 | 60 | 5 | |
-| 3 | 2 (Hallulla) | 2 | 55 | 10 | |
-| 4 | 2 (Hallulla) | 2 | 55 | 15 | |
-| 5 | 10 (Amasado) | 2 | 60 | 20 | |
-| 6 | 4 (Hall.Int) | 2 | 55 | 25 | |
-| 7 | 5 (Hot Dog) | 1 | 55 | 30 | Cambio a Fam1 |
-| 8 | 8 (Dobladita) | 1 | 50 | 35 | |
-| 9 | 9 (Boc.Dama) | 1 | 25 | 40 | |
-| 10 | 3 (Marr.Int) | 3 | 60 | 45 | Cambio a Fam3 |
-| 11 | 6 (Ciabatta) | 3 | 50 | 50 | |
-| 12 | 7 (Baguette) | 3 | 45 | 55 | |
-| 13 | 1 (Marraqueta) | 2 | 60 | 60 | Ciclo 2, vuelta a Fam2 |
-| ... | ... | ... | ... | ... | |
+| Row | PlanTipoPan    | PlanFamilia | PlanKgLote | PlanHoraLib | Nota                     |
+| --- | -------------- | ----------- | ---------- | ----------- | ------------------------ |
+| 1   | 1 (Marraqueta) | 2           | 60         | 0           | Pre-apertura bloque Fam2 |
+| 2   | 1 (Marraqueta) | 2           | 60         | 5           |                          |
+| 3   | 2 (Hallulla)   | 2           | 55         | 10          |                          |
+| 4   | 2 (Hallulla)   | 2           | 55         | 15          |                          |
+| 5   | 10 (Amasado)   | 2           | 60         | 20          |                          |
+| 6   | 4 (Hall.Int)   | 2           | 55         | 25          |                          |
+| 7   | 5 (Hot Dog)    | 1           | 55         | 30          | Cambio a Fam1            |
+| 8   | 8 (Dobladita)  | 1           | 50         | 35          |                          |
+| 9   | 9 (Boc.Dama)   | 1           | 25         | 40          |                          |
+| 10  | 3 (Marr.Int)   | 3           | 60         | 45          | Cambio a Fam3            |
+| 11  | 6 (Ciabatta)   | 3           | 50         | 50          |                          |
+| 12  | 7 (Baguette)   | 3           | 45         | 55          |                          |
+| 13  | 1 (Marraqueta) | 2           | 60         | 60          | Ciclo 2, vuelta a Fam2   |
+| ... | ...            | ...         | ...        | ...         |                          |
 
 > **Cómo completar las 155 filas**: Distribuir los batches de cada tipo (§3.5 del reporte: 34 Marraqueta, 31 Hallulla, 22 Hot Dog, etc.) a lo largo de las 10 horas de producción (06:00–16:00), agrupando por familia en bloques de 5–8 lotes para llenar corridas de horno.
 
 > **Interarrival base**: Con 155 lotes en ~600 min productivos → 1 lote cada ~3.9 min. Se puede usar `PlanHoraLib` directamente o un interarrival fijo de ~4 min.
 
-### Paso 2.5 — Tabla de Demanda Esperada por Hora y Tipo
+### Paso 2.5 — Tabla de Demanda Esperada por Hora y Tipo ✅
 
 > Esta tabla es la componente **reactiva** del enfoque híbrido. Permite calcular el déficit por tipo para decidir si inyectar lotes de emergencia.
 
@@ -217,12 +219,12 @@ Ir a **Navigation Panel** → clic en `EntCliente` → pestaña **Definitions** 
 
 Donde: NTiposPromedio = 1×0.50 + 2×0.35 + 3×0.15 = **1.65**
 
-| HoraID | DemKg_T1 | DemKg_T2 | DemKg_T3 | DemKg_T4 | DemKg_T5 | DemKg_T6 | DemKg_T7 | DemKg_T8 | DemKg_T9 | DemKg_T10 |
-|--------|----------|----------|----------|----------|----------|----------|----------|----------|----------|-----------|
-| 1 (09h) | 120 | 102 | 57 | 53 | 25 | 17 | 15 | 33 | 21 | 13 |
-| 4 (12h) | 168 | 143 | 79 | 74 | 111 | 38 | 33 | 31 | 20 | 28 |
-| 10 (18h) | 251 | 213 | 118 | 110 | 338 | 96 | 84 | 30 | 19 | 93 |
-| 11 (19h) | 252 | 215 | 119 | 111 | 310 | 96 | 84 | 31 | 19 | 94 |
+| HoraID   | DemKg_T1 | DemKg_T2 | DemKg_T3 | DemKg_T4 | DemKg_T5 | DemKg_T6 | DemKg_T7 | DemKg_T8 | DemKg_T9 | DemKg_T10 |
+| -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | --------- |
+| 1 (09h)  | 120      | 102      | 57       | 53       | 25       | 17       | 15       | 33       | 21       | 13        |
+| 4 (12h)  | 168      | 143      | 79       | 74       | 111      | 38       | 33       | 31       | 20       | 28        |
+| 10 (18h) | 251      | 213      | 118      | 110      | 338      | 96       | 84       | 30       | 19       | 93        |
+| 11 (19h) | 252      | 215      | 119      | 111      | 310      | 96       | 84       | 31       | 19       | 94        |
 
 > **Nota**: Completar las 12 filas usando la fórmula. Las filas 10–11 (18:00–20:00) son las de mayor demanda; el plan base debe tener producción adelantada para cubrirlas.
 
@@ -234,24 +236,24 @@ Ir a **Navigation Panel** → clic en **Model** → **Definitions** → **States
 
 #### Variables de inventario y estadísticas
 
-| Variable                   | Tipo                     | Nombre                  | Descripción                 |
-| -------------------------- | ------------------------ | ----------------------- | ---------------------------- |
+| Variable                   | Tipo                     | Nombre                  | Descripción                    |
+| -------------------------- | ------------------------ | ----------------------- | ------------------------------- |
 | Inventario actual          | Real (Vector, dim=10)    | `MStaInventario`      | Kg disponibles en sala por tipo |
-| Quiebres acumulados        | Real (Vector, dim=10)    | `MStaQuiebres`        | Kg perdidos por tipo         |
-| Ventas acumuladas          | Real (Vector, dim=10)    | `MStaVentas`          | Kg vendidos por tipo         |
-| Lotes producidos           | Integer (Vector, dim=10) | `MStaLotesProducidos` | Batches completados          |
-| Cola horno familia         | Real (Vector, dim=3)     | `MStaColaHorno`       | Kg esperando horno           |
-| Hora actual (índice 1-12) | Integer                  | `MStaHoraIdx`         | Índice para tablas horarias |
+| Quiebres acumulados        | Real (Vector, dim=10)    | `MStaQuiebres`        | Kg perdidos por tipo            |
+| Ventas acumuladas          | Real (Vector, dim=10)    | `MStaVentas`          | Kg vendidos por tipo            |
+| Lotes producidos           | Integer (Vector, dim=10) | `MStaLotesProducidos` | Batches completados             |
+| Cola horno familia         | Real (Vector, dim=3)     | `MStaColaHorno`       | Kg esperando horno              |
+| Hora actual (índice 1-12) | Integer                  | `MStaHoraIdx`         | Índice para tablas horarias    |
 
 #### Variables de control de producción (Enfoque Híbrido)
 
-| Variable | Tipo | Nombre | Descripción |
-|----------|------|--------|-------------|
-| Lote actual del plan | Integer | `MStaLotePlanActual` | Índice de la fila actual en `TablePlanProduccion` |
-| Kg en proceso por tipo | Real (Vector, dim=10) | `MStaEnProceso` | Kg actualmente en el flujo productivo (aún no en sala) |
-| Flag de lote reactivo | Integer | `MStaEsReactivo` | 1 si el próximo lote a crear es reactivo, 0 si es del plan |
-| Tipo reactivo pendiente | Integer | `MStaTipoReactivo` | Tipo de pan a producir cuando `MStaEsReactivo=1` |
-| Lotes reactivos inyectados | Integer | `MStaLotesReactivos` | Contador total de lotes extra inyectados |
+| Variable                   | Tipo                  | Nombre                 | Descripción                                                |
+| -------------------------- | --------------------- | ---------------------- | ----------------------------------------------------------- |
+| Lote actual del plan       | Integer               | `MStaLotePlanActual` | Índice de la fila actual en `TablePlanProduccion`        |
+| Kg en proceso por tipo     | Real (Vector, dim=10) | `MStaEnProceso`      | Kg actualmente en el flujo productivo (aún no en sala)     |
+| Flag de lote reactivo      | Integer               | `MStaEsReactivo`     | 1 si el próximo lote a crear es reactivo, 0 si es del plan |
+| Tipo reactivo pendiente    | Integer               | `MStaTipoReactivo`   | Tipo de pan a producir cuando `MStaEsReactivo=1`          |
+| Lotes reactivos inyectados | Integer               | `MStaLotesReactivos` | Contador total de lotes extra inyectados                    |
 
 > **Nota sobre vectores**: En SIMIO, los vectores se definen con dimensión en la propiedad "Rows" del State Variable.
 
