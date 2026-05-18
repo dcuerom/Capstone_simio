@@ -1,4 +1,4 @@
 Time(Minutes);EntityID;ObjectName;ProcessID;StepName;Action
-633,510817159288;--;--;--;--;The maximum number in system limit for entities of type 'EntLote1' has been exceeded.
-633,510817159288;--;--;--;--;Possible causes:
+125,35; ;Model;10.ProcCargaHorno;[Decide] CapacMinima;Unable to get value of property 'Decide.ConditionOrProbability'.
+125,35; ;Model;10.ProcCargaHorno;[Decide] CapacMinima;Referenced definition type 'EntLote' does not match executing type 'Server'
 
