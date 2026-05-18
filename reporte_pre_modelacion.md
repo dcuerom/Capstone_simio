@@ -407,45 +407,92 @@ El perfil de demanda muestra que las primeras 3 horas (09:00–12:00) tienen dem
 
 ### 5.3 Variables de estado
 
-| Variable                       | Tipo           | Descripción                                   |
-| ------------------------------ | -------------- | ---------------------------------------------- |
-| `Inventario[tipo]`           | Continua (kg)  | Stock actual en sala por tipo de pan           |
-| `QuiebreAcum[tipo]`          | Continua (kg)  | Demanda insatisfecha acumulada por tipo        |
-| `VentasAcum[tipo]`           | Continua (kg)  | Kg vendidos acumulados por tipo                |
-| `LotesProducidos[tipo]`      | Entera         | Cantidad de batches completados por tipo       |
-| `UltimaFamiliaHorno[horno]`  | Categórica    | Última familia horneada (para calcular setup) |
-| `EstadoHorno[horno]`         | Categórica    | Libre / Cargando / Horneando / Descargando     |
-| `ColaHorno[familia]`         | Continua (kg)  | Kg acumulados esperando horno por familia      |
-| `TiempoEsperaHorno[familia]` | Continua (min) | Tiempo que lleva esperando la carga            |
+#### Variables de inventario y estadísticas
+
+| Variable | Tipo | Nombre SIMIO | Descripción |
+|---|---|---|---|
+| `Inventario[tipo]` | Continua (kg), Vector dim=10 | `MStaInventario` | Stock actual en sala por tipo de pan |
+| `QuiebreAcum[tipo]` | Continua (kg), Vector dim=10 | `MStaQuiebres` | Demanda insatisfecha acumulada por tipo |
+| `VentasAcum[tipo]` | Continua (kg), Vector dim=10 | `MStaVentas` | Kg vendidos acumulados por tipo |
+| `LotesProducidos[tipo]` | Entera, Vector dim=10 | `MStaLotesProducidos` | Cantidad de batches completados por tipo |
+| `ColaHorno[familia]` | Continua (kg), Vector dim=3 | `MStaColaHorno` | Kg acumulados esperando horno por familia |
+| `HoraIdx` | Entera (1-12) | `MStaHoraIdx` | Índice de hora actual para tablas horarias |
+
+#### Variables de control de producción (Enfoque Híbrido)
+
+| Variable | Tipo | Nombre SIMIO | Descripción |
+|---|---|---|---|
+| `LotePlanActual` | Entera | `MStaLotePlanActual` | Índice de fila actual en `TablePlanProduccion` |
+| `EnProceso[tipo]` | Continua (kg), Vector dim=10 | `MStaEnProceso` | Kg actualmente en el flujo productivo (aún no en sala) |
+| `TipoReactivo` | Entera (1-10) | `MStaTipoReactivo` | Tipo de pan a producir como lote de emergencia |
+| `LotesReactivos` | Entera | `MStaLotesReactivos` | Contador total de lotes de emergencia inyectados |
+
+#### Variables de estado del horno
+
+| Variable | Tipo | Descripción |
+|---|---|---|
+| `UltimaFamiliaHorno[horno]` | Categórica | Última familia horneada (para calcular setup) |
+| `EstadoHorno[horno]` | Categórica | Libre / Cargando / Horneando / Descargando |
+| `TiempoEsperaHorno[familia]` | Continua (min) | Tiempo que lleva esperando la carga |
+
+> **Nota**: `EnProceso[tipo]` se incrementa cuando un lote entra a pesado y se decrementa cuando llega a sala de ventas. Permite al sistema reactivo calcular el déficit real sin duplicar producción.
 
 ### 5.4 Eventos principales
 
-| Evento                | Disparador                    | Acciones                                                   |
-| --------------------- | ----------------------------- | ---------------------------------------------------------- |
-| Inicio de jornada     | Hora de inicio panadería     | Inicia producción de batches pre-apertura                 |
-| Llegada de cliente    | Distribución empírica (Rate Table) | Selecciona tipos, verifica stock, registra venta o quiebre |
-| Fin de mezclado       | Timer (auto cycle)            | Libera mezcladora, panadero retira masa                    |
-| Fin de fermentación  | Timer                         | Lote disponible para horno                                 |
-| Lote listo para horno | Acumulación en cola          | Evalúa política de carga                                 |
-| Inicio de corrida     | Política de carga/timeout    | Carga horno, inicia cocción                               |
-| Fin de horneado       | Timer (14/18/21 min)          | Descarga, envía a enfriamiento                            |
-| Fin de enfriamiento   | Timer                         | Envía a traslado                                          |
-| Reposición a sala    | Ayudante disponible           | Incrementa inventario en sala                              |
-| Colación/Descanso    | Calendario turno              | Retira recurso temporalmente (escalonado)                  |
-| Fin de jornada tienda | 21:00                         | Cierre, calcula sobrantes                                  |
+| Evento | Disparador | Acciones |
+|---|---|---|
+| Inicio de jornada | t=0 (06:00) | Inicia liberación de lotes según `TablePlanProduccion` |
+| Liberación lote plan | `SrcLotes` cada ~4 min | Crea `EntLote` con tipo/familia/kg del plan secuencial |
+| Revisión de déficit | `TimerRevisorDeficit` cada 30 min (desde 09:00) | Calcula déficit por tipo, puede inyectar lote reactivo |
+| Lote reactivo | `EvtLoteReactivo` (Fire) | `SrcLotesReactivos` crea lote del tipo con mayor déficit |
+| Llegada de cliente | Distribución empírica (Rate Table) | Selecciona tipos (condicional sin reemplazo), verifica stock |
+| Fin de mezclado | Timer (auto cycle) | Libera mezcladora, panadero retira masa |
+| Fin de fermentación | Timer | Lote disponible para horno, acumula en `ColaHorno[familia]` |
+| Inicio de corrida | Política de carga/timeout | Carga horno, inicia cocción |
+| Fin de horneado | Timer (14/18/21 min) | Descarga, envía a enfriamiento |
+| Reposición a sala | Ayudante disponible | Incrementa `Inventario[tipo]`, decrementa `EnProceso[tipo]` |
+| Colación/Descanso | Calendario turno (escalonado) | Retira recurso temporalmente (min. 3 panaderos activos) |
+| Fin de jornada tienda | 21:00 | Cierre, calcula sobrantes |
 
 ### 5.5 Lógica de decisión
 
-#### 5.5.1 Política de liberación de producción
+#### 5.5.1 Política de liberación de producción — Enfoque Híbrido
+
+> **Decisión de diseño**: Se adoptó un enfoque **híbrido** que combina una secuencia de producción planificada con un mecanismo de ajuste reactivo por déficit. Esto balancea previsibilidad operativa con capacidad de respuesta a variaciones estocásticas.
+
+**Componente 1 — Plan Base (fijo, `SrcLotes`)**:
 
 ```
-PARA cada franja horaria:
-  Calcular demanda esperada por tipo para las próximas 2-3 horas
-  Calcular déficit = demanda_esperada - inventario_actual - en_proceso
-  SI déficit > 0:
-    Ordenar tipos por déficit descendente
-    Liberar batches de producción según prioridad
+SrcLotes genera EntLote cada ~4 min (155 lotes/día)
+PARA cada lote i = 1..155:
+  EStaTipoPan = TablePlanProduccion[i].PlanTipoPan
+  EStaFamilia = TablePlanProduccion[i].PlanFamilia
+  EStaKgLote  = TablePlanProduccion[i].PlanKgLote
+  EnProceso[tipo] += KgLote
 ```
+
+La secuencia en `TablePlanProduccion` se optimiza por:
+1. Agrupación por familia (minimiza setups de horno)
+2. Tipos de mayor demanda primero dentro de cada familia
+3. Producción adelantada para el peak de 18:00-20:00
+
+**Componente 2 — Ajuste Reactivo (dinámico, `ProcRevisorDeficit`)**:
+
+```
+CADA 30 minutos (desde 09:00, apertura de tienda):
+  PARA cada tipo j = 1..10:
+    deficit[j] = DemandaEsperada_2hrs[j] - Inventario[j] - EnProceso[j]
+  j* = tipo con mayor déficit
+  SI deficit[j*] > KgPorBatch[j*] / 2:
+    MStaTipoReactivo = j*
+    Fire EvtLoteReactivo → SrcLotesReactivos crea lote de emergencia
+```
+
+> **Horizonte de 2 horas**: Se anticipan 2 horas de demanda porque el ciclo productivo completo (pesado a sala) toma ~90-120 min.
+>
+> **Umbral de activación**: Solo se inyecta un lote reactivo si el déficit supera la mitad de un batch. Esto evita sobreproducción por déficits marginales.
+>
+> **Métrica de validación**: Si `LotesReactivos > 20` al final de la corrida, el plan base está mal dimensionado y requiere ajuste.
 
 #### 5.5.2 Política de carga del horno
 
@@ -470,20 +517,45 @@ Estrategia C: Secuencia fija F1→F2→F3
 Estrategia D: Híbrida (stock bajo + demanda esperada)
 ```
 
-#### 5.5.4 Lógica de compra del cliente
+#### 5.5.4 Lógica de compra del cliente — Implementación con probabilidades condicionales
 
 ```
-LLEGADA de cliente a sala:
-  Determinar N_tipos ~ Discrete(1:50%, 2:35%, 3:15%)
-  PARA i = 1 hasta N_tipos:
-    Seleccionar tipo según P(tipo|hora) condicional (sin reemplazo)
-    Cantidad = Triangular(min, moda, max) según tipo
+LLEGADA de cliente (ProcAsignarTiposCliente, Before Exiting de SrcClientes):
+  HoraIdx = Math.Floor(Run.TimeNow / 60) + 1
+  N_tipos ~ Discrete(1:50%, 2:35%, 3:15%)
+
+  TIPO 1 — Selección marginal:
+    Tipo1 = Random.Discrete con prob. acumuladas de TableProbEleccion[HoraIdx]
+    Kg1 = Triangular(min, moda, max) de TableCompra[Tipo1]
+
+  TIPO 2 (si N_tipos >= 2) — Selección condicional sin reemplazo:
+    ProbRest1 = 1 - P(Tipo1)
+    Rand2 = U(0,1) * ProbRest1
+    PARA cada tipo j != Tipo1 (scan condicional):
+      SI Rand2 <= P(j): Tipo2 = j -> SALIR
+      SINO: Rand2 -= P(j) -> siguiente j
+    Kg2 = Triangular de TableCompra[Tipo2]
+
+  TIPO 3 (si N_tipos >= 3) — Selección condicional doble:
+    ProbRest2 = ProbRest1 - P(Tipo2)
+    Rand3 = U(0,1) * ProbRest2
+    PARA cada tipo k != Tipo1, k != Tipo2:
+      SI Rand3 <= P(k): Tipo3 = k -> SALIR
+      SINO: Rand3 -= P(k) -> siguiente k
+    Kg3 = Triangular de TableCompra[Tipo3]
+```
+
+```
+VENTA (ProcVentaCliente, Entered de SrvVenta):
+  PARA cada tipo seleccionado (1, 2, 3 si aplica):
     SI Inventario[tipo] >= Cantidad:
       Inventario[tipo] -= Cantidad
-      Registrar venta
+      VentasAcum[tipo] += Cantidad
     SINO:
-      Registrar quiebre (toda la cantidad se pierde) ← 🔶 S5
+      QuiebreAcum[tipo] += Cantidad  <-- S5 (todo-o-nada)
 ```
+
+> **Validación §3.10**: Para hora 09:00 con Tipo1=Marraqueta (P=0.2645), P(Tipo2=Hallulla) = 0.2248/(1-0.2645) = 0.3056 ✓
 
 ### 5.6 Diagrama de flujo del proceso productivo (narrativo)
 

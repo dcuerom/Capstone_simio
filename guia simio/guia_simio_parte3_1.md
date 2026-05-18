@@ -31,7 +31,7 @@ Los Processes en SIMIO permiten implementar lógica que va más allá de las pro
 
 1. Ir a **Definitions** → **Processes** → **Create Process**
 2. Nombre: `ProcRevisorDeficit`
-3. Asignar como trigger del Timer: `TimerRevisorDeficit` → **Event Name** → `ProcRevisorDeficit`
+3. En las propiedades del proceso `ProcRevisorDeficit`, configurar **Triggering Event** a `TimerRevisorDeficit.Event`
 
 **Algoritmo del proceso**:
 
@@ -56,7 +56,9 @@ Los Processes en SIMIO permiten implementar lógica que va más allá de las pro
 | Step | Tipo | Configuración |
 |------|------|---------------|
 | 2 | **Assign** | `Model.MStaTipoReactivo` = 0 |
-| 3 | **Assign** | Variable temporal `MStaMaxDeficit` = 0 |
+| 3 | **Assign** | `Token.MaxDeficit` = 0 |
+
+> **Nota sobre Token.MaxDeficit**: Para crear esta variable temporal, debes ir a las propiedades del proceso `ProcRevisorDeficit` (clic en el fondo gris del proceso), buscar la sección **Process Properties**, hacer clic en `States` (Collection) y agregar un nuevo estado de tipo **Real** llamado `MaxDeficit`. Esto crea una variable que solo existe durante la ejecución de este proceso.
 
 **Steps 4–13**: Para cada tipo j = 1 a 10, un bloque Decide+Assign:
 
@@ -66,9 +68,9 @@ Para j = 1 (Marraqueta):
     (TableDemandaHora[MStaHoraIdx].DemKg_T1 + TableDemandaHora[Math.Min(12,MStaHoraIdx+1)].DemKg_T1)
     - MStaInventario[1] - MStaEnProceso[1]
 
-  Decide: deficit_j > MStaMaxDeficit
+  Decide: deficit_j > Token.MaxDeficit
     True →
-      Assign: MStaMaxDeficit = deficit_j
+      Assign: Token.MaxDeficit = deficit_j
       Assign: MStaTipoReactivo = 1
 
 Para j = 2 (Hallulla):
@@ -76,9 +78,9 @@ Para j = 2 (Hallulla):
     (TableDemandaHora[MStaHoraIdx].DemKg_T2 + TableDemandaHora[Math.Min(12,MStaHoraIdx+1)].DemKg_T2)
     - MStaInventario[2] - MStaEnProceso[2]
 
-  Decide: deficit_j > MStaMaxDeficit
+  Decide: deficit_j > Token.MaxDeficit
     True →
-      Assign: MStaMaxDeficit = deficit_j
+      Assign: Token.MaxDeficit = deficit_j
       Assign: MStaTipoReactivo = 2
 
   ... (repetir para j = 3 hasta 10)
@@ -88,7 +90,7 @@ Para j = 2 (Hallulla):
 
 | Step | Tipo | Configuración |
 |------|------|---------------|
-| 14 | **Decide** | `Model.MStaTipoReactivo > 0 AND Model.MStaMaxDeficit > TableProceso[Model.MStaTipoReactivo].KgPorBatch * 0.5` |
+| 14 | **Decide** | `Model.MStaTipoReactivo > 0 AND Token.MaxDeficit > TableProceso[Model.MStaTipoReactivo].KgPorBatch * 0.5` |
 | 15 (True) | **Fire** | Event: `EvtLoteReactivo` |
 
 > **Umbral de activación (Step 14)**: Solo se inyecta un lote reactivo si el déficit es mayor a la mitad de un batch del tipo. Esto evita sobreproducción por déficits marginales.
