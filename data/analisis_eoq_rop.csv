@@ -1,0 +1,35 @@
+REPORTE COMPLETO: ANÁLISIS ESTOCÁSTICO DE PRODUCCIÓN (EOQ Y ROP PROBABILÍSTICO)
+==================================================================================================
+DOCUMENTO DE REFERENCIA: metodologia_estocastica_eoq_rop.md
+MODELO DE INVENTARIO: Revisión Continua (Q, R) con Demanda Compuesta (Poisson + Triangular)
+
+PARÁMETROS GLOBALES DEL SISTEMA:
+--------------------------------
+- Nivel de Servicio Objetivo (CSL): 95%
+- Factor Normal (Z_alpha): 1.645
+- Tasa de Arribo Peak Global (Lambda_peak): 819.0 clientes/hora (18:00 - 19:00)
+- Costo de Setup Asumido (S): 1000
+- Costo de Mantención Asumido (H): 10 / kg
+
+FUNDAMENTOS MATEMÁTICOS UTILIZADOS:
+-----------------------------------
+1. Varianza Total de Demanda Horaria: Var(D_t) = Lambda_k * (Var(X) + E[X]^2)
+2. Demanda Esperada en Lead Time: Mu_L = Lambda_k * E[X] * L
+3. Desviación Estándar en Lead Time: Sigma_L = Sigma_D_Horaria * sqrt(L)
+4. Stock de Seguridad: SS = Z_alpha * Sigma_L
+5. Punto de Reorden: ROP = Mu_L + SS
+6. Lote Económico de Compra: EOQ = sqrt((2 * Demanda_Diaria * S) / H)
+
+TABLA DE RESULTADOS DETALLADOS:
+==================================================================================================
+Tipo de Pan,Demanda Diaria (kg),Lead Time (Horas),E[X] (Media de Compra kg),Var[X] (Varianza de Compra),P_k (Prob. Elección Peak),Lambda_k (Tasa Llegada Filtrada),Var(D) (Varianza Demanda Horaria),Sigma(D) (Desv. Est. Demanda Horaria),Mu_L (Demanda Esperada en Lead Time),Sigma_L (Desv. Est. en Lead Time),EOQ (Cantidad Óptima en Batches),SS (Stock de Seguridad al 95% kg),ROP Estocástico (Punto Reorden kg),ROP Estocástico (Batches)
+Marraqueta,2000,1.783,1.1,0.122,0.185,151.818,202.171,14.219,297.816,18.988,11.0,31.235,329.051,6.0
+Hallulla,1700,1.85,1.1,0.122,0.158,129.05,171.851,13.109,262.616,17.83,11.0,29.331,291.947,6.0
+Marraqueta Integral,800,1.983,0.933,0.144,0.087,71.572,72.646,8.523,132.488,12.003,7.0,19.746,152.234,3.0
+Hallulla Integral,800,1.95,0.833,0.062,0.082,66.798,50.544,7.109,108.546,9.928,8.0,16.331,124.877,3.0
+Pan Hot Dog,1200,1.833,1.433,0.327,0.25,204.799,487.763,22.085,538.167,29.904,9.0,49.192,587.358,11.0
+Ciabatta,400,2.233,0.767,0.069,0.071,57.977,38.072,6.17,99.27,9.221,6.0,15.169,114.438,3.0
+Baguette,350,2.217,0.6,0.022,0.062,50.729,19.362,4.4,67.469,6.551,6.0,10.777,78.246,2.0
+Dobladita,350,1.45,0.767,0.069,0.022,18.419,12.095,3.478,20.476,4.188,6.0,6.889,27.365,1.0
+Bocado de Dama,220,1.6,0.6,0.022,0.014,11.572,4.417,2.102,11.11,2.658,9.0,4.373,15.483,1.0
+Amasado,380,1.917,1.033,0.127,0.069,56.257,67.227,8.199,111.42,11.351,5.0,18.673,130.093,3.0
