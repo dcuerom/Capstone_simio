@@ -326,24 +326,90 @@ Este proceso se invoca **dentro** de `ProcPoliticaCargaHorno` (Opción B), reemp
 
 ### ESTRATEGIA A: Prioridad al menor stock en sala
 
-> **Lógica**: La familia cuyo inventario agregado en sala es más bajo tiene prioridad. Ataca directamente los quiebres de stock.
+> **Lógica**: La familia con menos inventario en sala tiene prioridad. Ataca directamente los quiebres de stock.
+>
+> **Override de calidad**: Si una familia lleva ≥ 15 min esperando horno (su masa está al límite de fermentación), obtiene prioridad absoluta sobre el criterio de stock, independientemente de los niveles de inventario. Entre varias familias en emergencia, gana la que lleva más tiempo esperando. Solo si ninguna familia está en emergencia se aplica el criterio de menor stock.
 
-#### Steps del Process
+#### Token States requeridos
+
+Añadir en las propiedades del proceso **`ProcSeleccionarFamiliaHorno`** → **Token States**:
+
+| Nombre | Tipo | Propósito |
+|---|---|---|
+| `EsperaF1` | Real | Minutos que lleva esperando la cola de Familia 1 |
+| `EsperaF2` | Real | Minutos que lleva esperando la cola de Familia 2 |
+| `EsperaF3` | Real | Minutos que lleva esperando la cola de Familia 3 |
+| `FamiliaEmergencia` | Integer | Familia en situación de calidad crítica (0 = ninguna) |
+| `MaxEspera` | Real | Mayor tiempo de espera entre familias en emergencia |
+| `StockF1` | Real | Stock agregado en sala de Familia 1 |
+| `StockF2` | Real | Stock agregado en sala de Familia 2 |
+| `StockF3` | Real | Stock agregado en sala de Familia 3 |
+| `MinStock` | Real | Mínimo stock encontrado hasta ahora (para comparación) |
+| `FamiliaElegida` | Integer | Resultado final: familia que entra al horno |
+
+---
+
+#### Steps del proceso
+
+**Bloque 0 — Calcular tiempo de espera por familia**
+
+> El multiplicador `(MStaColaHorno[f] > 0)` garantiza que si la cola está vacía, la espera se trate como 0 y no como el valor residual del timer anterior.
 
 | Step | Tipo | Configuración |
 |---|---|---|
-| 1 | **Assign** | `Token.StockF1 = Model.MStaInventario[5] + Model.MStaInventario[8] + Model.MStaInventario[9]` |
-| 2 | **Assign** | `Token.StockF2 = Model.MStaInventario[1] + Model.MStaInventario[2] + Model.MStaInventario[4] + Model.MStaInventario[10]` |
-| 3 | **Assign** | `Token.StockF3 = Model.MStaInventario[3] + Model.MStaInventario[6] + Model.MStaInventario[7]` |
-| 4 | **Assign** | `Token.FamiliaElegida = 1` |
-| 5 | **Assign** | `Token.MinStock = Token.StockF1` |
-| 6 | **Decide** | `Token.StockF2 < Token.MinStock AND Model.MStaColaHorno[2] > 0` |
-| 6T | **Assign** | `Token.FamiliaElegida = 2`, `Token.MinStock = Token.StockF2` |
-| 7 | **Decide** | `Token.StockF3 < Token.MinStock AND Model.MStaColaHorno[3] > 0` |
-| 7T | **Assign** | `Token.FamiliaElegida = 3` |
-| 8 | **Decide** | `Model.MStaColaHorno[Token.FamiliaElegida] > 0` |
-| 8T | **Assign** | Iniciar corrida de `Token.FamiliaElegida` (resetear cola, Fire, etc.) |
-| 8F | FIN | (ninguna familia tiene cola — no hornear) |
+| 0a | **Assign** | `Token.EsperaF1 = (Model.MStaColaHorno[1] > 0) * (Run.TimeNow - Model.MStaTimerHorno[1])` |
+| 0b | **Assign** | `Token.EsperaF2 = (Model.MStaColaHorno[2] > 0) * (Run.TimeNow - Model.MStaTimerHorno[2])` |
+| 0c | **Assign** | `Token.EsperaF3 = (Model.MStaColaHorno[3] > 0) * (Run.TimeNow - Model.MStaTimerHorno[3])` |
+
+**Bloque 1 — Override de calidad: buscar familia en emergencia**
+
+> Se recorre cada familia en orden. Si su espera supera los 15 min, se registra como candidata de emergencia. Si varias familias están en emergencia, gana la que lleva más tiempo.
+
+| Step | Tipo | Configuración | Salida |
+|---|---|---|---|
+| 1a | **Assign** | `Token.FamiliaEmergencia = 0` `Token.MaxEspera = 0` | → 1b |
+| 1b | **Decide** | `Token.EsperaF1 >= 15` | True → 1b-T \| False → 1c |
+| 1b-T | **Assign** | `Token.FamiliaEmergencia = 1` `Token.MaxEspera = Token.EsperaF1` | → 1c |
+| 1c | **Decide** | `Token.EsperaF2 >= 15 AND Token.EsperaF2 > Token.MaxEspera` | True → 1c-T \| False → 1d |
+| 1c-T | **Assign** | `Token.FamiliaEmergencia = 2` `Token.MaxEspera = Token.EsperaF2` | → 1d |
+| 1d | **Decide** | `Token.EsperaF3 >= 15 AND Token.EsperaF3 > Token.MaxEspera` | True → 1d-T \| False → 1e |
+| 1d-T | **Assign** | `Token.FamiliaEmergencia = 3` | → 1e |
+| 1e | **Decide** | `Token.FamiliaEmergencia > 0` | True → 1e-T (override activo) \| False → Bloque 2 |
+| 1e-T | **Assign** | `Token.FamiliaElegida = Token.FamiliaEmergencia` | → Bloque 3 (saltarse Bloque 2) |
+
+**Bloque 2 — Selección por menor stock (caso normal)**
+
+> Solo se ejecuta cuando ninguna familia está en emergencia de calidad. Se inicializa `MinStock` en un valor imposiblemente alto (`9999999`) para que cualquier stock real lo supere en la primera comparación. La condición `MStaColaHorno[f] > 0` evita elegir una familia sin masa lista.
+
+| Step | Tipo | Configuración | Salida |
+|---|---|---|---|
+| 2a | **Assign** | `Token.StockF1 = Model.MStaInventario[5] + Model.MStaInventario[8] + Model.MStaInventario[9]` | → 2b |
+| 2b | **Assign** | `Token.StockF2 = Model.MStaInventario[1] + Model.MStaInventario[2] + Model.MStaInventario[4] + Model.MStaInventario[10]` | → 2c |
+| 2c | **Assign** | `Token.StockF3 = Model.MStaInventario[3] + Model.MStaInventario[6] + Model.MStaInventario[7]` | → 2d |
+| 2d | **Assign** | `Token.FamiliaElegida = 0` `Token.MinStock = 9999999` | → 2e |
+| 2e | **Decide** | `Model.MStaColaHorno[1] > 0 AND Token.StockF1 < Token.MinStock` | True → 2e-T \| False → 2f |
+| 2e-T | **Assign** | `Token.FamiliaElegida = 1` `Token.MinStock = Token.StockF1` | → 2f |
+| 2f | **Decide** | `Model.MStaColaHorno[2] > 0 AND Token.StockF2 < Token.MinStock` | True → 2f-T \| False → 2g |
+| 2f-T | **Assign** | `Token.FamiliaElegida = 2` `Token.MinStock = Token.StockF2` | → 2g |
+| 2g | **Decide** | `Model.MStaColaHorno[3] > 0 AND Token.StockF3 < Token.MinStock` | True → 2g-T \| False → 2h |
+| 2g-T | **Assign** | `Token.FamiliaElegida = 3` | → 2h |
+| 2h | **Decide** | `Token.FamiliaElegida > 0` | True → Bloque 3 \| False → **EndProcess** (ninguna familia tiene cola) |
+
+**Bloque 3 — Iniciar corrida de la familia elegida**
+
+> Este bloque es el punto de convergencia de ambas rutas (override de calidad y selección por stock). Resetea la cola de la familia elegida, incrementa el contador de hornos en uso y dispara el evento de inicio de corrida. El reset del timer evita que el override de calidad se active de nuevo para lotes que aún no han llegado.
+
+| Step | Tipo | Configuración |
+|---|---|---|
+| 3a | **Assign** | `Model.MStaColaHorno[Token.FamiliaElegida] = 0` |
+| 3b | **Assign** | `Model.MStaTimerHorno[Token.FamiliaElegida] = 0` |
+| 3c | **Assign** | `Model.MStaHornosEnUso = Model.MStaHornosEnUso + 1` |
+| 3d | **Assign** | `Model.MStaUltimaFamiliaHorno = Token.FamiliaElegida` |
+| 3e | **Fire** | Event: `EvtIniciarCorrida` |
+
+> **Por qué resetear en Bloque 3 y no en Step 6 de `ProcPoliticaCargaHorno`**: El reset original (Step 6a del proceso de carga) usaba `EntLote.EStaFamilia`, que es la familia que *disparó* el umbral. Con Estrategia A, la familia elegida puede ser distinta. El reset debe hacerse sobre `Token.FamiliaElegida`, no sobre la familia disparadora. La familia que disparó el umbral pero no fue elegida conserva su cola y su timer: seguirá acumulando hasta que en la siguiente oportunidad de horno sea la de menor stock (o llegue a emergencia).
+
+---
 
 > **Índices de tipos por familia** (ref. reporte §3.1):
 > - Familia 1 (14 min): tipos 5 (Hot Dog), 8 (Dobladita), 9 (Bocado de Dama)

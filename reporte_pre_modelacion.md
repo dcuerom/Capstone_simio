@@ -49,14 +49,14 @@ Un supermercado opera una panadería propia que abastece una zona de autoservici
 
 ### 2.2 Fuera del modelo
 
-| Excluido | Justificación |
-|---|---|
-| Compra de materias primas | Se asume disponibilidad ilimitada de ingredientes |
-| Transporte externo | No afecta operación interna |
-| Fallas de equipo | Supuesto operacional del enunciado |
-| Mantenimiento mayor | Fuera del horizonte diario |
-| Ventas de otros productos | No interactúan con la panadería |
-| Deterioro por sobreproducción | Supuesto: no hay deterioro dentro del día |
+| Excluido                       | Justificación                                    |
+| ------------------------------ | ------------------------------------------------- |
+| Compra de materias primas      | Se asume disponibilidad ilimitada de ingredientes |
+| Transporte externo             | No afecta operación interna                      |
+| Fallas de equipo               | Supuesto operacional del enunciado                |
+| Mantenimiento mayor            | Fuera del horizonte diario                        |
+| Ventas de otros productos      | No interactúan con la panadería                 |
+| Deterioro por sobreproducción | Supuesto: no hay deterioro dentro del día        |
 
 ---
 
@@ -174,6 +174,7 @@ $$
 **% diario**: Se calcula como `Total_franja / 8.200 × 100`. Ejemplo: `448,8 / 8.200 = 5,5%`.
 
 **Clasificación de régimen**: Se agruparon las franjas por nivel de intensidad:
+
 - **Bajo**: franjas con ~449 kg/hr (09–12, 15–17, 20–21)
 - **Medio**: franjas con ~500–750 kg/hr (12–15, 17–18)
 - **Alto**: franjas con >1.400 kg/hr (18–20)
@@ -439,40 +440,40 @@ $$
 
 La siguiente tabla constituye la **distribución empírica discreta** del número de clientes por franja horaria. Las frecuencias absolutas (`fᵢ`) se derivan de la demanda en kg y el consumo promedio por cliente. La frecuencia relativa (`fᵢ/N`) representa la probabilidad de que un cliente llegue en esa franja.
 
-| Franja horaria | Clientes estimados (`fᵢ`) | Frecuencia relativa (`fᵢ/N`) | Frecuencia acumulada (`Fᵢ`) | Régimen   |
-| -------------- | -------------------------- | ----------------------------- | ----------------------------- | --------- |
-| 09:00–10:00   | 275                        | 0,0567                        | 0,0567                        | Bajo      |
-| 10:00–11:00   | 275                        | 0,0567                        | 0,1134                        | Bajo      |
-| 11:00–12:00   | 275                        | 0,0567                        | 0,1700                        | Bajo      |
-| 12:00–13:00   | 439                        | 0,0905                        | 0,2605                        | Medio     |
-| 13:00–14:00   | 417                        | 0,0859                        | 0,3464                        | Medio     |
-| 14:00–15:00   | 417                        | 0,0859                        | 0,4324                        | Medio     |
-| 15:00–16:00   | 275                        | 0,0567                        | 0,4890                        | Bajo      |
-| 16:00–17:00   | 275                        | 0,0567                        | 0,5457                        | Bajo      |
-| 17:00–18:00   | 299                        | 0,0616                        | 0,6073                        | Medio     |
-| 18:00–19:00   | 819                        | 0,1688                        | 0,7761                        | **Alto** |
-| 19:00–20:00   | 806                        | 0,1661                        | 0,9422                        | **Alto** |
-| 20:00–21:00   | 279                        | 0,0575                        | 0,9997                        | Bajo      |
-| **Total (N)** | **4.851**                  | **≈1,0000**                  |                               |           |
+| Franja horaria      | Clientes estimados (`fᵢ`) | Frecuencia relativa (`fᵢ/N`) | Frecuencia acumulada (`Fᵢ`) | Régimen       |
+| ------------------- | ---------------------------- | ------------------------------- | ------------------------------ | -------------- |
+| 09:00–10:00        | 275                          | 0,0567                          | 0,0567                         | Bajo           |
+| 10:00–11:00        | 275                          | 0,0567                          | 0,1134                         | Bajo           |
+| 11:00–12:00        | 275                          | 0,0567                          | 0,1700                         | Bajo           |
+| 12:00–13:00        | 439                          | 0,0905                          | 0,2605                         | Medio          |
+| 13:00–14:00        | 417                          | 0,0859                          | 0,3464                         | Medio          |
+| 14:00–15:00        | 417                          | 0,0859                          | 0,4324                         | Medio          |
+| 15:00–16:00        | 275                          | 0,0567                          | 0,4890                         | Bajo           |
+| 16:00–17:00        | 275                          | 0,0567                          | 0,5457                         | Bajo           |
+| 17:00–18:00        | 299                          | 0,0616                          | 0,6073                         | Medio          |
+| 18:00–19:00        | 819                          | 0,1688                          | 0,7761                         | **Alto** |
+| 19:00–20:00        | 806                          | 0,1661                          | 0,9422                         | **Alto** |
+| 20:00–21:00        | 279                          | 0,0575                          | 0,9997                         | Bajo           |
+| **Total (N)** | **4.851**              | **≈1,0000**              |                                |                |
 
 #### Implementación en SIMIO — Rate Table con tasas empíricas
 
 La distribución empírica se implementa en SIMIO mediante un **Rate Table**, donde cada intervalo horario recibe directamente la tasa de llegada observada (clientes/hora). SIMIO internamente genera los tiempos entre llegadas como un proceso de Poisson no homogéneo (NHPP) cuya tasa λ(t) varía según la tabla:
 
 | Intervalo | Rate (clientes/hr) | Interarribo medio (seg) |
-| --------- | ------------------- | ----------------------- |
-| 1         | 275                 | 13,1                    |
-| 2         | 275                 | 13,1                    |
-| 3         | 275                 | 13,1                    |
-| 4         | 439                 | 8,2                     |
-| 5         | 417                 | 8,6                     |
-| 6         | 417                 | 8,6                     |
-| 7         | 275                 | 13,1                    |
-| 8         | 275                 | 13,1                    |
-| 9         | 299                 | 12,0                    |
-| 10        | 819                 | 4,4                     |
-| 11        | 806                 | 4,5                     |
-| 12        | 279                 | 12,9                    |
+| --------- | ------------------ | ----------------------- |
+| 1         | 275                | 13,1                    |
+| 2         | 275                | 13,1                    |
+| 3         | 275                | 13,1                    |
+| 4         | 439                | 8,2                     |
+| 5         | 417                | 8,6                     |
+| 6         | 417                | 8,6                     |
+| 7         | 275                | 13,1                    |
+| 8         | 275                | 13,1                    |
+| 9         | 299                | 12,0                    |
+| 10        | 819                | 4,4                     |
+| 11        | 806                | 4,5                     |
+| 12        | 279                | 12,9                    |
 
 > **Justificación del enfoque empírico**: La demanda observada presenta un patrón **trimodal** (bajo-medio-alto) que no se ajusta adecuadamente a ninguna distribución paramétrica estándar. El uso de tasas empíricas directas evita errores de especificación y garantiza que la simulación reproduce fielmente el perfil de carga operativa real.
 
@@ -542,21 +543,21 @@ $$
 
 **Paso 4 — Tabla resumen de la derivación por hora**:
 
-| Franja | Demanda (kg) | E[kg/tipo] | E[kg/cliente] | Clientes |
-|---|---|---|---|---|
-| 09–10 | 448,8 | 0,9891 | 1,6320 | 275 |
-| 10–11 | 448,8 | 0,9891 | 1,6320 | 275 |
-| 11–12 | 448,8 | 0,9891 | 1,6320 | 275 |
-| 12–13 | 750,1 | 1,0347 | 1,7072 | 439 |
-| 13–14 | 689,4 | 1,0016 | 1,6526 | 417 |
-| 14–15 | 689,4 | 1,0016 | 1,6526 | 417 |
-| 15–16 | 448,8 | 0,9891 | 1,6320 | 275 |
-| 16–17 | 448,8 | 0,9891 | 1,6320 | 275 |
-| 17–18 | 499,5 | 1,0123 | 1,6702 | 299 |
-| 18–19 | 1.451,3 | 1,0733 | 1,7710 | 819 |
-| 19–20 | 1.416,5 | 1,0649 | 1,7571 | 806 |
-| 20–21 | 459,9 | 0,9993 | 1,6488 | 279 |
-| **Total** | **8.200** | | | **4.851** |
+| Franja          | Demanda (kg)    | E[kg/tipo] | E[kg/cliente] | Clientes        |
+| --------------- | --------------- | ---------- | ------------- | --------------- |
+| 09–10          | 448,8           | 0,9891     | 1,6320        | 275             |
+| 10–11          | 448,8           | 0,9891     | 1,6320        | 275             |
+| 11–12          | 448,8           | 0,9891     | 1,6320        | 275             |
+| 12–13          | 750,1           | 1,0347     | 1,7072        | 439             |
+| 13–14          | 689,4           | 1,0016     | 1,6526        | 417             |
+| 14–15          | 689,4           | 1,0016     | 1,6526        | 417             |
+| 15–16          | 448,8           | 0,9891     | 1,6320        | 275             |
+| 16–17          | 448,8           | 0,9891     | 1,6320        | 275             |
+| 17–18          | 499,5           | 1,0123     | 1,6702        | 299             |
+| 18–19          | 1.451,3         | 1,0733     | 1,7710        | 819             |
+| 19–20          | 1.416,5         | 1,0649     | 1,7571        | 806             |
+| 20–21          | 459,9           | 0,9993     | 1,6488        | 279             |
+| **Total** | **8.200** |            |               | **4.851** |
 
 > **Nota**: El E[kg/cliente] varía por hora porque las probabilidades de elección cambian (p.ej., en el peak vespertino aumenta la probabilidad de Hot Dog, cuya media triangular es mayor: 1,433 kg vs. ~0,6–1,1 kg de otros tipos).
 
@@ -579,6 +580,7 @@ $$
 > **Fuente**: Enunciado §III.C–G de `base_information.md`.
 
 Todos los valores se toman directamente del enunciado:
+
 - **1.200 kg** = 6 carros × (18 bandejas × Kg/bandeja promedio), enunciado §III.D
 - **600 kg (50%)** = carga mínima recomendada, enunciado §III.G
 - **5 min setup** al cambiar familia, enunciado §III.F
@@ -594,8 +596,8 @@ Todos los valores se toman directamente del enunciado:
 | Jornada efectiva                 | 8 horas                                    |
 | Colación                        | 45 min                                     |
 | Descansos                        | 2 × 15 min                                |
-| **Tiempo productivo neto** | **8 hrs = 480 min**                |
-| Turno bruto (con pausas)         | 9 hrs 15 min = 555 min                    |
+| **Tiempo productivo neto** | **8 hrs = 480 min**                  |
+| Turno bruto (con pausas)         | 9 hrs 15 min = 555 min                     |
 | Escalonamiento                   | Obligatorio (≥1 persona/función siempre) |
 | Inicio de turnos                 | Flexible (no necesariamente a horas fijas) |
 
@@ -605,12 +607,12 @@ Todos los valores se toman directamente del enunciado:
 
 La panadería opera en tres fases:
 
-| Fase | Horario | Duración | Actividad |
-|---|---|---|---|
-| **Pre-apertura** | 06:00 – 09:00 | 3 hrs | Producción de inventario inicial (18 batches, §4.4) |
-| **Operación plena** | 09:00 – 15:15 | 6h 15m | Producción continua + venta al público |
-| **Venta + horno residual** | 15:15 – 21:15 | 6 hrs | Panaderos off; manipuladores Turno B procesan últimos lotes |
-| **Total** | **06:00 – 21:15** | **15h 15m** | Ventana completa de operación |
+| Fase                             | Horario                  | Duración         | Actividad                                                    |
+| -------------------------------- | ------------------------ | ----------------- | ------------------------------------------------------------ |
+| **Pre-apertura**           | 06:00 – 09:00           | 3 hrs             | Producción de inventario inicial (18 batches, §4.4)        |
+| **Operación plena**       | 09:00 – 15:15           | 6h 15m            | Producción continua + venta al público                     |
+| **Venta + horno residual** | 15:15 – 21:15           | 6 hrs             | Panaderos off; manipuladores Turno B procesan últimos lotes |
+| **Total**                  | **06:00 – 21:15** | **15h 15m** | Ventana completa de operación                               |
 
 > Los panaderos terminan a las 15:15. Los manipuladores del Turno B (12:00–21:15) procesan los últimos lotes por el horno y los trasladan a sala. El peak de 18:00–20:00 se atiende con inventario pre-producido.
 
@@ -618,23 +620,23 @@ La panadería opera en tres fases:
 
 **Panaderos** — 3 grupos con descansos desfasados (sin refuerzo vespertino):
 
-| Grupo | Horario | Turno bruto | Productivo neto | Rol |
-|---|---|---|---|---|
-| Grupo A (3 panaderos) | 06:00 – 15:15 | 9h 15m | 480 min | Descanso temprano |
-| Grupo B (3 panaderos) | 06:00 – 15:15 | 9h 15m | 480 min | Descanso desfasado +30 min |
-| Grupo C (3 panaderos) | 06:00 – 15:15 | 9h 15m | 480 min | Descanso desfasado +15 min |
+| Grupo                 | Horario        | Turno bruto | Productivo neto | Rol                        |
+| --------------------- | -------------- | ----------- | --------------- | -------------------------- |
+| Grupo A (3 panaderos) | 06:00 – 15:15 | 9h 15m      | 480 min         | Descanso temprano          |
+| Grupo B (3 panaderos) | 06:00 – 15:15 | 9h 15m      | 480 min         | Descanso desfasado +30 min |
+| Grupo C (3 panaderos) | 06:00 – 15:15 | 9h 15m      | 480 min         | Descanso desfasado +15 min |
 
 > Los 3 grupos comparten el mismo horario (06:00–15:15) pero sus pausas están **desfasadas ~15–30 minutos**, de modo que cuando un grupo descansa, los otros dos siguen activos.
 
 **Manipuladores/Ayudantes** — 2 turnos con traslape:
 
-| Grupo | Horario | Turno bruto | Productivo neto | Rol |
-|---|---|---|---|---|
-| Manipuladores Turno A (2) | 06:00 – 15:15 | 9h 15m | 480 min | Horno + traslado matutino |
-| Manipuladores Turno B (2) | 12:00 – 21:15 | 9h 15m | 480 min | Horno + traslado vespertino |
-| Ayudantes Turno A (1) | 06:00 – 15:15 | 9h 15m | 480 min | Apoyo matutino |
-| Ayudantes Turno B (1) | 12:00 – 21:15 | 9h 15m | 480 min | Apoyo vespertino |
-| **Traslape** | **12:00 – 15:15** | **3h 15m** | | Máxima capacidad de horno |
+| Grupo                     | Horario                  | Turno bruto      | Productivo neto | Rol                         |
+| ------------------------- | ------------------------ | ---------------- | --------------- | --------------------------- |
+| Manipuladores Turno A (2) | 06:00 – 15:15           | 9h 15m           | 480 min         | Horno + traslado matutino   |
+| Manipuladores Turno B (2) | 12:00 – 21:15           | 9h 15m           | 480 min         | Horno + traslado vespertino |
+| Ayudantes Turno A (1)     | 06:00 – 15:15           | 9h 15m           | 480 min         | Apoyo matutino              |
+| Ayudantes Turno B (1)     | 12:00 – 21:15           | 9h 15m           | 480 min         | Apoyo vespertino            |
+| **Traslape**        | **12:00 – 15:15** | **3h 15m** |                 | Máxima capacidad de horno  |
 
 #### 3.13.4 Regla de escalonamiento de pausas
 
@@ -644,26 +646,26 @@ El enunciado exige que las pausas sean escalonadas: *"asegurando que al menos un
 
 **Esquema de pausas de los 3 grupos** (Panaderos, turno 06:00–15:15):
 
-| Pausa | Grupo A | Grupo C (+15 min) | Grupo B (+30 min) |
-|---|---|---|---|
-| Descanso 1 (15 min) | 08:00–08:15 | 08:15–08:30 | 08:30–08:45 |
-| Colación (45 min) | 10:45–11:30 | 11:00–11:45 | 11:15–12:00 |
-| Descanso 2 (15 min) | 13:30–13:45 | 13:30–13:45 | 13:45–14:00 |
+| Pausa               | Grupo A      | Grupo C (+15 min) | Grupo B (+30 min) |
+| ------------------- | ------------ | ----------------- | ----------------- |
+| Descanso 1 (15 min) | 08:00–08:15 | 08:15–08:30      | 08:30–08:45      |
+| Colación (45 min)  | 10:45–11:30 | 11:00–11:45      | 11:15–12:00      |
+| Descanso 2 (15 min) | 13:30–13:45 | 13:30–13:45      | 13:45–14:00      |
 
 > Cuando el Grupo A está en colación (10:45–11:30), los Grupos B y C siguen activos → 6 panaderos disponibles.
 
 #### 3.13.5 Cobertura mínima durante el día
 
-| Hora | Panaderos | Manipuladores | Fase |
-|---|---|---|---|
-| 06:00–08:00 | 9 (A+B+C) | Turno A (2+1) | Pre-apertura |
-| 08:00–08:45 | 6 (1 grupo en descanso) | Turno A (2+1) | Pre-apertura (horno activo) |
-| 09:00–10:45 | 9 | Turno A (2+1) | Régimen bajo |
-| 10:45–12:00 | 3–6 (colación escalonada) | Turno A (2+1) + Turno B (2+1) | Régimen medio |
-| 12:00–13:45 | 6–9 | Turno A + B (4+2) | Traslape — máxima capacidad horno |
-| 13:45–15:15 | 6–9 | Turno A + B (4+2) | Última producción panaderos |
-| 15:15–17:15 | 0 | Turno B (2+1) | Solo horno/traslado residual |
-| 17:15–21:15 | 0 | Turno B (2+1)* | **Peak de demanda** (venta con inventario) |
+| Hora         | Panaderos                   | Manipuladores                 | Fase                                             |
+| ------------ | --------------------------- | ----------------------------- | ------------------------------------------------ |
+| 06:00–08:00 | 9 (A+B+C)                   | Turno A (2+1)                 | Pre-apertura                                     |
+| 08:00–08:45 | 6 (1 grupo en descanso)     | Turno A (2+1)                 | Pre-apertura (horno activo)                      |
+| 09:00–10:45 | 9                           | Turno A (2+1)                 | Régimen bajo                                    |
+| 10:45–12:00 | 3–6 (colación escalonada) | Turno A (2+1) + Turno B (2+1) | Régimen medio                                   |
+| 12:00–13:45 | 6–9                        | Turno A + B (4+2)             | Traslape — máxima capacidad horno              |
+| 13:45–15:15 | 6–9                        | Turno A + B (4+2)             | Última producción panaderos                    |
+| 15:15–17:15 | 0                           | Turno B (2+1)                 | Solo horno/traslado residual                     |
+| 17:15–21:15 | 0                           | Turno B (2+1)*                | **Peak de demanda** (venta con inventario) |
 
 *(\* con pausas internas)*
 
@@ -704,22 +706,22 @@ Los panaderos terminan a las 15:15, pero los últimos lotes producidos aún nece
 
 ### 4.2 Supuestos del modelador
 
-| #      | Supuesto                                                                                                                                                                                                                                                                                    | Justificación                                                                                |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| 🔷 S6  | **Amasado manual no tiene tiempo separado en el CSV.** Se interpreta que el proceso de amasado manual está implícito en el ciclo de producción. El panadero ocupa la amasadora durante un tiempo proporcional al ciclo de mezclado (se estima ≈ 50% del tiempo de mezclado auto). | El CSV no distingue un tiempo explícito para amasado manual separado del mezclado            |
-| 🔷 S7  | **Los tiempos de proceso son determinísticos.** Dado que el enunciado no especifica distribuciones para los tiempos de producción, se modelan como constantes según la tabla de parámetros.                                                                                       | El enunciado sugiere considerar tiempos determinísticos donde no se especifica distribución |
-| 🔷 S8  | **Split enfriado/traslado:** Enfriado ≈ 67% del tiempo combinado, Traslado ≈ 33%. Ver tabla detallada abajo.                                                                                                                                                                        | Proporción basada en que el enfriamiento es pasivo y más largo que el traslado activo       |
-| 🔷 S9  | **El enfriamiento tiene capacidad ilimitada** (espacio suficiente de racks/mesas para enfriar).                                                                                                                                                                                       | El enunciado no limita este recurso y sugiere evaluar esta decisión                          |
-| 🔷 S10 | **Los panes no vendidos al final del día se descartan.** No hay stock que pase al día siguiente.                                                                                                                                                                                    | Coherente con la operación de pan fresco                                                     |
-| 🔷 S11 | **La demanda se modela a nivel de cliente individual**, con llegadas según una **distribución empírica** (tabla de frecuencias). Las tasas por hora son las observadas directamente, sin ajuste paramétrico.                                    | Preserva el patrón real sin imponer supuestos distribucionales |
-| 🔷 S12 | **Materias primas disponibles sin restricción.** No hay quiebres de insumos.                                                                                                                                                                                                         | Fuera del alcance del modelo                                                                  |
-| 🔷 S13 | **Todos los hornos son equivalentes e intercambiables.**                                                                                                                                                                                                                              | Supuesto operacional del enunciado                                                            |
-| 🔷 S14 | **Carros y bandejas suficientes.** Se modelan explícitamente pero se asume disponibilidad inicial suficiente. El reporte final indica cuántos se necesitan.                                                                                                                         | Indicado en el enunciado                                                                      |
-| 🔷 S15 | **La producción inicia a las 06:00 (pre-apertura).** Los 3 grupos de panaderos (9 panaderos) comienzan 3 horas antes de la apertura al público (09:00) para producir el inventario inicial de 18 batches. | El ciclo más largo (Ciabatta: 134 min) requiere ~2h15 mín.; 3 horas dan margen para múltiples batches paralelos |
-| 🔷 S16 | **Los panaderos se organizan en 3 grupos de 3** (total 9), con horario 06:00–15:15 (9h 15m bruto, 480 min productivos) y descansos desfasados en ~15–30 min entre grupos. **No hay refuerzo vespertino**: la producción para el peak debe completarse antes de las 15:15. | Garantiza cobertura mínima de 6 panaderos en todo momento. El peak de 18:00–20:00 se cubre con inventario pre-producido |
-| 🔷 S17 | **Las pausas se desfasan entre grupos**, no entre individuos. Cada grupo toma sus 3 pausas (2×15 min + 1×45 min) en bloque, con separación de ~15–30 min respecto al grupo siguiente. | Simplifica la implementación y garantiza que al menos 2 de 3 grupos están activos simultáneamente |
-| 🔷 S18 | **Manipuladores y ayudantes operan en 2 turnos**: Turno A (06:00–15:15) y Turno B (12:00–21:15), cada uno con 480 min productivos. El traslape de 3h 15m (12:00–15:15) maximiza la capacidad de horno. | Cubre el procesamiento de los últimos lotes después de que los panaderos terminan, y permite que el horno opere hasta ~21:15 |
-| 🔷 S19 | **Al finalizar el turno, el trabajador termina el lote en curso** antes de retirarse (política "Finish Work Already Started"). No abandona un lote a medio proceso. | Coherente con la operación real: no se deja masa sin procesar |
+| #      | Supuesto                                                                                                                                                                                                                                                                                    | Justificación                                                                                                                 |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 🔷 S6  | **Amasado manual no tiene tiempo separado en el CSV.** Se interpreta que el proceso de amasado manual está implícito en el ciclo de producción. El panadero ocupa la amasadora durante un tiempo proporcional al ciclo de mezclado (se estima ≈ 50% del tiempo de mezclado auto). | El CSV no distingue un tiempo explícito para amasado manual separado del mezclado                                             |
+| 🔷 S7  | **Los tiempos de proceso son determinísticos.** Dado que el enunciado no especifica distribuciones para los tiempos de producción, se modelan como constantes según la tabla de parámetros.                                                                                       | El enunciado sugiere considerar tiempos determinísticos donde no se especifica distribución                                  |
+| 🔷 S8  | **Split enfriado/traslado:** Enfriado ≈ 67% del tiempo combinado, Traslado ≈ 33%. Ver tabla detallada abajo.                                                                                                                                                                        | Proporción basada en que el enfriamiento es pasivo y más largo que el traslado activo                                        |
+| 🔷 S9  | **El enfriamiento tiene capacidad ilimitada** (espacio suficiente de racks/mesas para enfriar).                                                                                                                                                                                       | El enunciado no limita este recurso y sugiere evaluar esta decisión                                                           |
+| 🔷 S10 | **Los panes no vendidos al final del día se descartan.** No hay stock que pase al día siguiente.                                                                                                                                                                                    | Coherente con la operación de pan fresco                                                                                      |
+| 🔷 S11 | **La demanda se modela a nivel de cliente individual**, con llegadas según una **distribución empírica** (tabla de frecuencias). Las tasas por hora son las observadas directamente, sin ajuste paramétrico.                                                                | Preserva el patrón real sin imponer supuestos distribucionales                                                                |
+| 🔷 S12 | **Materias primas disponibles sin restricción.** No hay quiebres de insumos.                                                                                                                                                                                                         | Fuera del alcance del modelo                                                                                                   |
+| 🔷 S13 | **Todos los hornos son equivalentes e intercambiables.**                                                                                                                                                                                                                              | Supuesto operacional del enunciado                                                                                             |
+| 🔷 S14 | **Carros y bandejas suficientes.** Se modelan explícitamente pero se asume disponibilidad inicial suficiente. El reporte final indica cuántos se necesitan.                                                                                                                         | Indicado en el enunciado                                                                                                       |
+| 🔷 S15 | **La producción inicia a las 06:00 (pre-apertura).** Los 3 grupos de panaderos (9 panaderos) comienzan 3 horas antes de la apertura al público (09:00) para producir el inventario inicial de 18 batches.                                                                           | El ciclo más largo (Ciabatta: 134 min) requiere ~2h15 mín.; 3 horas dan margen para múltiples batches paralelos             |
+| 🔷 S16 | **Los panaderos se organizan en 3 grupos de 3** (total 9), con horario 06:00–15:15 (9h 15m bruto, 480 min productivos) y descansos desfasados en ~15–30 min entre grupos. **No hay refuerzo vespertino**: la producción para el peak debe completarse antes de las 15:15.    | Garantiza cobertura mínima de 6 panaderos en todo momento. El peak de 18:00–20:00 se cubre con inventario pre-producido      |
+| 🔷 S17 | **Las pausas se desfasan entre grupos**, no entre individuos. Cada grupo toma sus 3 pausas (2×15 min + 1×45 min) en bloque, con separación de ~15–30 min respecto al grupo siguiente.                                                                                             | Simplifica la implementación y garantiza que al menos 2 de 3 grupos están activos simultáneamente                           |
+| 🔷 S18 | **Manipuladores y ayudantes operan en 2 turnos**: Turno A (06:00–15:15) y Turno B (12:00–21:15), cada uno con 480 min productivos. El traslape de 3h 15m (12:00–15:15) maximiza la capacidad de horno.                                                                             | Cubre el procesamiento de los últimos lotes después de que los panaderos terminan, y permite que el horno opere hasta ~21:15 |
+| 🔷 S19 | **Al finalizar el turno, el trabajador termina el lote en curso** antes de retirarse (política "Finish Work Already Started"). No abandona un lote a medio proceso.                                                                                                                  | Coherente con la operación real: no se deja masa sin procesar                                                                 |
 
 ### 4.3 Split enfriado/traslado (Supuesto S8)
 
@@ -822,50 +824,50 @@ $$
 
 #### Variables de inventario y estadísticas
 
-| Variable | Tipo | Nombre SIMIO | Descripción |
-|---|---|---|---|
-| `Inventario[tipo]` | Continua (kg), Vector dim=10 | `MStaInventario` | Stock actual en sala por tipo de pan |
-| `QuiebreAcum[tipo]` | Continua (kg), Vector dim=10 | `MStaQuiebres` | Demanda insatisfecha acumulada por tipo |
-| `VentasAcum[tipo]` | Continua (kg), Vector dim=10 | `MStaVentas` | Kg vendidos acumulados por tipo |
-| `LotesProducidos[tipo]` | Entera, Vector dim=10 | `MStaLotesProducidos` | Cantidad de batches completados por tipo |
-| `ColaHorno[familia]` | Continua (kg), Vector dim=3 | `MStaColaHorno` | Kg acumulados esperando horno por familia |
-| `HoraIdx` | Entera (1-12) | `MStaHoraIdx` | Índice de hora actual para tablas horarias |
+| Variable                  | Tipo                         | Nombre SIMIO            | Descripción                                |
+| ------------------------- | ---------------------------- | ----------------------- | ------------------------------------------- |
+| `Inventario[tipo]`      | Continua (kg), Vector dim=10 | `MStaInventario`      | Stock actual en sala por tipo de pan        |
+| `QuiebreAcum[tipo]`     | Continua (kg), Vector dim=10 | `MStaQuiebres`        | Demanda insatisfecha acumulada por tipo     |
+| `VentasAcum[tipo]`      | Continua (kg), Vector dim=10 | `MStaVentas`          | Kg vendidos acumulados por tipo             |
+| `LotesProducidos[tipo]` | Entera, Vector dim=10        | `MStaLotesProducidos` | Cantidad de batches completados por tipo    |
+| `ColaHorno[familia]`    | Continua (kg), Vector dim=3  | `MStaColaHorno`       | Kg acumulados esperando horno por familia   |
+| `HoraIdx`               | Entera (1-12)                | `MStaHoraIdx`         | Índice de hora actual para tablas horarias |
 
 #### Variables de control de producción (Enfoque Híbrido)
 
-| Variable | Tipo | Nombre SIMIO | Descripción |
-|---|---|---|---|
-| `LotePlanActual` | Entera | `MStaLotePlanActual` | Índice de fila actual en `TablePlanProduccion` |
-| `EnProceso[tipo]` | Continua (kg), Vector dim=10 | `MStaEnProceso` | Kg actualmente en el flujo productivo (aún no en sala) |
-| `TipoReactivo` | Entera (1-10) | `MStaTipoReactivo` | Tipo de pan a producir como lote de emergencia |
-| `LotesReactivos` | Entera | `MStaLotesReactivos` | Contador total de lotes de emergencia inyectados |
+| Variable            | Tipo                         | Nombre SIMIO           | Descripción                                            |
+| ------------------- | ---------------------------- | ---------------------- | ------------------------------------------------------- |
+| `LotePlanActual`  | Entera                       | `MStaLotePlanActual` | Índice de fila actual en `TablePlanProduccion`       |
+| `EnProceso[tipo]` | Continua (kg), Vector dim=10 | `MStaEnProceso`      | Kg actualmente en el flujo productivo (aún no en sala) |
+| `TipoReactivo`    | Entera (1-10)                | `MStaTipoReactivo`   | Tipo de pan a producir como lote de emergencia          |
+| `LotesReactivos`  | Entera                       | `MStaLotesReactivos` | Contador total de lotes de emergencia inyectados        |
 
 #### Variables de estado del horno
 
-| Variable | Tipo | Descripción |
-|---|---|---|
-| `UltimaFamiliaHorno[horno]` | Categórica | Última familia horneada (para calcular setup) |
-| `EstadoHorno[horno]` | Categórica | Libre / Cargando / Horneando / Descargando |
-| `TiempoEsperaHorno[familia]` | Continua (min) | Tiempo que lleva esperando la carga |
+| Variable                       | Tipo           | Descripción                                   |
+| ------------------------------ | -------------- | ---------------------------------------------- |
+| `UltimaFamiliaHorno[horno]`  | Categórica    | Última familia horneada (para calcular setup) |
+| `EstadoHorno[horno]`         | Categórica    | Libre / Cargando / Horneando / Descargando     |
+| `TiempoEsperaHorno[familia]` | Continua (min) | Tiempo que lleva esperando la carga            |
 
 > **Nota**: `EnProceso[tipo]` se incrementa cuando un lote entra a pesado y se decrementa cuando llega a sala de ventas. Permite al sistema reactivo calcular el déficit real sin duplicar producción.
 
 ### 5.4 Eventos principales
 
-| Evento | Disparador | Acciones |
-|---|---|---|
-| Inicio de jornada | t=0 (06:00) | Inicia liberación de lotes según `TablePlanProduccion` |
-| Liberación lote plan | `SrcLotes` cada ~4 min | Crea `EntLote` con tipo/familia/kg del plan secuencial |
-| Revisión de déficit | `TimerRevisorDeficit` cada 30 min (desde 09:00) | Calcula déficit por tipo, puede inyectar lote reactivo |
-| Lote reactivo | `EvtLoteReactivo` (Fire) | `SrcLotesReactivos` crea lote del tipo con mayor déficit |
-| Llegada de cliente | Distribución empírica (Rate Table) | Selecciona tipos (condicional sin reemplazo), verifica stock |
-| Fin de mezclado | Timer (auto cycle) | Libera mezcladora, panadero retira masa |
-| Fin de fermentación | Timer | Lote disponible para horno, acumula en `ColaHorno[familia]` |
-| Inicio de corrida | Política de carga/timeout | Carga horno, inicia cocción |
-| Fin de horneado | Timer (14/18/21 min) | Descarga, envía a enfriamiento |
-| Reposición a sala | Ayudante disponible | Incrementa `Inventario[tipo]`, decrementa `EnProceso[tipo]` |
-| Colación/Descanso | Calendario turno (escalonado) | Retira recurso temporalmente (min. 3 panaderos activos) |
-| Fin de jornada tienda | 21:00 | Cierre, calcula sobrantes |
+| Evento                | Disparador                                        | Acciones                                                        |
+| --------------------- | ------------------------------------------------- | --------------------------------------------------------------- |
+| Inicio de jornada     | t=0 (06:00)                                       | Inicia liberación de lotes según `TablePlanProduccion`      |
+| Liberación lote plan | `SrcLotes` cada ~4 min                          | Crea `EntLote` con tipo/familia/kg del plan secuencial        |
+| Revisión de déficit | `TimerRevisorDeficit` cada 30 min (desde 09:00) | Calcula déficit por tipo, puede inyectar lote reactivo         |
+| Lote reactivo         | `EvtLoteReactivo` (Fire)                        | `SrcLotesReactivos` crea lote del tipo con mayor déficit     |
+| Llegada de cliente    | Distribución empírica (Rate Table)              | Selecciona tipos (condicional sin reemplazo), verifica stock    |
+| Fin de mezclado       | Timer (auto cycle)                                | Libera mezcladora, panadero retira masa                         |
+| Fin de fermentación  | Timer                                             | Lote disponible para horno, acumula en `ColaHorno[familia]`   |
+| Inicio de corrida     | Política de carga/timeout                        | Carga horno, inicia cocción                                    |
+| Fin de horneado       | Timer (14/18/21 min)                              | Descarga, envía a enfriamiento                                 |
+| Reposición a sala    | Ayudante disponible                               | Incrementa `Inventario[tipo]`, decrementa `EnProceso[tipo]` |
+| Colación/Descanso    | Calendario turno (escalonado)                     | Retira recurso temporalmente (min. 3 panaderos activos)         |
+| Fin de jornada tienda | 21:00                                             | Cierre, calcula sobrantes                                       |
 
 ### 5.5 Lógica de decisión
 
@@ -885,6 +887,7 @@ PARA cada lote i = 1..155:
 ```
 
 La secuencia en `TablePlanProduccion` se optimiza por:
+
 1. Agrupación por familia (minimiza setups de horno)
 2. Tipos de mayor demanda primero dentro de cada familia
 3. Producción adelantada para el peak de 18:00-20:00
@@ -1093,15 +1096,15 @@ Estos cubren los tres pools (Producción, Gestión de Hornos, Sala de Ventas) co
 
 #### Mezcladora — CUELLO DE BOTELLA IDENTIFICADO
 
-| Métrica                  | Valor                                       |
-| ------------------------- | ------------------------------------------- |
-| Tiempo ocupado por batch  | 13-18 min (carga 2 + auto 10-15 + retiro 1) |
-| Total batches/día        | 155                                         |
-| Total mezcladora-min/día | **2.442 min (40,7 hrs)**              |
+| Métrica                  | Valor                                         |
+| ------------------------- | --------------------------------------------- |
+| Tiempo ocupado por batch  | 13-18 min (carga 2 + auto 10-15 + retiro 1)   |
+| Total batches/día        | 155                                           |
+| Total mezcladora-min/día | **2.442 min (40,7 hrs)**                |
 | Ventana disponible        | 555 min (turno único panaderos 06:00–15:15) |
-| Con 3 mezcladoras         | 147% → INSUFICIENTE                        |
-| Con 4 mezcladoras         | 110% → INSUFICIENTE                        |
-| Con 5 mezcladoras         | 88% → VIABLE                               |
+| Con 3 mezcladoras         | 147% → INSUFICIENTE                          |
+| Con 4 mezcladoras         | 110% → INSUFICIENTE                          |
+| Con 5 mezcladoras         | 88% → VIABLE                                 |
 
 > **Hallazgo crítico**: La mezcladora es el recurso más restrictivo del sistema. Las mezcladoras solo pueden operarse mientras haya panaderos para carga/descarga (turno único 06:00–15:15 = 555 min). Se requieren **mínimo 5 mezcladoras** para la producción diaria.
 
@@ -1112,30 +1115,30 @@ Estos cubren los tres pools (Producción, Gestión de Hornos, Sala de Ventas) co
 | Tiempo hands-on por batch                    | 16-20 min (pesado + carga + retiro + formado) |
 | Total panadero-min/día (sin amasado manual) | 2.926 min (48,8 hrs)                          |
 | Tiempo productivo neto por turno             | 480 min (8h)                                  |
-| Mínimo panaderos (sin amasado manual)       | ⌈2.926 / 480⌉ = **7 panaderos**         |
-| Con amasado manual (+50% mezclado)           | ⌈3.914 / 480⌉ = **9 panaderos**         |
+| Mínimo panaderos (sin amasado manual)       | ⌈2.926 / 480⌉ =**7 panaderos**        |
+| Con amasado manual (+50% mezclado)           | ⌈3.914 / 480⌉ =**9 panaderos**        |
 
 #### Horno
 
-| Métrica                         | Valor                                                     |
-| -------------------------------- | --------------------------------------------------------- |
-| Corridas totales/día            | 9 (mínimo teórico)                                       |
-| Tiempo total horno (sin setup)   | 250 min (4,2 hrs)                                         |
-| Tiempo total horno (con setup)   | 295 min (4,9 hrs)                                         |
-| Ventana real de horno            | ~600 min (06:00–16:00, último lote + fermentación)       |
-| Con 1 horno                      | **49% utilización → 1 horno suficiente en teoría** |
+| Métrica                       | Valor                                                       |
+| ------------------------------ | ----------------------------------------------------------- |
+| Corridas totales/día          | 9 (mínimo teórico)                                        |
+| Tiempo total horno (sin setup) | 250 min (4,2 hrs)                                           |
+| Tiempo total horno (con setup) | 295 min (4,9 hrs)                                           |
+| Ventana real de horno          | ~600 min (06:00–16:00, último lote + fermentación)       |
+| Con 1 horno                    | **49% utilización → 1 horno suficiente en teoría** |
 
 > **Nota**: Aunque 1 horno basta en volumen agregado, la restricción operativa es el **timing**: la producción debe distribuirse durante el día para evitar quiebres, especialmente antes del peak de 18:00–20:00. Probablemente se necesiten **2 hornos** para flexibilidad de secuenciamiento.
 
 #### Manipulador/Ayudante
 
-| Métrica                             | Valor                                      |
-| ------------------------------------ | ------------------------------------------ |
-| Carga/descarga horno                 | 9 corridas × 10 min = 90 min              |
-| Traslado a sala                      | 155 batches × ~4 min = 620 min            |
-| Total manipulador-min/día           | **710 min (11,8 hrs)**               |
-| Mínimo manipuladores (por turno)     | ⌈710 / 480⌉ = **2 manipuladores**    |
-| Con 2 turnos (A + B)                 | **Total: 4 manipuladores**           |
+| Métrica                          | Valor                                    |
+| --------------------------------- | ---------------------------------------- |
+| Carga/descarga horno              | 9 corridas × 10 min = 90 min            |
+| Traslado a sala                   | 155 batches × ~4 min = 620 min          |
+| Total manipulador-min/día        | **710 min (11,8 hrs)**             |
+| Mínimo manipuladores (por turno) | ⌈710 / 480⌉ =**2 manipuladores** |
+| Con 2 turnos (A + B)              | **Total: 4 manipuladores**         |
 
 #### Derivación de §6.2 — Cálculos de carga de recursos
 
@@ -1177,17 +1180,17 @@ Con amasado manual (🔷 S6: ~50% del tiempo de mezclado auto): +988 min → 3.9
 
 ### 6.4 Resumen de recursos mínimos estimados (punto de partida para experimentación)
 
-| Recurso          | Mínimo estimado       | Notas                                                     |
-| ---------------- | ---------------------- | --------------------------------------------------------- |
-| Mezcladoras      | **5**            | Cuello de botella principal (ventana 555 min)              |
-| Amasadoras       | 2-3                    | Depende del tiempo de amasado manual (S6)                 |
-| Mesas de formado | 2-3                    | Paralelo con mezcladoras                                  |
-| Hornos           | 1-2                    | 1 basta (49% util.); 2 para flexibilidad temporal         |
-| Panaderos        | **9 total**      | 3 grupos × 3, turno único 06:00–15:15                     |
-| Manipuladores    | **2 por turno**  | 2 turnos (A: 06–15:15, B: 12–21:15), total 4             |
-| Ayudantes        | **1 por turno**  | Siguen patrón de manipuladores, total 2                   |
-| Carros           | ~20-30 en circulación | 2 carros/batch × batches simultáneos                    |
-| Bandejas         | ~400-500               | ~27 bandejas/batch promedio × batches simultáneos       |
+| Recurso          | Mínimo estimado       | Notas                                               |
+| ---------------- | ---------------------- | --------------------------------------------------- |
+| Mezcladoras      | **5**            | Cuello de botella principal (ventana 555 min)       |
+| Amasadoras       | 2-3                    | Depende del tiempo de amasado manual (S6)           |
+| Mesas de formado | 2-3                    | Paralelo con mezcladoras                            |
+| Hornos           | 1-2                    | 1 basta (49% util.); 2 para flexibilidad temporal   |
+| Panaderos        | **9 total**      | 3 grupos × 3, turno único 06:00–15:15            |
+| Manipuladores    | **2 por turno**  | 2 turnos (A: 06–15:15, B: 12–21:15), total 4      |
+| Ayudantes        | **1 por turno**  | Siguen patrón de manipuladores, total 2            |
+| Carros           | ~20-30 en circulación | 2 carros/batch × batches simultáneos              |
+| Bandejas         | ~400-500               | ~27 bandejas/batch promedio × batches simultáneos |
 
 ---
 
