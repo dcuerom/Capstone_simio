@@ -143,13 +143,15 @@ El diagrama lógico completo es:
 
 ---
 
-#### **Step 4 — Decide: ¿Se alcanzó la capacidad del horno (600 kg)? ✅**
+#### **Step 4 — Decide: ¿Alguna familia alcanzó la capacidad del horno (600 kg)?**
 
 | Campo               | Valor                                               |
 | ------------------- | --------------------------------------------------- |
 | **Type**      | Decide                                              |
-| **Condition** | `Model.MStaColaHorno[EntLote.EStaFamilia] >= 600` |
+| **Condition** | `Model.MStaColaHorno[1] >= 600 OR Model.MStaColaHorno[2] >= 600 OR Model.MStaColaHorno[3] >= 600` |
 
+> **Por qué evaluar las 3 familias y no solo `EntLote.EStaFamilia`**: El trigger se dispara por el lote que *acaba* de salir de fermentación, pero otras familias pueden haber acumulado 600 kg antes de que esa familia lo haga. Si solo se evalúa la familia disparadora, una familia con cola llena queda esperando indefinidamente hasta que un nuevo lote suyo vuelva a disparar el proceso.
+>
 > **El valor 600** representa la capacidad máxima de una corrida del horno. Ajustar según el reporte §4.3 si la capacidad física es diferente.
 >
 > **Ref. Workbook6 §7.2**: El Decide step en un Process ejecuta *ambas* ramas como flujos independientes de tokens. El token toma solo una rama según la condición.
@@ -174,16 +176,18 @@ El diagrama lógico completo es:
 
 **Rama False del Step 4 → Step 5F:**
 
-#### **Step 5F — Decide: ¿Tiempo de espera >= 15 minutos?** *(rama de corrida anticipada) ✅*
+#### **Step 5F — Decide: ¿Alguna familia lleva >= 15 minutos esperando?** *(rama de corrida anticipada)*
 
 | Campo               | Valor                                                               |
 | ------------------- | ------------------------------------------------------------------- |
 | **Type**      | Decide                                                              |
-| **Condition** | `(Run.TimeNow - Model.MStaTimerHorno[EntLote.EStaFamilia]) >= 15` |
+| **Condition** | `(Model.MStaColaHorno[1] > 0 AND (Run.TimeNow - Model.MStaTimerHorno[1]) >= 15) OR (Model.MStaColaHorno[2] > 0 AND (Run.TimeNow - Model.MStaTimerHorno[2]) >= 15) OR (Model.MStaColaHorno[3] > 0 AND (Run.TimeNow - Model.MStaTimerHorno[3]) >= 15)` |
 
-> **¿Por qué 15 minutos?** Es el tiempo máximo que puede estar la masa fermentada esperando sin comprometer calidad (supuesto operacional del reporte §2.4). Si la cola no llenó el horno en 15 min → hacer corrida anticipada.
+> **Por qué evaluar las 3 familias y no solo `EntLote.EStaFamilia`**: Igual que en Step 4, una familia puede haber agotado sus 15 minutos antes de que un nuevo lote suyo vuelva a disparar el proceso. La guarda `MStaColaHorno[f] > 0` es necesaria para que el timer residual de una cola vacía (valor anterior no reseteado) no active una corrida falsa.
+>
+> **¿Por qué 15 minutos?** Es el tiempo máximo que puede estar la masa en fermentación final esperando sin comprometer calidad (supuesto operacional del reporte §2.4). Si ninguna familia llenó el horno en 15 min → hacer corrida anticipada con lo que haya.
 
-**Rama True → Step 6F (Decide horno libre para corrida anticipada)**
+**Rama True → Step 5F bis (Decide horno libre para corrida anticipada)**
 **Rama False → FIN** *(aún hay tiempo; esperar más lotes)*
 
 ---
@@ -200,56 +204,64 @@ El diagrama lógico completo es:
 
 ---
 
-#### **Step 6 — Iniciar corrida del horno** *(compartido por ambas rutas) ✅*
+#### **Step 6 — Seleccionar familia y iniciar corrida** *(compartido por ambas rutas)*
 
-Este bloque se compone de 3 Assign consecutivos + 1 Fire:
+Step 6 ya no ejecuta los resets directamente. En su lugar, delega la decisión a `ProcSeleccionarFamiliaHorno`, que elige la familia según `PropPoliticaSecuenciaHorno` y ejecuta los resets sobre la familia elegida (no sobre `EntLote.EStaFamilia`).
 
-| Sub-step | Type             | State Variable                                | New Value                     |
-| -------- | ---------------- | --------------------------------------------- | ----------------------------- |
-| 6a       | **Assign** | `Model.MStaColaHorno[EntLote.EStaFamilia]`  | `0`                         |
-| 6b       | **Assign** | `Model.MStaTimerHorno[EntLote.EStaFamilia]` | `0`                         |
-| 6c       | **Assign** | `Model.MStaHornosEnUso`                     | `Model.MStaHornosEnUso + 1` |
-| 6d       | **Fire**   | Event:`EvtIniciarCorrida`                   | *(ver Parte 3) ❎*          |
+| Sub-step | Type        | Configuración |
+| -------- | ----------- | ------------- |
+| 6        | **Execute** | Process: `ProcSeleccionarFamiliaHorno` |
 
-> **¿Por qué resetear la cola a 0 antes de Fire?** Evita doble conteo. El evento `EvtIniciarCorrida` será el disparador que mueve al lote a través de `SrvCargaHorno → SrvHorneado`. Los nuevos lotes que lleguen mientras el horno procesa empezarán a acumular desde 0 en `MStaColaHorno`.
+> **Por qué Execute y no los Assign directos**: Los resets anteriores (6a–6d) usaban `EntLote.EStaFamilia` — la familia del lote que *disparó* el umbral. Pero con las políticas de secuencia (Estrategia A–D), la familia elegida puede ser distinta. `ProcSeleccionarFamiliaHorno` decide cuál familia entra al horno y ejecuta en su Bloque 3:
+> - `MStaColaHorno[Token.FamiliaElegida] = 0`
+> - `MStaTimerHorno[Token.FamiliaElegida] = 0`
+> - `MStaHornosEnUso = MStaHornosEnUso + 1`
+> - `MStaUltimaFamiliaHorno = Token.FamiliaElegida`
+> - Fire `EvtIniciarCorrida`
+>
+> La familia que disparó el umbral pero no fue elegida conserva su cola y timer: seguirá acumulando hasta que en la siguiente oportunidad sea la más prioritaria.
 
 ---
 
 ### 2.4 — Diagrama visual completo del Process✅
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│  ProcPoliticaCargaHorno                                             │
-│                                                                     │
-│  ┌─────────┐   ┌──────────────────┐   ┌─────────────────────────┐  │
-│  │ Step 1  │──▶│ Step 2 (Decide)  │──▶│ Step 3 (Assign Timer)   │  │
-│  │ Assign  │   │ ¿Primer lote?    │   │ Timer=Run.TimeNow       │  │
-│  │ cola+=kg│   └──────────────────┘   └────────────┬────────────┘  │
-│  └─────────┘          │ False                       │ True          │
-│                       └─────────────────────────────┘              │
-│                                          ↓                          │
-│                               ┌──────────────────┐                 │
-│                               │ Step 4 (Decide)  │                 │
-│                               │ Cola >= 600?     │                 │
-│                               └──────────────────┘                 │
-│                        True ↓              ↓ False                  │
-│                  ┌───────────────┐  ┌──────────────────┐           │
-│                  │ Step 5T       │  │ Step 5F (Decide) │           │
-│                  │ Hornos libres?│  │ Espera >= 15min? │           │
-│                  └───────────────┘  └──────────────────┘           │
-│           True ↓       ↓ False  True ↓           ↓ False           │
-│        ┌────────┐     FIN   ┌─────────┐          FIN               │
-│        │Step 6  │           │Step 5Fbis│                            │
-│        │Corrida │           │Hornos   │                            │
-│        │completa│           │libres?  │                            │
-│        └────────┘           └─────────┘                            │
-│        └────────┘    True ↓       ↓ False                          │
-│             ↑      ┌────────┐    FIN                                │
-│             └──────│Step 6  │                                       │
-│                    │Corrida │                                       │
-│                    │anticipad│                                      │
-│                    └────────┘                                       │
-└─────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────┐
+│  ProcPoliticaCargaHorno                                                  │
+│                                                                          │
+│  ┌─────────┐   ┌──────────────────┐   ┌──────────────────────────────┐  │
+│  │ Step 1  │──▶│ Step 2 (Decide)  │──▶│ Step 3 (Assign Timer)        │  │
+│  │ Assign  │   │ ¿Primer lote de  │   │ MStaTimerHorno[f]=TimeNow    │  │
+│  │ cola+=kg│   │  esta familia?   │   └──────────────┬───────────────┘  │
+│  └─────────┘   └──────────────────┘         False ↑  │ True             │
+│                       │ False                    └───┘                   │
+│                       └──────────────────────────────┘                   │
+│                                          ↓                               │
+│                     ┌────────────────────────────────────┐               │
+│                     │ Step 4 (Decide)                    │               │
+│                     │ ¿ColaF1>=600 OR ColaF2>=600        │               │
+│                     │       OR ColaF3>=600?              │               │
+│                     └────────────────────────────────────┘               │
+│                        True ↓                    ↓ False                 │
+│            ┌───────────────────┐   ┌─────────────────────────────┐       │
+│            │ Step 5T (Decide)  │   │ Step 5F (Decide)            │       │
+│            │ Hornos libres?    │   │ ¿EsperaF1>=15 OR EsperaF2   │       │
+│            └───────────────────┘   │   >=15 OR EsperaF3>=15?     │       │
+│       True ↓       ↓ False         └─────────────────────────────┘       │
+│    ┌────────────┐  FIN          True ↓                    ↓ False        │
+│    │  Step 6    │          ┌──────────────────┐           FIN             │
+│    │  Execute   │          │ Step 5Fbis       │                           │
+│    │  ProcSelec │          │ Hornos libres?   │                           │
+│    │  cionarFam │          └──────────────────┘                           │
+│    │  iliaHorno │     True ↓           ↓ False                            │
+│    └────────────┘  ┌────────────┐      FIN                                │
+│          ↑         │  Step 6    │                                         │
+│          └─────────│  Execute   │                                         │
+│                    │  ProcSelec │                                         │
+│                    │  cionarFam │                                         │
+│                    │  iliaHorno │                                         │
+│                    └────────────┘                                         │
+└──────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -369,20 +381,31 @@ Tras ejecutar el modelo:
 ## Resumen del Flujo Completo
 
 ```
-SrvFermentacion (Exited trigger)
+SrvFermentacion (Exited trigger)   ← Fermentación Final, justo antes de SrvCargaHorno
     ↓
 ProcPoliticaCargaHorno
-    ├─ Acumula kg en MStaColaHorno[familia]
-    ├─ Decide: ¿Primera vez? → registrar MStaTimerHorno
-    ├─ Decide: ¿Cola >= 600?
-    │    SÍ → Decide ¿Hay hornos libres? → Fire EvtIniciarCorrida
-    │    NO → Decide ¿15 min esperados?
-    │              SÍ → Decide ¿Hay hornos libres? → Fire EvtIniciarCorrida
-    │              NO → FIN (esperar más lotes)
-    └─ Fire resetea cola + Incrementa MStaHornosEnUso (+1)
+    ├─ Step 1:  Acumula kg en MStaColaHorno[EntLote.EStaFamilia]
+    ├─ Step 2:  ¿Primer lote de esta familia? → Step 3: registrar MStaTimerHorno[familia]
+    ├─ Step 4:  ¿ColaF1>=600 OR ColaF2>=600 OR ColaF3>=600?
+    │    SÍ  → Step 5T:  ¿Hay hornos libres?
+    │               SÍ  → Step 6: Execute ProcSeleccionarFamiliaHorno
+    │               NO  → FIN
+    │    NO  → Step 5F:  ¿EsperaF1>=15 OR EsperaF2>=15 OR EsperaF3>=15?
+    │               SÍ  → Step 5Fbis: ¿Hay hornos libres?
+    │                          SÍ  → Step 6: Execute ProcSeleccionarFamiliaHorno
+    │                          NO  → FIN
+    │               NO  → FIN (esperar más lotes)
+    └─ (resets y Fire se ejecutan dentro de ProcSeleccionarFamiliaHorno, Bloque 3)
+
+ProcSeleccionarFamiliaHorno  (invocado vía Execute desde Step 6)
+    ├─ Bloque 0: Calcular tiempos de espera por familia
+    ├─ Bloque 1: Override de calidad (familia con espera >=15 min tiene prioridad)
+    ├─ Bloque 2: Si no hay emergencia → selección por menor stock / mayor demanda / round-robin / híbrida
+    └─ Bloque 3: Reset MStaColaHorno[FamiliaElegida] + MStaTimerHorno[FamiliaElegida]
+                 + MStaHornosEnUso++ + Fire EvtIniciarCorrida
 
 SrvHorneado (Exited trigger)
     ↓
 ProcHornoCompleto
-    └─ Decrementa MStaHornosEnUso (-1)
+    └─ MStaHornosEnUso = Math.Max(0, MStaHornosEnUso - 1)
 ```
