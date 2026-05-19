@@ -279,32 +279,116 @@ Step 6 ya no ejecuta los resets directamente. En su lugar, delega la decisión a
 
 ---
 
-## PARTE 3: Elemento de Sincronización — Event `EvtIniciarCorrida`
+## PARTE 3: Elemento de Sincronización — `EvtIniciarCorrida` y control de compuerta
 
-El **Fire** del Step 6d necesita un Event que sincronice la apertura del horno. Sin este evento, Simio no tiene cómo notificar a `SrvCargaHorno` que puede procesar.
+Cuando `ProcSeleccionarFamiliaHorno` (Bloque 3) dispara `EvtIniciarCorrida`, ese evento debe abrir la compuerta de carga solo para los lotes de la familia elegida. Sin este mecanismo, todos los lotes de todas las familias fluirían mezclados al horno, violando la restricción de que una corrida es de una sola familia.
 
-### 3.1 — Crear el Event ✅
+La solución tiene tres piezas: (1) servidores de espera por familia controlados por estado, (2) un proceso que abre la compuerta al ocurrir el evento, y (3) un proceso que la cierra al terminar el horneado.
+
+---
+
+### 3.1 — Crear el Event
 
 1. Ir a **Definitions** → **Elements** → **Events** → **Add Event**
 2. Nombre: `EvtIniciarCorrida`
 
-### 3.2 — Configurar `SrvCargaHorno` para escuchar el evento
+---
 
-En lugar de un Processing Time estático, `SrvCargaHorno` actuará como punto de control:
+### 3.2 — Nuevas variables de estado necesarias
 
-1. Clic en `SrvCargaHorno` → Properties
-2. **Processing Time**: `5` (minutos — tiempo de carga física de lotes al horno)
-3. En **Add-On Process Triggers** → **Entered** → crear nuevo process `ProcHornoCompleto`:
+Ir a **Definitions → States** y crear:
 
-#### Process `ProcHornoCompleto` (en `SnkLoteTerminado` o al final de `SrvHorneado`)
+| Nombre | Tipo | Rows | Valor Inicial | Propósito |
+|---|---|---|---|---|
+| `MStaCapEspera` | Discrete (Integer) Array | 3 | 0 | Capacidad activa de cada servidor de espera por familia. `0` = bloqueado, `999` = abierto. |
+| `MStaLotesEnHorno` | Discrete (Integer) | 1 | 0 | Contador de lotes actualmente dentro de `SrvHorneado`. Detecta cuándo termina una corrida completa. |
 
-Este process libera un cupo de horno cuando el ciclo de horneado termina:
+---
 
-| Step | Type             | Configuración                                                         |
-| ---- | ---------------- | ---------------------------------------------------------------------- |
-| 1    | **Assign** | `Model.MStaHornosEnUso` = `Math.Max(0, Model.MStaHornosEnUso - 1)` |
+### 3.3 — Reconfigurar el pipeline: añadir servidores de espera por familia
 
-> **Ubicación correcta del trigger**: Asociar este Process al **Exited** de `SrvHorneado` (o al **Entered** de `SrvDescargaHorno`). Así, se resta 1 a los hornos en uso, permitiendo que el siguiente lote en cola dispare una nueva corrida.
+En lugar de que los lotes vayan directamente de `SrvFermentacion` a `SrvCargaHorno`, se insertan tres servidores de espera — uno por familia — que actúan como compuertas.
+
+#### Nuevos servidores a arrastrar al Facility
+
+| Nombre | Processing Time | Capacity Type | Capacity State | Propósito |
+|---|---|---|---|---|
+| `SrvEsperaF1` | `0` | From State | `Model.MStaCapEspera[1]` | Retiene lotes de Familia 1 hasta que su corrida sea autorizada |
+| `SrvEsperaF2` | `0` | From State | `Model.MStaCapEspera[2]` | Retiene lotes de Familia 2 |
+| `SrvEsperaF3` | `0` | From State | `Model.MStaCapEspera[3]` | Retiene lotes de Familia 3 |
+
+> **Capacity Type = "From State"**: En las propiedades del servidor, cambiar **Capacity Type** de "Fixed" a "From State" y en **Capacity State** referenciar la variable correspondiente. Mientras el valor sea 0, ningún lote puede ser procesado — permanecen en el Input Buffer del servidor de espera.
+>
+> **Processing Time = 0**: El servidor de espera no consume tiempo de simulación, solo actúa como compuerta.
+
+#### Nueva secuencia de conexiones
+
+Reemplazar la conexión directa `SrvFermentacion → SrvCargaHorno` por:
+
+```
+SrvFermentacion
+    ↓
+[TransferNode: NodoSalidaFermentacion]
+    ├─ EntLote.EStaFamilia == 1  →  SrvEsperaF1  ─┐
+    ├─ EntLote.EStaFamilia == 2  →  SrvEsperaF2  ──┼─→ SrvCargaHorno → SrvHorneado
+    └─ EntLote.EStaFamilia == 3  →  SrvEsperaF3  ─┘
+```
+
+Para configurar el routing en `NodoSalidaFermentacion`:
+1. Clic en el nodo → **Outbound Link Rule**: `By Expression`
+2. En cada conector saliente, asignar **Selection Weight**:
+   - Conector a `SrvEsperaF1`: `EntLote.EStaFamilia == 1`
+   - Conector a `SrvEsperaF2`: `EntLote.EStaFamilia == 2`
+   - Conector a `SrvEsperaF3`: `EntLote.EStaFamilia == 3`
+
+---
+
+### 3.4 — Proceso `ProcAbrirCargaHorno` (dispara la compuerta)
+
+Este proceso escucha `EvtIniciarCorrida` y abre brevemente la compuerta de la familia elegida, dejando pasar todos los lotes que estaban esperando. Luego cierra la compuerta para que los lotes que lleguen después de esta corrida queden retenidos.
+
+**Crear el proceso**:
+1. Ir a **Definitions** → **Processes** → **Create Process**
+2. Nombre: `ProcAbrirCargaHorno`
+3. **Triggering Event**: `EvtIniciarCorrida.Occurred`
+
+**Steps**:
+
+| Step | Tipo | Configuración | Nota |
+|---|---|---|---|
+| 1 | **Assign** | `Model.MStaCapEspera[Model.MStaUltimaFamiliaHorno] = 999` | Abre la compuerta: todos los lotes en espera de la familia elegida fluyen instantáneamente hacia `SrvCargaHorno` |
+| 2 | **Delay** | `0.01` minutos | Pausa mínima para que SIMIO procese el vaciado del buffer antes de cerrar |
+| 3 | **Assign** | `Model.MStaCapEspera[Model.MStaUltimaFamiliaHorno] = 0` | Cierra la compuerta: los lotes que lleguen después de esta corrida quedarán retenidos en `SrvEsperaFx` |
+
+> El delay de `0.01` min no es tiempo real de producción — es la pausa mínima necesaria para que el motor de SIMIO libere todas las entidades acumuladas en el buffer antes de que se ejecute el Assign de cierre. Sin este delay, el Assign de apertura y cierre ocurrirían en el mismo instante de simulación y ningún lote pasaría.
+
+---
+
+### 3.5 — Proceso `ProcHornoCompleto` (libera el cupo al terminar la corrida)
+
+Este proceso se dispara cuando cada lote sale de `SrvHorneado`. Usa `MStaLotesEnHorno` para detectar cuándo fue el ÚLTIMO lote de la corrida, y solo entonces decrementa `MStaHornosEnUso` — evitando que el contador baje varias veces por corrida.
+
+#### Trigger: `SrvHorneado.Entered` (para el contador de subida)
+
+En `SrvHorneado` → **Add-On Process Triggers** → **Entered** → crear proceso inline o `ProcContarEntradaHorno`:
+
+| Step | Tipo | Configuración |
+|---|---|---|
+| 1 | **Assign** | `Model.MStaLotesEnHorno = Model.MStaLotesEnHorno + 1` |
+
+#### Trigger: `SrvHorneado.Exited` (para el contador de bajada y liberación)
+
+En `SrvHorneado` → **Add-On Process Triggers** → **Exited** → crear `ProcHornoCompleto`:
+
+| Step | Tipo | Configuración | Salida |
+|---|---|---|---|
+| 1 | **Assign** | `Model.MStaLotesEnHorno = Model.MStaLotesEnHorno - 1` | → paso 2 |
+| 2 | **Decide** | `Model.MStaLotesEnHorno == 0` | True → paso 3 \| False → EndProcess |
+| 3 | **Assign** | `Model.MStaHornosEnUso = Math.Max(0, Model.MStaHornosEnUso - 1)` | → EndProcess |
+
+> **Por qué no decrementar en cada Exited directamente**: Si hay 8 lotes en la corrida, `SrvHorneado.Exited` se dispara 8 veces. Decrementar `MStaHornosEnUso` en cada disparo lo llevaría a valores negativos y habilitaría nuevas corridas antes de que el horno esté realmente libre. El check `MStaLotesEnHorno == 0` garantiza que el decremento ocurre solo cuando el último lote sale.
+>
+> **`Math.Max(0, ...)`**: Guarda de seguridad por si el contador llegase a 0 inesperadamente antes de que todos los lotes salgan (por ejemplo, por condiciones de carrera entre réplicas).
 
 ---
 
@@ -333,13 +417,15 @@ Trigger: **Exited** de `SrvFermentacion`
 
 ## PARTE 5: Variables de Estado a Declarar (Resumen Final)
 
-Ir a **Definitions → States** y crear todos los siguientes antes de construir los processes:
+Ir a **Definitions → States** y crear **todos** los siguientes antes de construir los processes. El orden importa: los processes referencian estas variables y SIMIO no compilará si no existen.
 
-| Nombre              | Tipo               | Rows | Valor Inicial | Propósito                                                |
-| ------------------- | ------------------ | ---- | ------------- | --------------------------------------------------------- |
-| `MStaColaHorno`   | Real Array         | 3    | 0             | Kg acumulados por familia en cola del horno               |
-| `MStaTimerHorno`  | Real Array         | 3    | 0             | Tiempo (min) en que llegó el primer lote de cada familia |
-| `MStaHornosEnUso` | Discrete (Integer) | —   | 0             | Contador de hornos en ciclo activo                        |
+| Nombre | Tipo | Rows | Valor Inicial | Propósito |
+|---|---|---|---|---|
+| `MStaColaHorno` | Real Array | 3 | 0 | Kg lógicos acumulados por familia esperando horno (contador para política de carga) |
+| `MStaTimerHorno` | Real Array | 3 | 0 | `Run.TimeNow` en que llegó el primer lote de cada familia (para la regla de 15 min) |
+| `MStaHornosEnUso` | Discrete (Integer) | 1 | 0 | Corridas de horno activas. Incrementa al disparar `EvtIniciarCorrida`, decrementa al terminar la corrida |
+| `MStaCapEspera` | Discrete (Integer) Array | 3 | 0 | Capacidad de `SrvEsperaF1/F2/F3`. `0` = bloqueado, `999` = abierto para paso de lotes |
+| `MStaLotesEnHorno` | Discrete (Integer) | 1 | 0 | Lotes actualmente dentro de `SrvHorneado`. Detecta fin de corrida cuando llega a 0 |
 
 ---
 
@@ -372,7 +458,7 @@ Tras ejecutar el modelo:
 | ---------------------- | ---------------------------------------------------------------- | --------------------- |
 | Cola promedio en horno | Results →`SrvCargaHorno` → InputBuffer → Content → Average | < 3 lotes             |
 | Utilización horno     | Results →`SrvHorneado` → ScheduledUtilization                | 70–90%               |
-| Corridas totales horno | Tally Statistic en Step 6c                                       | ~25–35 corridas/día |
+| Corridas totales horno | Tally Statistic en `ProcAbrirCargaHorno` Step 1 | ~25–35 corridas/día |
 
 > **Ref. Workbook6 §2.4.7–2.4.9**: "The InputBuffer Content shows the average number waiting. ScheduledUtilization = tiempo utilizado / tiempo disponible."
 
@@ -402,10 +488,27 @@ ProcSeleccionarFamiliaHorno  (invocado vía Execute desde Step 6)
     ├─ Bloque 1: Override de calidad (familia con espera >=15 min tiene prioridad)
     ├─ Bloque 2: Si no hay emergencia → selección por menor stock / mayor demanda / round-robin / híbrida
     └─ Bloque 3: Reset MStaColaHorno[FamiliaElegida] + MStaTimerHorno[FamiliaElegida]
-                 + MStaHornosEnUso++ + Fire EvtIniciarCorrida
+                 + MStaHornosEnUso++ + MStaUltimaFamiliaHorno = FamiliaElegida
+                 + Fire EvtIniciarCorrida
+
+EvtIniciarCorrida.Occurred
+    ↓
+ProcAbrirCargaHorno
+    ├─ Assign: MStaCapEspera[MStaUltimaFamiliaHorno] = 999   ← abre compuerta
+    ├─ Delay: 0.01 min                                        ← lotes fluyen a SrvCargaHorno
+    └─ Assign: MStaCapEspera[MStaUltimaFamiliaHorno] = 0     ← cierra compuerta
+
+SrvEsperaFx → SrvCargaHorno (5 min carga) → SrvHorneado
+
+SrvHorneado (Entered trigger)
+    ↓
+    Assign: MStaLotesEnHorno = MStaLotesEnHorno + 1
 
 SrvHorneado (Exited trigger)
     ↓
 ProcHornoCompleto
-    └─ MStaHornosEnUso = Math.Max(0, MStaHornosEnUso - 1)
+    ├─ Assign: MStaLotesEnHorno = MStaLotesEnHorno - 1
+    └─ Decide: MStaLotesEnHorno == 0?
+         SÍ → Assign: MStaHornosEnUso = Math.Max(0, MStaHornosEnUso - 1)
+         NO → EndProcess  (aún hay lotes horneando, no liberar)
 ```
