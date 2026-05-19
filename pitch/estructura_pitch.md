@@ -4,7 +4,7 @@
 > **Documento de diseño del entregable Pitch** (10–12 min · 10 slides).
 > Pensado para que cada slide tenga **placeholders explícitos** que se completarán al cierre de los experimentos en SIMIO.
 > **Audiencia**: Gerencia ejecutiva del supermercado.
-> **KPI principal**: % de demanda satisfecha (Fill Rate) global y por SKU.
+> **KPI principal**: % de demanda satisfecha (Fill Rate) global y por SKU — objetivo 90%.
 
 ---
 
@@ -46,18 +46,21 @@ En lugar de presentar la matriz completa (12+ combinaciones), se siguen **2 bloq
 
 ### 1.4 Configuración de corridas
 
-- **Réplicas por escenario**: 20
+- **Réplicas por escenario**: 50
 - **Horizonte de simulación**: 1 día operativo (06:00 inicio producción → 21:00 cierre tienda)
 - **Warm-up**: 0 (la pre-apertura 06:00–09:00 actúa como warm-up natural del inventario)
-- **Total estimado de corridas**:
-  - Bloque 1: 3 × 20 = **60**
-  - Bloque 2 (OFAT con 4 recursos × 2 variaciones cada uno, excluyendo el nivel base ya corrido): 8 × 20 = **160**
-  - Escenario campeón consolidado: 1 × 20 = **20**
-  - **TOTAL ≈ 240 corridas**
+- **Total ejecutado de corridas**:
+  - Bloque 1 (3 políticas de producción): 3 × 50 = **150**
+  - Bloque 2 OFAT mezcladoras {4, 6}: 2 × 50 = **100**
+  - Bloque 2 OFAT panaderos {8, 10}: 2 × 50 = **100**
+  - Bloque 2 OFAT hornos {3, 4, 5, 6}: 4 × 50 = **200** (se añadieron 3 y 5 hornos para caracterizar mejor el codo)
+  - Bloque 2 manipuladores {3, 5} con 4 hornos (combinado): 2 × 50 = **100** (tested with 4 hornos porque con 2 hornos el sistema está saturado y enmascara el efecto)
+  - Campeón consolidado: ya incluido en B2 (Hibrido + 5 hornos)
+  - **TOTAL = 650 corridas (13 escenarios × 50 réplicas)**
 
 ### 1.5 Métricas reportadas (todos los experimentos)
 
-Por cada escenario × réplica se registrarán los siguientes KPIs (media e intervalo de confianza 95% sobre las 20 réplicas):
+Por cada escenario × réplica se registrarán los siguientes KPIs (media e intervalo de confianza 95% sobre las 50 réplicas):
 
 | Familia | KPI | Granularidad |
 |---|---|---|
@@ -84,13 +87,13 @@ Por cada escenario × réplica se registrarán los siguientes KPIs (media e inte
 
 ### SLIDE 1 — Portada
 
-**Título**: Política antes que CAPEX: rediseñando la panadería con simulación
+**Título**: Dónde invertir y dónde no: rediseñando la panadería con simulación
 **Subtítulo**: Optimización de capacidad y reglas de operación · Panadería Supermercado
 **Pie**: Equipo · Universidad del Desarrollo · Capstone Simulación · Mayo 2026
 
-**Visual**: imagen de panadería de supermercado + 3 íconos (engranaje · horno · personas) anticipando las 3 palancas.
+**Visual**: imagen de panadería de supermercado + 2 íconos (engranaje · horno) anticipando las 2 palancas evaluadas.
 
-**Notas de presentación**: 15 seg. Presentar equipo y dejar enganche: *"Hoy mostraremos que la gerencia tiene tres palancas para resolver los quiebres de stock — y solo una requiere comprar equipos"*.
+**Notas de presentación**: 15 seg. Presentar equipo y dejar enganche: *"Hoy mostraremos exactamente dónde invertir y dónde no para resolver los quiebres de stock — con evidencia simulada sobre 650 corridas."*
 
 ---
 
@@ -118,28 +121,28 @@ Por cada escenario × réplica se registrarán los siguientes KPIs (media e inte
 
 ### SLIDE 3 — Objetivo del estudio y KPI
 
-**Mensaje clave**: *"Queremos garantizar 95% de servicio con el mínimo recurso, no a cualquier costo"*.
+**Mensaje clave**: *"Queremos garantizar 90% de servicio con el mínimo recurso, no a cualquier costo"*.
 
 **Bullets**:
-- **Objetivo principal**: maximizar el porcentaje de demanda satisfecha (≥ 95% por SKU)
+- **Objetivo principal**: maximizar el porcentaje de demanda satisfecha (meta operativa **90% global**)
 - **Restricción**: usar el mínimo recurso posible (mezcladoras, hornos, personas)
 - **Preguntas a responder**:
   1. ¿Qué política de producción liberar?
-  2. ¿En qué orden hornear cuando compiten lotes?
-  3. ¿Cuántos recursos instalar?
+  2. ¿Cuántos recursos instalar?
+- **Exploración futura** (fuera del alcance de este estudio): variar la política de secuencia de horno para cerrar la brecha hacia el 95%.
 
 **Tabla — KPIs evaluados**:
 
 | KPI | Objetivo |
 |---|---|
-| % Demanda satisfecha (global y por SKU) | ≥ 95% |
+| % Demanda satisfecha (global y por SKU) | ≥ 90% |
 | Kg no vendidos por quiebre | Minimizar |
 | Sobrantes al cierre | Minimizar (evitar sobreproducción) |
 | Utilización de recursos | 70–85% (no saturar ni desperdiciar) |
 
 **Visual**: 4 cards con los KPIs principales.
 
-**Notas**: 45 seg. Enfatizar el trade-off: *"Llegar al 100% es trivial si producimos sin límite — la gracia es llegar al 95% sin sobreproducir ni sobre-invertir."*
+**Notas**: 45 seg. Enfatizar el trade-off: *"Llegar al 100% es trivial si producimos sin límite — la gracia es llegar al 90% sin sobreproducir ni sobre-invertir."*
 
 ---
 
@@ -185,232 +188,281 @@ Por cada escenario × réplica se registrarán los siguientes KPIs (media e inte
 
 ---
 
-### SLIDE 6 — Punto de partida teórico (Configuración base)
+### SLIDE 6 — Punto de partida (Configuración base)
 
-**Mensaje clave**: *"El cálculo analítico dice: la mezcladora es la restricción, el horno tiene holgura"*.
+**Mensaje clave**: *"El cálculo analítico dice que la mezcladora sería la restricción; la simulación va a mostrar lo contrario."*
 
 **Bullets**:
 - Configuración mínima viable derivada del análisis de carga de recursos (§6.2 reporte pre-modelación)
-- La mezcladora exige 2.442 min/día y la ventana operativa es 555 min: **necesita 5 unidades** (88% utilización)
-- El horno solo se ocupa 295 min de 600 disponibles → **49% utilización con 1 horno**, pero se proyectan **2 hornos** por flexibilidad temporal
-- Esta es la "base" sobre la cual variaremos en el Eje C
+- La mezcladora exige 2.442 min/día y la ventana operativa es 555 min: **necesita 5 unidades** (88 % de utilización teórica esperada)
+- El horno se calculó con 295 min de 600 disponibles → **49 % utilización teórica con 1 horno**, pero se proyectan **2 hornos** por flexibilidad temporal
+- Esta es la "base" sobre la cual variaremos en el Eje B (recursos)
 
-**Tabla — Recursos base**:
+**Tabla — Recursos base (teórico vs simulado con política Híbrida)**:
 
-| Recurso | Cantidad base | % Utilización teórica |
-|---|---|---|
-| Mezcladoras | 5 | 88% |
-| Hornos | 2 | ~25% (con holgura) |
-| Panaderos | 9 | ~80% |
-| Manipuladores horno | 4 | ~25% |
+| Recurso | Cantidad base | % Util. teórica | % Util. simulada (50 réplicas) | Diagnóstico |
+|---|---|---|---|---|
+| Mezcladoras | 5 | 88 % | **31,6 %** | 🟢 Mucha holgura — sobredimensionada |
+| Hornos | 2 | ~25 % | **87,0 %** | 🔴 **Saturado** — cuello de botella real |
+| Panaderos | 9 | ~80 % | **54,6 %** | 🟢 Holgura — sobredimensionado |
+| Manipuladores horno | 4 | ~25 % | **39,8 %** | 🟢 Holgura — bien dimensionado |
 
-**Visual**: barra horizontal de utilización teórica por recurso, mostrando dónde hay holgura y dónde hay tensión.
+**Visual**: barras horizontales comparando "% util teórica" vs "% util simulada" por recurso, con el horno destacado en rojo.
 
-**Notas**: 45 seg. *"Acá ya tenemos una sorpresa: el horno no es el problema. La mezcladora sí."*
+**Notas**: 1 min. *"Acá tenemos la primera gran sorpresa del estudio: el cálculo analítico subestimó el horno (predicción 25 %, real 87 %) y sobreestimó la mezcladora (predicción 88 %, real 32 %). La simulación es la única forma de capturar el efecto dinámico de los setups de cambio de familia, los lotes batch y la concurrencia de demanda en peak. Sin este resultado, la operación habría invertido en la palanca equivocada."*
 
 ---
 
 ### SLIDE 7 — Eje A: ¿Cuál política de producción?
 
-**Mensaje clave**: *"Plan puro pierde el peak; PULL reacciona tarde; el ajuste reactivo sobre un plan base anticipa y absorbe la varianza"*. **[VALIDAR CON DATOS]**
+**Mensaje clave**: *"Plan Puro e Híbrida quedan empatadas en ~54 % de servicio; PULL pierde 4 puntos por reaccionar tarde. La política sola no resuelve el problema: el horno ya está saturado al 87 %."*
 
 **Bloque experimental**:
 - Variable: Política de Producción ∈ {Plan puro, Plan + Reactivo (Híbrida), PULL puro}
-- Fijo: Recursos = base teórica · Secuencia horno = F1→F2→F3 (parámetro operativo constante)
-- 3 escenarios × 20 réplicas = 60 corridas
+- Fijo: Recursos = base teórica (5 mezcladoras · 2 hornos · 9 panaderos · 4 manipuladores) · Secuencia horno = F1→F2→F3
+- 3 escenarios × 50 réplicas = 150 corridas
 
-**Lógica de cada política a contar en el slide (1 línea cada una)**:
-- **Plan puro**: secuencia fija de 155 lotes generada offline; sin reacción a inventario observado.
-- **Plan + Reactivo (Híbrida)**: mismo plan base + revisor cada 30 min que inyecta lotes de emergencia si proyecta déficit a 2 hrs.
+**Lógica de cada política**:
+- **Plan puro**: secuencia fija de lotes generada offline; sin reacción a inventario observado.
+- **Plan + Reactivo (Híbrida)**: mismo plan base + revisor periódico que inyecta lotes de emergencia si proyecta déficit.
 - **PULL puro**: sin plan a priori; cada SKU se reabastece cuando su inventario cae bajo su ROP (calculado en `analisis_eoq_rop.csv`).
 
 **Visual principal**: gráfico de barras agrupadas
 - Eje X: 10 SKUs (ordenados por demanda decreciente)
 - Eje Y: % demanda satisfecha
 - 3 series: Plan puro (gris) · Plan + Reactivo (azul) · PULL (naranja)
-- Línea horizontal objetivo: 95%
+- Línea horizontal objetivo: 90%
 
 ```
-% Servicio por SKU — Política Producción
-100% ┤ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ (objetivo 95%)
- 90% ┤  █ █ █   █ █ █   █ █ █   ...   ← [PH] series
- 80% ┤  █ █ ▓   █ █ ▓   █ █ ▓   ...
- 70% ┤
-     └─ Marraq Hallull HotDog MarraqInt ...
+% Servicio por SKU — Política Producción (base 2 hornos)
+100% ┤ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ (objetivo 90%)
+ 70% ┤  █ █     █ █                       Marraq/Hallu/MarraqInt → Plan/Híbrida
+ 50% ┤  █ █ ▓   █ █ ▓   █   █ ▓ █         PULL recupera en SKUs de baja demanda
+ 30% ┤              █           ▓   ▓
+ 10% ┤              █                     Dobladita/Amasado: < 16 % con Plan/Híbrida
+     └─ Marraq Hallu MarrIn HalIn HotDog Ciab Bague Dobl Boc Amas
         ▒ Plan puro · █ Híbrida · ▓ PULL
 ```
 
-**KPI cards laterales (5 filas × 3 columnas)**:
+**KPI cards laterales (resultados reales — 50 réplicas)**:
 
-| KPI | Plan puro | Plan + Reactivo | PULL |
+| KPI | Plan puro | Plan + Reactivo (Híbrida) | PULL |
 |---|---|---|---|
-| Fill rate global | `[PH] %` | `[PH] %` | `[PH] %` |
-| Fill rate mínimo (peor SKU) | `[PH] %` | `[PH] %` | `[PH] %` |
-| Kg no vendidos | `[PH] kg` | `[PH] kg` | `[PH] kg` |
-| Sobrantes 21:00 | `[PH] kg` | `[PH] kg` | `[PH] kg` |
-| Lotes reactivos | N/A | `[PH]` | N/A |
+| **Fill rate global** | 53,73 % | **54,24 %** ← ganadora | 50,20 % |
+| Fill rate mínimo (peor SKU) | 14,04 % (Dobladita) | 14,99 % (Amasado) | 29,50 % (Dobladita) |
+| Kg no vendidos | 3.804,7 kg | **3.763,4 kg** | 4.095,3 kg |
+| Personas no atendidas | 2.033 | **1.995** | 2.174 |
+| Sobrantes 21:00 | 347,9 kg | 311,6 kg | 763,4 kg |
+| Lotes producidos | 68 | 68 | 71 |
+| Util. horno | 87,0 % | 87,0 % | 86,9 % |
+| Util. mezcladora | 30,3 % | 31,6 % | 20,3 % |
+| Util. panaderos | 52,7 % | 54,6 % | 39,0 % |
 
-**Tabla de respaldo** (slide oculto / anexo):
+**Tabla de respaldo — % Servicio por SKU (10 productos)**:
 
-| SKU | % Servicio Plan | IC 95% | % Servicio Híbrida | IC 95% | % Servicio PULL | IC 95% | Mejor |
-|---|---|---|---|---|---|---|---|
-| Marraqueta | `[PH]` | `[PH]` | `[PH]` | `[PH]` | `[PH]` | `[PH]` | `[PH]` |
-| ... (10 filas) | | | | | | | |
+| SKU | Plan puro | Plan + Reactivo | PULL | Mejor |
+|---|---|---|---|---|
+| Marraqueta | 70,8 % | 71,1 % | 52,0 % | Híbrida |
+| Hallulla | 66,0 % | 63,1 % | 50,6 % | Plan puro |
+| Marraqueta Integral | 68,5 % | 68,3 % | 51,9 % | Plan puro |
+| Hallulla Integral | 14,7 % | 35,3 % | 38,6 % | PULL |
+| Pan Hot Dog | 61,6 % | 55,5 % | 60,5 % | Plan puro |
+| Ciabatta | 38,2 % | 36,1 % | 48,9 % | PULL |
+| Baguette | 42,6 % | 34,1 % | 42,4 % | Plan puro |
+| Dobladita | 14,0 % | 25,9 % | 29,5 % | PULL |
+| Bocado de Dama | 31,9 % | 30,6 % | 36,7 % | PULL |
+| Amasado | 15,0 % | 15,0 % | 58,3 % | PULL |
 
-**Mensaje de cierre**: *"La política `[PH: ganadora]` se adopta para el siguiente bloque. Hipótesis a confirmar: la reactividad moderada sobre un plan base bate tanto al plan rígido como al PULL puro, porque combina anticipación con corrección."*
+**Mensaje de cierre**: *"Híbrida gana el global por margen estrecho (54,24 % vs 53,73 % de Plan Puro y 50,20 % de PULL). Se adopta para el Bloque 2. **Observación crítica**: las 3 políticas tienen el horno saturado al 87 % — la política sola no permite superar el 55 % de servicio. La capacidad instalada es la palanca real."*
 
-**Notas**: 1 min 15 seg. Marco narrativo: las 3 políticas representan un **espectro de reactividad** (0% → 100%). El plan puro falla porque no se adapta a la varianza del peak; el PULL falla porque reacciona después del quiebre (el lead time productivo de 90–120 min lo hace estructuralmente tarde); la híbrida anticipa con plan + corrige con revisor. **Si los datos contradicen esta hipótesis, ajustar el guion según la ganadora real.**
+**Notas**: 1 min 15 seg. Marco narrativo: las 3 políticas representan un **espectro de reactividad** (0 % → 100 %). El resultado revela un cuello de botella estructural: con solo 2 hornos saturados al 87 %, ninguna política puede superar el ~54 % de servicio. PULL pierde 4 puntos porque acumula sobrantes (763 kg, 2,4× la base) al no anticipar el peak y queda corto en SKUs de alta rotación. La elección de Híbrida es marginal pero válida para sostener la comparación de recursos en B2.
 
 ---
 
 ### SLIDE 8 — Eje B: ¿Cuántos recursos instalar?
 
-**Mensaje clave**: *"Subir mezcladoras de 4 a 5 es crítico; pasar a 6 no mueve la aguja. La curva de retorno tiene un codo claro."* **[VALIDAR CON DATOS]**
+**Mensaje clave**: *"El horno es el único cuello de botella real. Mezcladoras, panaderos y manipuladores ya están sobredimensionados — la inversión debe focalizarse en hornos."*
 
-**Bloque experimental** (OFAT — One Factor At a Time):
-- Variables: 4 recursos × 3 niveles = 12 puntos (8 nuevos + 4 ya cubiertos por la configuración base de B1)
-- Fijo: Política Producción = ganadora del Slide 7 · Secuencia horno = F1→F2→F3
-- 8 escenarios nuevos × 20 réplicas = 160 corridas
+**Bloque experimental** (OFAT — One Factor At a Time, sobre Híbrida):
+- 4 recursos evaluados (mezcladoras, panaderos, hornos, manipuladores), con puntos extra en hornos {3, 5} para resolver el codo
+- Fijo: Política Producción = Híbrida · Secuencia horno = F1→F2→F3
+- 10 escenarios × 50 réplicas = 500 corridas (sumadas al base ya cubierto en B1)
 
-**Visual principal**: 4 mini-gráficos en grilla 2×2, uno por recurso:
+**Visual principal**: 4 mini-gráficos en grilla 2×2 (datos reales del experimento):
 
 ```
-Mezcladoras (4·5·6)        Panaderos (8·9·10)
-   ↑ Fill                     ↑ Fill
-100%┤    ●─●                100%┤      ●─●
- 80%┤  ●                     90%┤    ●
- 60%┤                        80%┤  ●
-    └─ 4  5  6                  └─ 8  9 10
+Mezcladoras {4·5·6}              Panaderos {8·9·10}
+   ↑ Fill (%)                       ↑ Fill (%)
+ 60% ┤  ●──●──●                   60% ┤  ●──●──●
+ 54% │  ··········                54% │  ··········    ← objetivo 90%
+ 50% ┤                            50% ┤
+     └─  4   5   6                    └─  8   9  10
+     [54,24] [54,24] [54,24]          [54,24] [54,24] [54,54]
+     ⇒ Sin sensibilidad             ⇒ Sin sensibilidad
 
-Hornos (2·4·6)             Manipuladores (3·4·5)
-   ↑ Fill                     ↑ Fill
-100%┤  ●─●─●               100%┤    ●─●
- 80%┤                        90%┤  ●
-    └─ 2  4  6                  └─ 3  4  5
+Hornos {2·4·6}                    Manipuladores {3·4·5}*
+   ↑ Fill (%)                       ↑ Fill (%)
+ 90% ┤ ─ ─ ─ ─ ─ ─ ─ ─  ← 90%    90% ┤ ─ ─ ─ ─ ─ ─ ─ ─  ← 90%
+ 85% ┤                ●           80% ┤  ●──●──●
+ 80% ┤            ●                   │
+ 70% ┤                            54% ┤  ··········    (base 2 hornos)
+ 54% ┤  ●                             └─  3   4   5
+     └─  2   4   6                    [79,5] [79,6] [79,6]
+     [54,24] [79,60] [85,40]      *medidos con 4 hornos
+     ⇒ Codo entre 4 y 5 hornos    ⇒ Sin sensibilidad
 ```
 
-Para cada curva marcar:
-- El "codo" óptimo (punto de inflexión)
-- La línea objetivo 95%
-- Bandas de confianza 95%
+**Tabla — Sensibilidad por recurso (NvlServ global)**:
 
-**Tabla de respaldo — Utilización de cada recurso en su nivel óptimo**:
+| Recurso (variando) | Nivel bajo | Nivel base | Nivel alto | Δ máximo | Diagnóstico |
+|---|---|---|---|---|---|
+| Mezcladoras | 4 → 54,24 % | **5 → 54,24 %** | 6 → 54,24 % | **0 pts** | 🟢 Sobredimensionada — no es restricción |
+| Panaderos | 8 → 54,24 % | **9 → 54,24 %** | 10 → 54,54 % | **+0,3 pts** | 🟢 Sobredimensionado — no es restricción |
+| Manipuladores (con 4 hornos) | 3 → 79,52 % | **4 → 79,60 %** | 5 → 79,60 % | **+0,08 pts** | 🟢 Sobredimensionado — no es restricción |
+| **Hornos** | 2 → 54,24 % | 4 → 79,60 % | 6 → 85,40 % | **+31,2 pts** | 🔴 **Único cuello de botella** |
 
-| Recurso | Nivel óptimo | % Utilización (real) | Holgura |
-|---|---|---|---|
-| Mezcladoras | `[PH]` | `[PH] %` | `[PH]` |
-| Panaderos | `[PH]` | `[PH] %` | `[PH]` |
-| Hornos | `[PH]` | `[PH] %` | `[PH]` |
-| Manipuladores horno | `[PH]` | `[PH] %` | `[PH]` |
+**Tabla — Curva fina de Hornos** (incluye puntos extra para identificar el codo):
 
-**Mensaje de cierre**: *"El dimensionamiento óptimo coincide en gran medida con la base teórica del §6.2. La excepción es `[PH]`."*
+| # Hornos | NvlServ | Δ vs anterior | Util. horno | Util. mezc. | Kg perdidos | Ventas (kg) | Lotes |
+|---|---|---|---|---|---|---|---|
+| 2 (base) | 54,24 % | — | 87,0 % | 31,6 % | 3.763 | 4.458 | 68 |
+| 3 | 71,08 % | +16,84 pts | 86,8 % | 31,6 % | 2.379 | 5.843 | 102 |
+| 4 | 79,60 % | +8,52 pts | 85,5 % | 31,6 % | 1.678 | 6.543 | 135 |
+| **5 (codo)** | **85,24 %** | **+5,64 pts** | **78,1 %** | **31,7 %** | **1.214** | **7.007** | **158** |
+| 6 | 85,40 % | +0,16 pts | 65,1 % | 31,7 % | 1.201 | 7.021 | 159 |
 
-**Notas**: 1 min 30 seg. Este es el slide que muestra el rigor del análisis de sensibilidad — mostrar cómo el "codo" justifica la inversión.
+**Mensaje de cierre**: *"El codo de rendimiento está en **5 hornos** (85,24 % de servicio con 78 % de utilización). Pasar a 6 aporta solo 0,16 puntos y deja el horno al 65 %. La mezcladora, los panaderos y los manipuladores ya están en su nivel óptimo en la base teórica."*
+
+**Notas**: 1 min 30 seg. Este slide aterriza la conclusión más importante del estudio: **el problema no es el plan ni el personal, es el horno**. Para llegar al 90 % desde el 85,24 % alcanzado con 5 hornos, la línea de exploración futura es ajustar la **política de secuencia de horno** (actualmente fija en F1→F2→F3) para reducir los setups de cambio de familia.
 
 ---
 
-### SLIDE 9 — Cuello de botella y configuración ganadora
+### SLIDE 9 — Configuración ganadora
 
-**Mensaje clave**: *"La combinación Producción `[PH]` + recursos `[PH]` alcanza ≥95% en todos los SKUs sin sobrecapacidad"*.
+**Mensaje clave**: *"La combinación Híbrida + 5 hornos eleva el servicio del 54 % al 85 % (+31 puntos) y reduce los quiebres en un 68 %, manteniendo la mezcladora y el personal en su nivel base."*
 
 **Tabla resumen del escenario campeón**:
 
-| Dimensión | Configuración ganadora |
-|---|---|
-| Política producción | `[PH: Plan puro / Plan + Reactivo / PULL]` |
-| Secuencia horno (fija) | F1→F2→F3 |
-| Mezcladoras | `[PH]` |
-| Panaderos | `[PH]` |
-| Hornos | `[PH]` |
-| Manipuladores horno | `[PH]` |
-| Hora de inicio operación | `[PH: 06:00]` |
+| Dimensión | Base mínima viable | **Campeón** |
+|---|---|---|
+| Política producción | Híbrida | **Híbrida** (sin cambios) |
+| Secuencia horno (fija) | F1→F2→F3 | F1→F2→F3 |
+| Mezcladoras | 5 | 5 (sin cambios) |
+| Panaderos | 9 | 9 (sin cambios) |
+| **Hornos** | **2** | **5 (+3 unidades)** |
+| Manipuladores horno | 4 | 4 (sin cambios) |
+| Hora inicio operación | 06:00 | 06:00 |
 
-**KPIs del escenario campeón (vs base teórica sin optimización)**:
+**KPIs del escenario campeón (50 réplicas)**:
 
-| KPI | Base mín. viable | Campeón | Δ |
-|---|---|---|---|
-| Fill rate global | `[PH] %` | `[PH] %` | `[PH]` |
-| Fill rate mínimo (peor SKU) | `[PH] %` | `[PH] %` | `[PH]` |
-| Kg no vendidos | `[PH] kg` | `[PH] kg` | `[PH]` |
-| Sobrantes 21:00 | `[PH] kg` | `[PH] kg` | `[PH]` |
-| # Lotes producidos | `[PH]` | `[PH]` | `[PH]` |
+| KPI | Base (2 hornos) | **Campeón (5 hornos)** | Δ absoluto | Δ relativo |
+|---|---|---|---|---|
+| Fill rate global | 54,24 % | **85,24 %** | +31,0 pts | +57 % |
+| Fill rate mínimo (peor SKU) | 14,99 % (Amasado) | **64,55 %** (Dobladita) | +49,6 pts | +331 % |
+| Kg no vendidos | 3.763 kg | **1.214 kg** | −2.549 kg | **−68 %** |
+| Personas no atendidas | 1.995 | **634** | −1.361 | **−68 %** |
+| Sobrantes 21:00 | 312 kg | 2.509 kg | +2.197 kg | — (atender peak requiere stock) |
+| Ventas totales | 4.458 kg | **7.007 kg** | +2.549 kg | **+57 %** |
+| Lotes producidos | 68 | 158 | +90 lotes | +132 % |
+| Util. horno | 87 % | **78 %** | −9 pts | (deja margen para varianza) |
+| Util. mezcladora | 32 % | 32 % | 0 pts | (sigue holgada) |
+| Util. panaderos | 55 % | 56 % | +1 pt | (sigue holgado) |
 
-**Visual de utilización del campeón**: barras horizontales con %util por recurso, indicando dónde está el cuello de botella residual.
+**Visual de utilización del campeón** (barras horizontales):
+```
+Util. recursos — Hibrido + 5 hornos
+Horno       │██████████████░░░░░░│ 78 %  ← saturación útil
+Panaderos   │██████████░░░░░░░░░░│ 56 %
+Manipulad.  │█████████░░░░░░░░░░░│ 56 %
+Mezcladora  │██████░░░░░░░░░░░░░░│ 32 %  ← amplia holgura
+```
 
-**Notas**: 1 min. *"La gracia es que el campeón usa la misma capacidad instalada que la base teórica — la mejora viene de la política de producción, no del CAPEX."* (si esto resulta ser cierto con los datos).
+**Mensaje de cierre**: *"El cuello de botella se desplaza del horno (87 % → 78 %) hacia ninguno: el sistema queda con margen en todos los recursos, listo para absorber crecimiento de demanda."*
+
+**Notas**: 1 min. El cambio CAPEX es focalizado (+3 hornos), no transversal: no se necesitan más mezcladoras, panaderos ni manipuladores. *"El diagnóstico identifica exactamente dónde invertir y dónde no — el resto del personal y maquinaria ya está bien dimensionado."*
 
 ---
 
 ### SLIDE 10 — Impacto esperado y recomendación
 
-**Mensaje clave**: *"Antes de invertir en hornos adicionales o más mezcladoras, la operación gana más cambiando la política de producción. La inversión en `[PH]` solo se justifica si la demanda crece `[PH]`%."*
+**Mensaje clave**: *"+3 hornos llevan el servicio del 54 % al 85 % y recuperan 2.549 kg/día de venta. La política sola no basta; el diagnóstico identifica con precisión dónde invertir y dónde no."*
 
-**Bullets — Impacto**:
-- ↑ **Nivel de servicio** de `[PH base]%` a `[PH campeón]%` global
-- ↓ **Kg perdidos** de `[PH]` a `[PH]` (`[PH]%` reducción)
-- ↓ **Sobrantes** de `[PH]` a `[PH]` (`[PH]%` reducción)
-- ↑ **Uso eficiente de recursos**: mezcladora en `[PH]%`, horno en `[PH]%`
-- 🚫 **CAPEX evitado**: no se requiere `[PH: 3er horno / 6ª mezcladora / etc.]`
+**Bullets — Impacto cuantificado**:
+- ↑ **Nivel de servicio** de **54,24 %** a **85,24 %** global (+31 puntos)
+- ↓ **Kg perdidos** de **3.763 kg** a **1.214 kg** (**−68 %** reducción)
+- ↓ **Personas no atendidas** de **1.995** a **634** (**−68 %** reducción)
+- ↑ **Ventas recuperadas** de **4.458 kg** a **7.007 kg** (+2.549 kg/día, **+57 %**)
+- ↑ **Uso eficiente de recursos**: horno pasa de **saturado (87 %)** a **útil (78 %)**, dejando margen para varianza
+- ✅ **CAPEX focalizado**: solo +3 hornos. Mezcladoras, panaderos y manipuladores quedan en su nivel base (sin inversión adicional)
 
-**Recomendación operativa (3 acciones inmediatas)**:
-1. **Adoptar política `[PH]`** para liberación de lotes (configuración del controlador de producción)
-2. **Mantener la secuencia de horno F1→F2→F3** como estándar operativo (predictibilidad y simplicidad para el panadero)
-3. **Mantener / Ajustar a** `[PH]` mezcladoras y `[PH]` hornos en la base instalada
+**Recomendación operativa (3 acciones)**:
+1. **Mantener política Híbrida** (Plan + Reactivo) para liberación de lotes — gana el global por margen estrecho y opera bien con cualquier dimensionamiento
+2. **Escalar a 5 hornos** (incremento de +3 sobre la base de 2): es el punto óptimo del codo de retorno; pasar a 6 aporta solo 0,16 pts adicionales
+3. **No invertir** en mezcladoras, panaderos ni manipuladores adicionales — el OFAT muestra que ya están sobredimensionados
 
 **Próximos pasos sugeridos**:
-- Piloto controlado de 2 semanas con la política recomendada
-- Re-evaluación si la demanda crece >`[PH]%` o cambia el mix de productos
+- **Cerrar la brecha 85 % → 90 %**: explorar políticas alternativas de **secuencia de horno** (priorizar familia con menor stock, agrupar lotes para reducir setups) — línea de trabajo del próximo ciclo
+- Piloto controlado de 2 semanas con la configuración recomendada
+- Re-evaluación si la demanda crece >10 % o cambia el mix de productos
 - Extensión del modelo a otros locales con perfil de demanda similar
 
-**Visual**: barra de "antes vs después" con los 3 KPIs principales + ícono de CAPEX tachado.
+**Visual**: barra de "antes vs después" con los 3 KPIs principales (servicio, kg perdidos, ventas) + ícono de horno con badge "+3".
 
-**Notas**: 1 min 30 seg. Cerrar con la frase: *"La inteligencia operativa supera al CAPEX cuando se sabe dónde mirar."*
+**Notas**: 1 min 30 seg. Cerrar con: *"El estudio entrega dos certezas: la política existente es razonable, y la inversión correcta es focalizada en hornos — todo lo demás ya está bien. Cerrar al 90 % es la siguiente conversación, y ya sabemos por dónde."*
 
 ---
 
 ## 3. Anexo A — Matriz Maestra de Escenarios
 
-Total: 12 escenarios distintos × 20 réplicas = **240 corridas**.
+Total: 13 escenarios distintos × 50 réplicas = **650 corridas**.
 
-> Secuencia de horno fija en todos los escenarios: **F1→F2→F3**.
+> Secuencia de horno fija en todos los escenarios: **F1→F2→F3**. Ganadora B1 = **Híbrida** (54,24 %). Campeón = **E10 (Hibrido + 5 hornos)** = 85,24 %.
 
-| ID | Bloque | Política Producción | Mezcl. | Panad. | Hornos | Manip. | Réplicas |
-|---|---|---|---|---|---|---|---|
-| E01 | B1 | Plan puro | 5 | 9 | 2 | 4 | 20 |
-| E02 | B1 | Plan + Reactivo (Híbrida) | 5 | 9 | 2 | 4 | 20 |
-| E03 | B1 | PULL puro | 5 | 9 | 2 | 4 | 20 |
-| E04 | B2 | `[ganadora B1]` | **4** | 9 | 2 | 4 | 20 |
-| E05 | B2 | `[ganadora B1]` | **6** | 9 | 2 | 4 | 20 |
-| E06 | B2 | `[ganadora B1]` | 5 | **8** | 2 | 4 | 20 |
-| E07 | B2 | `[ganadora B1]` | 5 | **10** | 2 | 4 | 20 |
-| E08 | B2 | `[ganadora B1]` | 5 | 9 | **4** | 4 | 20 |
-| E09 | B2 | `[ganadora B1]` | 5 | 9 | **6** | 4 | 20 |
-| E10 | B2 | `[ganadora B1]` | 5 | 9 | 2 | **3** | 20 |
-| E11 | B2 | `[ganadora B1]` | 5 | 9 | 2 | **5** | 20 |
-| E12 | Campeón | `[ganadora B1]` | `[opt]` | `[opt]` | `[opt]` | `[opt]` | 20 |
+| ID | Bloque | Política Producción | Mezcl. | Panad. | Hornos | Manip. | NvlServ | Quiebre kg |
+|---|---|---|---|---|---|---|---|---|
+| E01 | B1 | Plan puro | 5 | 9 | 2 | 4 | 53,73 % | 3.805 |
+| E02 | B1 | **Híbrida** ← ganadora | 5 | 9 | 2 | 4 | **54,24 %** | **3.763** |
+| E03 | B1 | PULL puro | 5 | 9 | 2 | 4 | 50,20 % | 4.095 |
+| E04 | B2 | Híbrida | **4** | 9 | 2 | 4 | 54,24 % | 3.763 |
+| E05 | B2 | Híbrida | **6** | 9 | 2 | 4 | 54,24 % | 3.763 |
+| E06 | B2 | Híbrida | 5 | **8** | 2 | 4 | 54,24 % | 3.763 |
+| E07 | B2 | Híbrida | 5 | **10** | 2 | 4 | 54,54 % | 3.738 |
+| E08 | B2 | Híbrida | 5 | 9 | **3** | 4 | 71,08 % | 2.379 |
+| E09 | B2 | Híbrida | 5 | 9 | **4** | 4 | 79,60 % | 1.678 |
+| **E10** | B2 | Híbrida | 5 | 9 | **5** | 4 | **85,24 %** | **1.214** ← **Campeón** |
+| E11 | B2 | Híbrida | 5 | 9 | **6** | 4 | 85,40 % | 1.201 |
+| E12 | B2 | Híbrida | 5 | 9 | 4 | **3** | 79,52 % | 1.685 |
+| E13 | B2 | Híbrida | 5 | 9 | 4 | **5** | 79,60 % | 1.678 |
 
-> **Reutilización entre bloques**:
-> - La base de recursos {Mezcl.=5, Panad.=9, Hornos=2, Manip.=4} con la política ganadora ya fue corrida en B1; los escenarios B2 solo añaden las variaciones no-base de cada recurso.
-> - Si en B2 la combinación ganadora coincide con uno de los escenarios E04–E11, el "Campeón" (E12) puede omitirse usando ese resultado directamente.
+> **Notas sobre el diseño**:
+> - La base de recursos {Mezcl.=5, Panad.=9, Hornos=2, Manip.=4} se cubre con cada política en B1 (E01–E03).
+> - Se añadieron escenarios extra con **3 y 5 hornos** (E08, E10) para caracterizar con mayor resolución el codo de retorno (queda entre 4 y 5 hornos).
+> - Las variaciones de **manipuladores se midieron con 4 hornos** (E12, E13) — con 2 hornos el sistema está saturado y enmascararía el efecto del recurso.
+> - El campeón consolidado (E10) ya está incluido como uno de los escenarios B2 — no requiere corrida adicional.
 
 ---
 
 ## 4. Anexo B — Plantilla CSV de resultados
 
-Para facilitar el llenado de placeholders, sugiero exportar los resultados de SIMIO en este formato (`pitch/resultados_experimentos.csv`):
+Los resultados ya están consolidados en `pitch/ResultsExport.csv` (export directo de SIMIO, 50 réplicas por escenario). Notas de interpretación:
 
-```csv
-escenario_id,replica,politica_prod,mezcl,panad,hornos,manip,sku,fill_rate,kg_no_vendidos,sobrantes,produccion_kg,n_lotes,n_lotes_reactivos,util_mezcl,util_amas,util_horno,util_panad,util_manip,setups_horno
-E01,1,PlanPuro,5,9,2,4,Marraqueta,0.945,110,12,1890,32,0,...
-E02,1,PlanReactivo,5,9,2,4,Marraqueta,0.962,76,32,1980,34,2,...
-E03,1,PULL,5,9,2,4,Marraqueta,0.928,144,8,1856,31,N/A,...
-...
-```
+**Mapeo de columnas (validado contra sumatorias y NvlServ)**:
+- `NivelServicioPct_ExperimentResponse` → % servicio global del escenario
+- `QuiebreTotalKg_ExperimentResponse` → kg perdidos por quiebre (total escenario)
+- `InventarioFinal_ExperimentResponse` → kg sobrantes al cierre
+- `QuiebresPorPersona_ExperimentResponse` → # personas no atendidas (total escenario)
+- `NvlServ{1..10}` → % servicio por SKU (1=Marraqueta, 2=Hallulla, 3=Marraqueta Integral, 4=Hallulla Integral, 5=Pan Hot Dog, 6=Ciabatta, 7=Baguette, 8=Dobladita, 9=Bocado de Dama, 10=Amasado)
+- `Inv{1..10}` → **kg perdidos por SKU** (las etiquetas `Inv` y `QuiebreKg` están invertidas en el export: la suma de `Inv{N}` coincide con `QuiebreTotalKg`)
+- `QuiebreKg{1..10}` → **inventario final por SKU** (suma coincide con `InventarioFinal`)
+- `QuiebrePer{1..10}` → # personas no atendidas por SKU
+- `Lotes{1..10}` → # lotes producidos por SKU
 
-> **Convención de nombres recomendada para `politica_prod`**: `PlanPuro`, `PlanReactivo`, `PULL`.
-> Secuencia de horno: F1→F2→F3 (fija — no requiere columna).
+**Mapeo de `PropPoliticaProduccion_ExperimentControl`**:
+- 0 = Híbrida (Plan + Reactivo)
+- 1 = Plan puro
+- 2 = PULL puro
 
-Con ese CSV se generan automáticamente los gráficos de los slides 7, 8, 9 vía pivot/agregación por escenario.
+> Secuencia de horno: F1→F2→F3 (fija — `PropPoliticaSecuenciaHorno_ExperimentControl=1` en todos los escenarios).
 
 ---
 
