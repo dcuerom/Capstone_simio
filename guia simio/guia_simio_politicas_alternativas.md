@@ -20,52 +20,165 @@ Puedes usar esta propiedad en los `Decide` steps de tus procesos principales par
 Esta política reemplaza la tabla de secuencia estática. El sistema solo produce cuando el inventario (más lo que está en proceso) cae por debajo de un umbral crítico.
 
 ### Fase A: Parámetros del Sistema PULL
-1. Ir a **Data** → **Tables** → Seleccionar `TableProceso` (o crear una nueva tabla `TablePoliticaPull`).
-2. Agregar dos columnas tipo **Real** o **Integer**:
-   - `PuntoReorden`: El nivel de stock crítico ($s$) en kg que dispara la producción.
-   - `LotesAReponer`: La cantidad de batches a producir ($Q$) cuando se alcanza el punto de reorden.
+
+> **Separación de responsabilidades**: Los parámetros de política PULL **no** se agregan a `TableProceso` (que contiene tiempos de proceso por estación). Se requiere una tabla dedicada.
+
+1. Ir a **Data** → **Tables** → **Add Data Table** → Nombrar `TablePoliticaPull`.
+2. Agregar **3 columnas**:
+
+| Columna | Tipo | Descripción | Fuente del valor |
+|---|---|---|---|
+| `TipoID` | Integer | Identificador del tipo de pan (1–10) | Manual (1 a 10, en orden) |
+| `PuntoReorden_kg` | Real | Inventario posición mínimo $s$ (kg) que dispara producción | `data/analisis_eoq_rop.csv`, columna `ROP_kg` |
+| `LotesAReponer` | Integer | Cantidad de batches a crear cuando se cruza el ROP | `Math.Ceiling(EOQ_kg / KgPorBatch)` por tipo |
+
+3. Poblar las **10 filas** con los valores de `data/analisis_eoq_rop.csv` generado por `generar_eoq.py`. La fila con `TipoID = i` corresponde al tipo de pan `i`.
+
+> **Importante**: En todas las expresiones de Fase C, usar `TablePoliticaPull[Token.TipoActual].PuntoReorden_kg` y `TablePoliticaPull[Token.TipoActual].LotesAReponer` (no columnas de `TableProceso`).
 
 ### Fase B: Proceso Monitor de Inventario
-En lugar de generar lotes cada 4 minutos con un `Interarrival Time`, usaremos un proceso periódico (Timer) que revisa los 10 tipos de pan constantemente.
 
+En lugar de generar lotes cada 4 minutos con un `Interarrival Time`, un Timer periódico revisa los 10 tipos de pan y crea lotes cuando el inventario posición baja del ROP.
+
+#### B.1 — Timer
 1. Ir a **Definitions** → **Elements** → **Timers** → Crear `TimerRevisionPull`.
-   - **Time Interval**: `5` (minutos).
-2. Ir a **Definitions** → **Processes** → Crear `ProcControlPull`.
+   - **Time Interval**: `3` (minutos).
+
+> **Por qué 3 min**: El pipeline completo dura ~80 min. Un intervalo de 5 min introduce latencia innecesaria durante el peak 18:00–20:00. Con 3 min el sistema detecta el déficit más rápido sin sobrecargar el motor de eventos.
+
+#### B.2 — Variable de bloqueo anti-solapamiento
+
+Si el proceso tarda más de 3 minutos en ejecutarse (muchos tipos bajo ROP), el Timer puede dispararlo de nuevo antes de que termine el anterior. Eso causaría **doble-conteo en `MStaEnProceso`** y creación duplicada de lotes. Se necesita un semáforo.
+
+1. Ir a **Definitions** → **States** → **Add State** → Tipo **Discrete (Integer)**:
+   - **Name**: `MStaBloqueoPull`
+   - **Rows**: `1`
+   - **Initial Value**: `0`
+   - Semántica: `0` = proceso libre, `1` = proceso en ejecución. Si el Timer dispara y encuentra `1`, termina sin hacer nada.
+
+#### B.3 — Proceso ProcControlPull
+1. Ir a **Definitions** → **Processes** → Crear `ProcControlPull`.
    - **Triggering Event**: `TimerRevisionPull.Event`
-   - Configurar **Token States**: En las propiedades del proceso, ir a **Token States** → **Add State** de tipo `Integer` llamado `TipoActual`. Añadir otro `Integer` llamado `LotesCreados`.
+2. En las propiedades del proceso, ir a **Token States** → **Add State** (dos entradas):
+
+| Nombre | Tipo | Propósito |
+|---|---|---|
+| `TipoActual` | Integer | Índice del tipo de pan en la iteración actual (1–10) |
+| `LotesCreados` | Integer | Contador del loop interno de creación de lotes |
 
 ### Fase C: Lógica del Proceso (`ProcControlPull`)
-El proceso recorre los 10 tipos de pan, evalúa su nivel de stock, y si amerita, crea los lotes.
 
-1. **Step Decide** (Filtro de Política):
-   - Condition: `Model.PropPoliticaProduccion == 2`
-   - **False**: `EndProcess` (termina sin hacer nada).
-   - **True**: Continúa al siguiente step.
-2. **Step Assign** (Inicializar): `Token.TipoActual = 1`
-3. **Step Decide** (Evaluación de Reorden): 
-   - Condition (ejemplo asumiendo tabla consolidada): `Model.MStaInventario[Token.TipoActual] + Model.MStaEnProceso[Token.TipoActual] <= TableProceso[Token.TipoActual].PuntoReorden`
-4. **Rama True (Crear Lotes)**:
-   - **Step Assign** (Iniciar contador): `Token.LotesCreados = 0`
-   - **Step Decide** (Loop de lotes): `Token.LotesCreados < TableProceso[Token.TipoActual].LotesAReponer`
-   - **Rama True (Crear 1 lote)**:
-     - **Step Create**: 
-       - Entity Type: `EntLote`
-       - Number of Entities: `1`
-       - Starting Node: `Input@SrvPesado` (o el nodo Input respectivo).
-     - **Step Assign** (En el nodo `Created` del step Create):
-       - `EntLote.EStaTipoPan = Token.TipoActual`
-       - `EntLote.EStaFamilia = TableProceso[Token.TipoActual].FamiliaID`
-       - `EntLote.EStaKgLote = TableProceso[Token.TipoActual].KgPorBatch`
-       - `Model.MStaEnProceso[Token.TipoActual] = Model.MStaEnProceso[Token.TipoActual] + EntLote.EStaKgLote`
-     - **Step Assign** (En la salida principal del step Create): `Token.LotesCreados = Token.LotesCreados + 1`
-     - Ligar esta salida de vuelta al **Step Decide** del loop de lotes.
-   - **Rama False (Fin lotes)**: Confluye con la rama False del Step Decide de Evaluación de Reorden.
-5. **Convergencia y Loop Principal**:
-   - **Step Assign**: `Token.TipoActual = Token.TipoActual + 1`
-6. **Step Decide** (Fin de iteración tipos):
-   - Condition: `Token.TipoActual <= 10`
-   - **True**: Vuelve al inicio del Step Decide de Evaluación (Paso 3).
-   - **False**: FIN (`EndProcess`).
+El proceso recorre los 10 tipos de pan en secuencia, evalúa el inventario posición de cada uno, y crea los lotes necesarios.
+
+> **Arquitectura del Step Create en SIMIO**: El step `Create` tiene **dos salidas**:
+> - **Salida principal (token)**: El token del proceso (el hilo de control) continúa por aquí. Se usa para incrementar `LotesCreados` y volver al loop.
+> - **Puerto `Created` (entidad nueva)**: La entidad recién creada fluye por aquí. Se usa para asignar sus atributos. Una vez que los steps conectados al puerto `Created` terminan (EndProcess de esa rama), SIMIO libera la entidad al `Starting Node` en la Facility.
+>
+> Estas dos salidas corren en paralelo: el token del proceso sigue su camino mientras la entidad se inicializa por el puerto `Created`.
+
+#### Steps del proceso
+
+**Bloque 0 — Filtros de entrada**
+
+| Nº | Step | Configuración | Salida |
+|---|---|---|---|
+| 0a | **Decide** | `Model.PropPoliticaProduccion == 2` | False → `EndProcess` \| True → paso 0b |
+| 0b | **Decide** | `Model.MStaBloqueoPull == 1` | True → `EndProcess` (ya hay una ejecución activa) \| False → paso 0c |
+| 0c | **Assign** | `Model.MStaBloqueoPull = 1` | → paso 1 |
+
+**Bloque 1 — Inicialización del loop principal**
+
+| Nº | Step | Configuración |
+|---|---|---|
+| 1 | **Assign** | `Token.TipoActual = 1` |
+
+**Bloque 2 — Evaluación de inventario posición**
+
+> La condición compara *inventario posición* = on-hand + on-order (lo que ya está en el pipeline) contra el ROP. Esto evita crear lotes duplicados para batches que ya están en proceso.
+
+| Nº | Step | Configuración | Salida |
+|---|---|---|---|
+| 2 | **Decide** | `Model.MStaInventario[Token.TipoActual] + Model.MStaEnProceso[Token.TipoActual] <= TablePoliticaPull[Token.TipoActual].PuntoReorden_kg` | True → paso 3 \| False → paso 6 |
+
+**Bloque 3 — Loop de creación de lotes**
+
+| Nº | Step | Configuración | Salida |
+|---|---|---|---|
+| 3 | **Assign** | `Token.LotesCreados = 0` | → paso 4 |
+| 4 | **Decide** | `Token.LotesCreados < TablePoliticaPull[Token.TipoActual].LotesAReponer` | True → paso 5 \| False → paso 6 |
+
+**Bloque 4 — Creación de 1 lote (rama True del paso 4)**
+
+| Nº | Step | Puerto | Configuración |
+|---|---|---|---|
+| 5 | **Create** | — | Entity Type: `EntLote`, Number of Entities: `1`, Starting Node: `Input@SrvPesado` ¹ |
+| 5-C1 | **Assign** | `Created` ← *entidad* | `EntLote.EStaTipoPan = Token.TipoActual` |
+| 5-C2 | **Assign** | `Created` (continúa) | `EntLote.EStaFamilia = TableProceso[Token.TipoActual].FamiliaID` |
+| 5-C3 | **Assign** | `Created` (continúa) | `EntLote.EStaKgLote = TableProceso[Token.TipoActual].KgPorBatch` |
+| 5-C4 | **Assign** | `Created` (continúa) | `Model.MStaEnProceso[Token.TipoActual] = Model.MStaEnProceso[Token.TipoActual] + EntLote.EStaKgLote` ² |
+| 5-C5 | **EndProcess** | `Created` (cierra) | Libera la entidad al `Starting Node`. SIMIO la envía a `Input@SrvPesado`. |
+| 5-T | **Assign** | Salida principal ← *token* | `Token.LotesCreados = Token.LotesCreados + 1` → vuelve al **paso 4** |
+
+> ¹ `Input@SrvPesado` es el nombre interno del nodo de entrada del servidor `SrvPesado`. Si el servidor tiene otro nombre en el modelo, ajustar aquí.
+>
+> ² El incremento de `MStaEnProceso` ocurre en el puerto `Created` (en el contexto de la entidad) para garantizar que el contador se actualiza **antes** de que la entidad entre a la Facility y antes de que el timer pueda dispararse de nuevo.
+
+**Bloque 5 — Avance al siguiente tipo (convergencia de falsas)**
+
+Los pasos 6-8 son alcanzados tanto por la rama False del paso 2 (no hay déficit) como por la rama False del paso 4 (ya se crearon todos los lotes necesarios).
+
+| Nº | Step | Configuración | Salida |
+|---|---|---|---|
+| 6 | **Assign** | `Token.TipoActual = Token.TipoActual + 1` | → paso 7 |
+| 7 | **Decide** | `Token.TipoActual <= 10` | True → vuelve al **paso 2** \| False → paso 8 |
+| 8 | **Assign** | `Model.MStaBloqueoPull = 0` | → paso 9 |
+| 9 | **EndProcess** | — | Fin del proceso. El semáforo queda en 0 para el próximo disparo del Timer. |
+
+---
+
+### Fase D: Decremento de `MStaEnProceso` al completar el pipeline
+
+> **Este paso es obligatorio.** Sin él, `MStaEnProceso[i]` crece sin límite y la condición del paso 2 nunca vuelve a ser verdadera: el sistema PULL queda paralizado después del primer ciclo.
+
+El decremento debe ocurrir cuando el lote **termina el pipeline completo** y llega a la góndola (inventario). Ese momento es el evento de salida del paso de Reposición (último servidor antes del Sink, o el proceso `ProcActualizarInventario` que gestiona el inventario en sala).
+
+#### D.1 — Dónde agregar el decremento
+
+Localiza el proceso o el nodo donde actualmente se incrementa `MStaInventario` (registro de stock en sala). Puede ser:
+
+- Un proceso `ProcActualizarInventario` disparado al terminar el enfriado, o
+- El evento `Exited` del último servidor del pipeline (p.ej. `SrvEnfriado` o `SrvReposicion`).
+
+#### D.2 — Assigns a agregar
+
+En ese punto del proceso, **inmediatamente antes o después** del assign que suma al inventario, agregar:
+
+```
+// Decremento: el lote ya no está "en proceso", ahora está en sala
+Model.MStaEnProceso[EntLote.EStaTipoPan] =
+    Model.MStaEnProceso[EntLote.EStaTipoPan] - EntLote.EStaKgLote
+
+// Incremento de inventario en sala (si no existe aún, agregar aquí)
+Model.MStaInventario[EntLote.EStaTipoPan] =
+    Model.MStaInventario[EntLote.EStaTipoPan] + EntLote.EStaKgLote
+```
+
+En SIMIO (tabla de Assign steps):
+
+| Sub-step | State Variable | New Value |
+|---|---|---|
+| D-1 | `Model.MStaEnProceso[EntLote.EStaTipoPan]` | `Model.MStaEnProceso[EntLote.EStaTipoPan] - EntLote.EStaKgLote` |
+| D-2 | `Model.MStaInventario[EntLote.EStaTipoPan]` | `Model.MStaInventario[EntLote.EStaTipoPan] + EntLote.EStaKgLote` |
+
+#### D.3 — Decremento de inventario por despacho al cliente
+
+El inventario también debe decrementarse cuando el cliente compra. Ese assign debe existir en el proceso de atención al cliente. Verificar que esté presente:
+
+| Sub-step | State Variable | New Value |
+|---|---|---|
+| C-1 | `Model.MStaInventario[TipoPanComprado]` | `Model.MStaInventario[TipoPanComprado] - kg_comprados` |
+
+Sin este assign, `MStaInventario` nunca baja y el ROP nunca se cruza.
 
 ---
 
