@@ -1,0 +1,420 @@
+Time(Minutes);EntityID;ObjectName;ProcessID;StepName;Action
+0;--;--;--;--;System initialization completed.
+0;--;--;--;--;Time until next event of timer 'TimerRevisorDeficit' is '60' Minutes.
+0;--;--;--;--;Time until next event of timer 'TimerHorno' is '0' Minutes.
+0;--;--;--;--;Time until next event of timer 'TimerRevisionPull' is '0' Minutes.
+0;--;--;--;--;Time until next event of timer 'TimerCriticidad' is '0' Minutes.
+0;--;--;--;--;Time until next event of timer 'TimerBloqueHorario' is '0' Minutes.
+0;--;--;--;--;Time until next event of timer 'SrcLotes.EntityArrivals' is '0' Minutes.
+0;--;--;--;--;Number of event 'EvtLoteReactivo' occurrences required to trigger next event of timer 'SrcLotesReactivos.EntityArrivals' is '1' occurrence(s).
+0;SnkLoteTerminado;SnkLoteTerminado;0.OnRunInitialized;[Begin];Process 'SnkLoteTerminado.OnRunInitialized' execution started.
+0;SnkLoteTerminado;SnkLoteTerminado;0.OnRunInitialized;[Execute] RunInitializedAddOnProcess;Executing process 'ProcInicialización'.
+0;SnkLoteTerminado;ModeloBase;1.ProcInicialización;[Begin];Process 'ProcInicialización' execution started.
+0;SnkLoteTerminado;ModeloBase;1.ProcInicialización;[Assign] Assign5;Assigning state variable 'ModeloBase.MStaInventario[1]' the value '240'. Previous value was '1'.
+0;SnkLoteTerminado;ModeloBase;1.ProcInicialización;[Assign] Assign6;Assigning state variable 'ModeloBase.MStaInventario[2]' the value '165'. Previous value was '1'.
+0;SnkLoteTerminado;ModeloBase;1.ProcInicialización;[Assign] Assign7;Assigning state variable 'ModeloBase.MStaInventario[3]' the value '120'. Previous value was '1'.
+0;SnkLoteTerminado;ModeloBase;1.ProcInicialización;[Assign] Assign8;Assigning state variable 'ModeloBase.MStaInventario[4]' the value '110'. Previous value was '1'.
+0;SnkLoteTerminado;ModeloBase;1.ProcInicialización;[Assign] Assign9;Assigning state variable 'ModeloBase.MStaInventario[5]' the value '55'. Previous value was '1'.
+0;SnkLoteTerminado;ModeloBase;1.ProcInicialización;[Assign] Assign10;Assigning state variable 'ModeloBase.MStaInventario[6]' the value '50'. Previous value was '1'.
+0;SnkLoteTerminado;ModeloBase;1.ProcInicialización;[Assign] Assign11;Assigning state variable 'ModeloBase.MStaInventario[7]' the value '45'. Previous value was '1'.
+0;SnkLoteTerminado;ModeloBase;1.ProcInicialización;[Assign] Assign12;Assigning state variable 'ModeloBase.MStaInventario[8]' the value '50'. Previous value was '1'.
+0;SnkLoteTerminado;ModeloBase;1.ProcInicialización;[Assign] Assign13;Assigning state variable 'ModeloBase.MStaInventario[9]' the value '50'. Previous value was '1'.
+0;SnkLoteTerminado;ModeloBase;1.ProcInicialización;[Assign] Assign14;Assigning state variable 'ModeloBase.MStaInventario[10]' the value '60'. Previous value was '1'.
+0;SnkLoteTerminado;ModeloBase;1.ProcInicialización;[End];Process 'ProcInicialización' execution ended.
+0;SnkLoteTerminado;SnkLoteTerminado;0.OnRunInitialized;[End];Process 'SnkLoteTerminado.OnRunInitialized' execution ended.
+0;SrcLotesReactivos;SrcLotesReactivos;0.OnRunInitialized;[Begin];Process 'SrcLotesReactivos.OnRunInitialized' execution started.
+0;SrcLotesReactivos;SrcLotesReactivos;0.OnRunInitialized;[Create] Entities;Ignoring attempt to create '0' object(s) of entity type 'EntLote1'. The number of objects to create is not a positive quantity.
+0;SrcLotesReactivos;SrcLotesReactivos;0.OnRunInitialized;[End];Process 'SrcLotesReactivos.OnRunInitialized' execution ended.
+0;--;--;--;--;Firing event 'TimerHorno.Event'.
+0;--;--;--;--;Timer ‘TimerHorno’ stopping condition detected.
+0;--;--;--;--;Firing event 'TimerRevisionPull.Event'.
+0;--;--;--;--;Time until next event of timer 'TimerRevisionPull' is '5' Minutes.
+0;--;--;--;--;Firing event 'TimerCriticidad.Event'.
+0;--;--;--;--;Time until next event of timer 'TimerCriticidad' is '2' Minutes.
+0;--;--;--;--;Firing event 'TimerBloqueHorario.Event'.
+0;--;--;--;--;Time until next event of timer 'TimerBloqueHorario' is '120' Minutes.
+0;--;--;--;--;Firing event 'SrcLotes.EntityArrivals.Event'.
+0;--;--;--;--;Time until next event of timer 'SrcLotes.EntityArrivals' is '3,87' Minutes.
+0;SrcLotes;SrcLotes;0.OnEntityArrival;[Begin];Process 'SrcLotes.OnEntityArrival' execution started.
+0;SrcLotes;SrcLotes;0.OnEntityArrival;[Create] Entities;Creating '1' new object(s) of entity type 'EntLote1'.
+0;SrcLotes;SrcLotes;0.OnEntityArrival;[Create] Entities;Created object 'EntLote1.74'.
+0;EntLote1.74;SrcLotes;1.OnEntityArrival;[Transfer] ToProcessing;Entity 'EntLote1.74' transferring from '[FreeSpace] SrcLotes' into station 'SrcLotes.Processing'.
+0;SrcLotes;SrcLotes;0.OnEntityArrival;[End];Process 'SrcLotes.OnEntityArrival' execution ended.
+0;EntLote1.74;SrcLotes;2.OnEnteredProcessing;[Begin];Process 'SrcLotes.OnEnteredProcessing' execution started.
+0;EntLote1.74;SrcLotes;2.OnEnteredProcessing;[EndTransfer] IntoProcessing;Entity 'EntLote1.74' ending transfer into station 'SrcLotes.Processing'.
+0;EntLote1.74;SrcLotes;2.OnEnteredProcessing;[Execute] CreatedEntityAddOnProcess;Executing process 'SrcLotes_CreatedEntity'.
+0;EntLote1.74;ModeloBase;0.SrcLotes_CreatedEntity;[Begin];Process 'SrcLotes_CreatedEntity' execution started.
+0;EntLote1.74;ModeloBase;0.SrcLotes_CreatedEntity;[Assign] AsignarFamilia;Assigning state variable 'EntLote1.74.EStaFamilia' the value '2'. Previous value was '1'.
+0;EntLote1.74;ModeloBase;0.SrcLotes_CreatedEntity;[End];Process 'SrcLotes_CreatedEntity' execution ended.
+0;EntLote1.74;SrcLotes;2.OnEnteredProcessing;[Transfer] ToOutputBuffer;Entity 'EntLote1.74' transferring from '[Station] SrcLotes.Processing' into station 'SrcLotes.OutputBuffer'.
+0;EntLote1.74;SrcLotes;1.OnEntityArrival;[End];Process 'SrcLotes.OnEntityArrival' execution ended.
+0;EntLote1.74;SrcLotes;0.OnEnteredOutputBuffer;[Begin];Process 'SrcLotes.OnEnteredOutputBuffer' execution started.
+0;EntLote1.74;SrcLotes;0.OnEnteredOutputBuffer;[EndTransfer] IntoOutputBuffer;Entity 'EntLote1.74' ending transfer into station 'SrcLotes.OutputBuffer'.
+0;EntLote1.74;SrcLotes;0.OnEnteredOutputBuffer;[Assign] BeforeExitingAssignments;Assigning state variable 'ModeloBase.MStaLotePlanActual' the value '2'. Previous value was '1'.
+0;EntLote1.74;SrcLotes;0.OnEnteredOutputBuffer;[Assign] BeforeExitingAssignments;Assigning state variable 'EntLote1.74.EStaTipoPan' the value '1'. Previous value was '1'.
+0;EntLote1.74;SrcLotes;0.OnEnteredOutputBuffer;[Assign] BeforeExitingAssignments;Assigning state variable 'EntLote1.74.EStaFamilia' the value '2'. Previous value was '2'.
+0;EntLote1.74;SrcLotes;0.OnEnteredOutputBuffer;[Assign] BeforeExitingAssignments;Assigning state variable 'EntLote1.74.EStaKgLote' the value '60'. Previous value was '0'.
+0;EntLote1.74;SrcLotes;0.OnEnteredOutputBuffer;[Assign] BeforeExitingAssignments;Assigning state variable 'ModeloBase.MStaEnProceso[1]' the value '60'. Previous value was '0'.
+0;EntLote1.74;SrcLotes;0.OnEnteredOutputBuffer;[Transfer] ToOutputNode;Entity 'EntLote1.74' transferring from '[Station] SrcLotes.OutputBuffer' into node 'Output@SrcLotes'.
+0;EntLote1.74;Output@SrcLotes;1.OnEnteredFromAssociatedObject;[Begin];Process 'Output@SrcLotes.OnEnteredFromAssociatedObject' execution started.
+0;EntLote1.74;Output@SrcLotes;1.OnEnteredFromAssociatedObject;[Fire] EnteredEvent;Firing event 'Output@SrcLotes.Entered'.
+0;EntLote1.74;Output@SrcLotes;1.OnEnteredFromAssociatedObject;[Transfer] ToOutboundLink;Entity 'EntLote1.74' transferring from '[Node] Output@SrcLotes' into node 'Input@SrvPesado'.
+0;EntLote1.74;Input@SrvPesado;3.OnEnteredToAssociatedObject;[Begin];Process 'Input@SrvPesado.OnEnteredToAssociatedObject' execution started.
+0;EntLote1.74;Input@SrvPesado;3.OnEnteredToAssociatedObject;[Fire] EnteredEvent;Firing event 'Input@SrvPesado.Entered'.
+0;EntLote1.74;Input@SrvPesado;3.OnEnteredToAssociatedObject;[Transfer] ToAssociatedObject;Entity 'EntLote1.74' transferring from '[Node] Input@SrvPesado' into object 'SrvPesado'.
+0;EntLote1.74;Input@SrvPesado;3.OnEnteredToAssociatedObject;[Transfer] ToAssociatedObject;Entity 'EntLote1.74' transferring from '[Node] Input@SrvPesado' into station 'SrvPesado.InputBuffer'.
+0;EntLote1.74;SrcLotes;2.OnEnteredProcessing;[End];Process 'SrcLotes.OnEnteredProcessing' execution ended.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Begin];Process 'SrvPesado.OnEnteredInputBuffer' execution started.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[EndTransfer] IntoInputBuffer;Entity 'EntLote1.74' ending transfer into station 'SrvPesado.InputBuffer'.
+0;EntLote1.74;Output@SrcLotes;2.OnExited;[Begin];Process 'Output@SrcLotes.OnExited' execution started.
+0;EntLote1.74;Output@SrcLotes;2.OnExited;[Fire] ExitedEvent;Firing event 'Output@SrcLotes.Exited'.
+0;EntLote1.74;Output@SrcLotes;2.OnExited;[End];Process 'Output@SrcLotes.OnExited' execution ended.
+0;EntLote1.74;Input@SrvPesado;2.OnExited;[Begin];Process 'Input@SrvPesado.OnExited' execution started.
+0;EntLote1.74;Input@SrvPesado;2.OnExited;[Fire] ExitedEvent;Firing event 'Input@SrvPesado.Exited'.
+0;EntLote1.74;Input@SrvPesado;2.OnExited;[End];Process 'Input@SrvPesado.OnExited' execution ended.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] Server;Object 'EntLote1.74' waiting to seize '1' resource(s) of resource type '[ParentObject] SrvPesado'.
+0;EntLote1.74;SrcLotes;0.OnEnteredOutputBuffer;[End];Process 'SrcLotes.OnEnteredOutputBuffer' execution ended.
+0;EntLote1.74;Output@SrcLotes;1.OnEnteredFromAssociatedObject;[End];Process 'Output@SrcLotes.OnEnteredFromAssociatedObject' execution ended.
+0;EntLote1.74;Input@SrvPesado;3.OnEnteredToAssociatedObject;[End];Process 'Input@SrvPesado.OnEnteredToAssociatedObject' execution ended.
+0;--;--;--;--;Resource 'SrvPesado' checking allocation queue which contains '1' item(s).
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] Server;Object 'EntLote1.74' checking availability to seize '1' resource(s) of resource type '[ParentObject] SrvPesado'.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] Server;Object 'EntLote1.74' checking availability to seize '1' capacity unit(s) of resource 'SrvPesado’.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] Server;Object 'EntLote1.74' found ‘3’ currently available capacity unit(s) of resource 'SrvPesado’.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] Server;Object 'EntLote1.74' found '1' currently available resource(s) of resource type '[ParentObject] SrvPesado'.
+0;--;--;--;--;Resource 'SrvPesado' selecting object 'EntLote1.74' waiting at rank position '1' in allocation queue which contains '1' item(s).
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] Server;Object 'EntLote1.74' seized '1' capacity unit(s) of resource 'SrvPesado'.
+0;--;--;--;--;Changing from AutoState 'Starved' to 'Busy' on resource 'SrvPesado'.
+0;--;--;--;--;Assigning state variable 'SrvPesado.ResourceState' the value '1'. Previous value was '0'.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] Server;Object 'EntLote1.74' completed seize of '1' resource(s) of resource type '[ParentObject] SrvPesado'.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' waiting to seize '1' resource(s) of resource type '[FromList] Daniel'.
+0;--;--;--;--;Resource 'ResPanaderoA' checking allocation queue which contains '1' item(s).
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' checking availability to seize '1' resource(s) of resource type '[FromList] Daniel'.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' checking availability to seize '1' capacity unit(s) of resource 'ResPanaderoA’.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' found ‘3’ currently available capacity unit(s) of resource 'ResPanaderoA’.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' checking availability to seize '1' capacity unit(s) of resource 'ResPanaderoB’.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' found ‘3’ currently available capacity unit(s) of resource 'ResPanaderoB’.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' checking availability to seize '1' capacity unit(s) of resource 'ResPanaderoC’.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' found ‘3’ currently available capacity unit(s) of resource 'ResPanaderoC’.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' checking availability to seize '1' capacity unit(s) of resource 'ResPanaderoRefuerzo’.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' found ‘9’ currently available capacity unit(s) of resource 'ResPanaderoRefuerzo’.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' found '4' currently available resource(s) of resource type '[FromList] Daniel'.
+0;--;--;--;--;Resource 'ResPanaderoA' selecting object 'EntLote1.74' waiting at rank position '1' in allocation queue which contains '1' item(s).
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' seized '1' capacity unit(s) of resource 'ResPanaderoA'.
+0;--;--;--;--;Changing from AutoState 'Starved' to 'Busy' on resource 'ResPanaderoA'.
+0;--;--;--;--;Assigning state variable 'ResPanaderoA.ResourceState' the value '1'. Previous value was '0'.
+0;EntLote1.74;ResPanaderoA;3.OnCapacityAllocated;[Begin];Process 'ResPanaderoA.OnCapacityAllocated' execution started.
+0;EntLote1.74;ResPanaderoA;3.OnCapacityAllocated;[Fire] AllocatedEvent;Firing event 'ResPanaderoA.Allocated'.
+0;EntLote1.74;ResPanaderoA;3.OnCapacityAllocated;[End];Process 'ResPanaderoA.OnCapacityAllocated' execution ended.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Seize] SecondaryResources;Object 'EntLote1.74' completed seize of '1' resource(s) of resource type '[FromList] Daniel'.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[Transfer] ToProcessing;Entity 'EntLote1.74' transferring from '[Station] SrvPesado.InputBuffer' into station 'SrvPesado.Processing'.
+0;EntLote1.74;SrvPesado;3.OnEnteredProcessing;[Begin];Process 'SrvPesado.OnEnteredProcessing' execution started.
+0;EntLote1.74;SrvPesado;3.OnEnteredProcessing;[EndTransfer] IntoProcessing;Entity 'EntLote1.74' ending transfer into station 'SrvPesado.Processing'.
+0;EntLote1.74;SrvPesado;3.OnEnteredProcessing;[Decide] IfProcessTypeSpecificTime;Token branching on condition 'ProcessType==Enum.TaskProcessType.SpecificTime'.
+0;EntLote1.74;SrvPesado;3.OnEnteredProcessing;[Decide] IfProcessTypeSpecificTime;Token sent to 'True' exit.
+0;EntLote1.74;SrvPesado;3.OnEnteredProcessing;[Delay] ProcessingTime;Delaying token for '5' Minutes until time '5' Minutes. Delay multiplier was '1'.
+0;EntLote1.74;SrvPesado;4.OnEnteredInputBuffer;[End];Process 'SrvPesado.OnEnteredInputBuffer' execution ended.
+0,123635379617178;--;--;--;--;Firing event 'SrcClientes.EntityArrivals.Event'.
+0,123635379617178;--;--;--;--;Time until next event of timer 'SrcClientes.EntityArrivals' is '0,307528125083306' Minutes.
+0,123635379617178;SrcClientes;SrcClientes;4.OnEntityArrival;[Begin];Process 'SrcClientes.OnEntityArrival' execution started.
+0,123635379617178;SrcClientes;SrcClientes;4.OnEntityArrival;[Create] Entities;Creating '1' new object(s) of entity type 'EntCliente1'.
+0,123635379617178;SrcClientes;SrcClientes;4.OnEntityArrival;[Create] Entities;Created object 'EntCliente1.75'.
+0,123635379617178;EntCliente1.75;SrcClientes;1.OnEntityArrival;[Transfer] ToProcessing;Entity 'EntCliente1.75' transferring from '[FreeSpace] SrcClientes' into station 'SrcClientes.Processing'.
+0,123635379617178;SrcClientes;SrcClientes;4.OnEntityArrival;[End];Process 'SrcClientes.OnEntityArrival' execution ended.
+0,123635379617178;EntCliente1.75;SrcClientes;0.OnEnteredProcessing;[Begin];Process 'SrcClientes.OnEnteredProcessing' execution started.
+0,123635379617178;EntCliente1.75;SrcClientes;0.OnEnteredProcessing;[EndTransfer] IntoProcessing;Entity 'EntCliente1.75' ending transfer into station 'SrcClientes.Processing'.
+0,123635379617178;EntCliente1.75;SrcClientes;0.OnEnteredProcessing;[Execute] CreatedEntityAddOnProcess;Executing process 'ProcesoAsignarTiposCliente'.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Begin];Process 'ProcesoAsignarTiposCliente' execution started.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Assign] IdHora;Assigning state variable 'ModeloBase.MStaHoraIdx' the value '1'. Previous value was '0'.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Assign] Tipos;Assigning state variable 'EntCliente1.75.EStaNTipos' the value '2'. Previous value was '1'.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Assign] TipoAComprar;Assigning state variable 'EntCliente1.75.EStaTipo1' the value '3'. Previous value was '1'.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Assign] KgComprar;Assigning state variable 'EntCliente1.75.EStaKg1' the value '0,993047365831166'. Previous value was '0'.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Decide] Si2Tipos;Token branching on condition 'EntCliente.EStaNTipos >= 2'.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Decide] Si2Tipos;Token sent to 'True' exit.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Assign] Tipos2AComprar;Assigning state variable 'EntCliente1.75.EStaTipo2' the value '3'. Previous value was '1'.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Decide] Decide19;Token branching on condition 'EntCliente.EStaTipo2 != EntCliente.EStaTipo1'.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Decide] Decide19;Token sent to 'False' exit.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Assign] Tipos2AComprar;Assigning state variable 'EntCliente1.75.EStaTipo2' the value '2'. Previous value was '3'.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Decide] Decide19;Token branching on condition 'EntCliente.EStaTipo2 != EntCliente.EStaTipo1'.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Decide] Decide19;Token sent to 'True' exit.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Assign] Kg2Comprar;Assigning state variable 'EntCliente1.75.EStaKg2' the value '0,880948632021143'. Previous value was '0'.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Decide] Si3Tipos;Token branching on condition 'EntCliente.EStaNTipos >= 3'.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[Decide] Si3Tipos;Token sent to 'False' exit.
+0,123635379617178;EntCliente1.75;ModeloBase;4.ProcesoAsignarTiposCliente;[End];Process 'ProcesoAsignarTiposCliente' execution ended.
+0,123635379617178;EntCliente1.75;SrcClientes;0.OnEnteredProcessing;[Transfer] ToOutputBuffer;Entity 'EntCliente1.75' transferring from '[Station] SrcClientes.Processing' into station 'SrcClientes.OutputBuffer'.
+0,123635379617178;EntCliente1.75;SrcClientes;1.OnEntityArrival;[End];Process 'SrcClientes.OnEntityArrival' execution ended.
+0,123635379617178;EntCliente1.75;SrcClientes;4.OnEnteredOutputBuffer;[Begin];Process 'SrcClientes.OnEnteredOutputBuffer' execution started.
+0,123635379617178;EntCliente1.75;SrcClientes;4.OnEnteredOutputBuffer;[EndTransfer] IntoOutputBuffer;Entity 'EntCliente1.75' ending transfer into station 'SrcClientes.OutputBuffer'.
+0,123635379617178;EntCliente1.75;SrcClientes;4.OnEnteredOutputBuffer;[Transfer] ToOutputNode;Entity 'EntCliente1.75' transferring from '[Station] SrcClientes.OutputBuffer' into node 'Output@SrcClientes'.
+0,123635379617178;EntCliente1.75;Output@SrcClientes;1.OnEnteredFromAssociatedObject;[Begin];Process 'Output@SrcClientes.OnEnteredFromAssociatedObject' execution started.
+0,123635379617178;EntCliente1.75;Output@SrcClientes;1.OnEnteredFromAssociatedObject;[Fire] EnteredEvent;Firing event 'Output@SrcClientes.Entered'.
+0,123635379617178;EntCliente1.75;Output@SrcClientes;1.OnEnteredFromAssociatedObject;[Transfer] ToOutboundLink;Entity 'EntCliente1.75' transferring from '[Node] Output@SrcClientes' into node 'Input@SrvVenta'.
+0,123635379617178;EntCliente1.75;Input@SrvVenta;2.OnEnteredToAssociatedObject;[Begin];Process 'Input@SrvVenta.OnEnteredToAssociatedObject' execution started.
+0,123635379617178;EntCliente1.75;Input@SrvVenta;2.OnEnteredToAssociatedObject;[Fire] EnteredEvent;Firing event 'Input@SrvVenta.Entered'.
+0,123635379617178;EntCliente1.75;Input@SrvVenta;2.OnEnteredToAssociatedObject;[Transfer] ToAssociatedObject;Entity 'EntCliente1.75' transferring from '[Node] Input@SrvVenta' into object 'SrvVenta'.
+0,123635379617178;EntCliente1.75;Input@SrvVenta;2.OnEnteredToAssociatedObject;[Transfer] ToAssociatedObject;Entity 'EntCliente1.75' transferring from '[Node] Input@SrvVenta' into station 'SrvVenta.InputBuffer'.
+0,123635379617178;EntCliente1.75;SrcClientes;0.OnEnteredProcessing;[End];Process 'SrcClientes.OnEnteredProcessing' execution ended.
+0,123635379617178;EntCliente1.75;SrvVenta;5.OnEnteredInputBuffer;[Begin];Process 'SrvVenta.OnEnteredInputBuffer' execution started.
+0,123635379617178;EntCliente1.75;SrvVenta;5.OnEnteredInputBuffer;[Execute] EnteredAddOnProcess;Executing process 'ProcVentaCliente'.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Begin];Process 'ProcVentaCliente' execution started.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Decide] SiInventario1;Token branching on condition 'MStaInventario[EntCliente.EStaTipo1] >= EntCliente.EStaKg1'.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Decide] SiInventario1;Token sent to 'True' exit.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Assign] QuitaDeInv1;Assigning state variable 'ModeloBase.MStaInventario[3]' the value '119,006952634169'. Previous value was '120'.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Assign] Venta1;Assigning state variable 'ModeloBase.MStaVentas[3]' the value '1,99304736583117'. Previous value was '1'.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Decide] SiTipo2;Token branching on condition 'EntCliente.EStaNTipos >= 2'.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Decide] SiTipo2;Token sent to 'True' exit.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Decide] SiInventario2;Token branching on condition 'MStaInventario[EntCliente.EStaTipo2] >= EntCliente.EStaKg2'.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Decide] SiInventario2;Token sent to 'True' exit.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Assign] QuitaDeInv3;Assigning state variable 'ModeloBase.MStaInventario[2]' the value '164,119051367979'. Previous value was '165'.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Assign] Venta2;Assigning state variable 'ModeloBase.MStaVentas[2]' the value '1,88094863202114'. Previous value was '1'.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Decide] SiTipo3;Token branching on condition 'EntCliente.EStaNTipos >= 3'.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[Decide] SiTipo3;Token sent to 'False' exit.
+0,123635379617178;EntCliente1.75;ModeloBase;0.ProcVentaCliente;[End];Process 'ProcVentaCliente' execution ended.
+0,123635379617178;EntCliente1.75;SrvVenta;5.OnEnteredInputBuffer;[EndTransfer] IntoInputBuffer;Entity 'EntCliente1.75' ending transfer into station 'SrvVenta.InputBuffer'.
+0,123635379617178;EntCliente1.75;Output@SrcClientes;0.OnExited;[Begin];Process 'Output@SrcClientes.OnExited' execution started.
+0,123635379617178;EntCliente1.75;Output@SrcClientes;0.OnExited;[Fire] ExitedEvent;Firing event 'Output@SrcClientes.Exited'.
+0,123635379617178;EntCliente1.75;Output@SrcClientes;0.OnExited;[End];Process 'Output@SrcClientes.OnExited' execution ended.
+0,123635379617178;EntCliente1.75;Input@SrvVenta;0.OnExited;[Begin];Process 'Input@SrvVenta.OnExited' execution started.
+0,123635379617178;EntCliente1.75;Input@SrvVenta;0.OnExited;[Fire] ExitedEvent;Firing event 'Input@SrvVenta.Exited'.
+0,123635379617178;EntCliente1.75;Input@SrvVenta;0.OnExited;[End];Process 'Input@SrvVenta.OnExited' execution ended.
+0,123635379617178;EntCliente1.75;SrvVenta;5.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.75' waiting to seize '1' resource(s) of resource type '[ParentObject] SrvVenta'.
+0,123635379617178;EntCliente1.75;SrcClientes;4.OnEnteredOutputBuffer;[End];Process 'SrcClientes.OnEnteredOutputBuffer' execution ended.
+0,123635379617178;EntCliente1.75;Output@SrcClientes;1.OnEnteredFromAssociatedObject;[End];Process 'Output@SrcClientes.OnEnteredFromAssociatedObject' execution ended.
+0,123635379617178;EntCliente1.75;Input@SrvVenta;2.OnEnteredToAssociatedObject;[End];Process 'Input@SrvVenta.OnEnteredToAssociatedObject' execution ended.
+0,123635379617178;--;--;--;--;Resource 'SrvVenta' checking allocation queue which contains '1' item(s).
+0,123635379617178;EntCliente1.75;SrvVenta;5.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.75' checking availability to seize '1' resource(s) of resource type '[ParentObject] SrvVenta'.
+0,123635379617178;EntCliente1.75;SrvVenta;5.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.75' checking availability to seize '1' capacity unit(s) of resource 'SrvVenta’.
+0,123635379617178;EntCliente1.75;SrvVenta;5.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.75' found ‘999’ currently available capacity unit(s) of resource 'SrvVenta’.
+0,123635379617178;EntCliente1.75;SrvVenta;5.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.75' found '1' currently available resource(s) of resource type '[ParentObject] SrvVenta'.
+0,123635379617178;--;--;--;--;Resource 'SrvVenta' selecting object 'EntCliente1.75' waiting at rank position '1' in allocation queue which contains '1' item(s).
+0,123635379617178;EntCliente1.75;SrvVenta;5.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.75' seized '1' capacity unit(s) of resource 'SrvVenta'.
+0,123635379617178;--;--;--;--;Changing from AutoState 'Starved' to 'Busy' on resource 'SrvVenta'.
+0,123635379617178;--;--;--;--;Assigning state variable 'SrvVenta.ResourceState' the value '1'. Previous value was '0'.
+0,123635379617178;EntCliente1.75;SrvVenta;5.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.75' completed seize of '1' resource(s) of resource type '[ParentObject] SrvVenta'.
+0,123635379617178;EntCliente1.75;SrvVenta;5.OnEnteredInputBuffer;[Transfer] ToProcessing;Entity 'EntCliente1.75' transferring from '[Station] SrvVenta.InputBuffer' into station 'SrvVenta.Processing'.
+0,123635379617178;EntCliente1.75;SrvVenta;2.OnEnteredProcessing;[Begin];Process 'SrvVenta.OnEnteredProcessing' execution started.
+0,123635379617178;EntCliente1.75;SrvVenta;2.OnEnteredProcessing;[EndTransfer] IntoProcessing;Entity 'EntCliente1.75' ending transfer into station 'SrvVenta.Processing'.
+0,123635379617178;EntCliente1.75;SrvVenta;2.OnEnteredProcessing;[Decide] IfProcessTypeSpecificTime;Token branching on condition 'ProcessType==Enum.TaskProcessType.SpecificTime'.
+0,123635379617178;EntCliente1.75;SrvVenta;2.OnEnteredProcessing;[Decide] IfProcessTypeSpecificTime;Token sent to 'True' exit.
+0,123635379617178;EntCliente1.75;SrvVenta;2.OnEnteredProcessing;[Delay] ProcessingTime;Delaying token for '0,5' Minutes until time '0,623635379617178' Minutes. Delay multiplier was '1'.
+0,123635379617178;EntCliente1.75;SrvVenta;5.OnEnteredInputBuffer;[End];Process 'SrvVenta.OnEnteredInputBuffer' execution ended.
+0,431163504700484;--;--;--;--;Firing event 'SrcClientes.EntityArrivals.Event'.
+0,431163504700484;--;--;--;--;Time until next event of timer 'SrcClientes.EntityArrivals' is '0,683470075738191' Minutes.
+0,431163504700484;SrcClientes;SrcClientes;5.OnEntityArrival;[Begin];Process 'SrcClientes.OnEntityArrival' execution started.
+0,431163504700484;SrcClientes;SrcClientes;5.OnEntityArrival;[Create] Entities;Creating '1' new object(s) of entity type 'EntCliente1'.
+0,431163504700484;SrcClientes;SrcClientes;5.OnEntityArrival;[Create] Entities;Created object 'EntCliente1.76'.
+0,431163504700484;EntCliente1.76;SrcClientes;1.OnEntityArrival;[Transfer] ToProcessing;Entity 'EntCliente1.76' transferring from '[FreeSpace] SrcClientes' into station 'SrcClientes.Processing'.
+0,431163504700484;SrcClientes;SrcClientes;5.OnEntityArrival;[End];Process 'SrcClientes.OnEntityArrival' execution ended.
+0,431163504700484;EntCliente1.76;SrcClientes;4.OnEnteredProcessing;[Begin];Process 'SrcClientes.OnEnteredProcessing' execution started.
+0,431163504700484;EntCliente1.76;SrcClientes;4.OnEnteredProcessing;[EndTransfer] IntoProcessing;Entity 'EntCliente1.76' ending transfer into station 'SrcClientes.Processing'.
+0,431163504700484;EntCliente1.76;SrcClientes;4.OnEnteredProcessing;[Execute] CreatedEntityAddOnProcess;Executing process 'ProcesoAsignarTiposCliente'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Begin];Process 'ProcesoAsignarTiposCliente' execution started.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Assign] IdHora;Assigning state variable 'ModeloBase.MStaHoraIdx' the value '1'. Previous value was '1'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Assign] Tipos;Assigning state variable 'EntCliente1.76.EStaNTipos' the value '3'. Previous value was '1'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Assign] TipoAComprar;Assigning state variable 'EntCliente1.76.EStaTipo1' the value '2'. Previous value was '1'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Assign] KgComprar;Assigning state variable 'EntCliente1.76.EStaKg1' the value '0,708438222777049'. Previous value was '0'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Decide] Si2Tipos;Token branching on condition 'EntCliente.EStaNTipos >= 2'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Decide] Si2Tipos;Token sent to 'True' exit.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Assign] Tipos2AComprar;Assigning state variable 'EntCliente1.76.EStaTipo2' the value '4'. Previous value was '1'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Decide] Decide19;Token branching on condition 'EntCliente.EStaTipo2 != EntCliente.EStaTipo1'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Decide] Decide19;Token sent to 'True' exit.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Assign] Kg2Comprar;Assigning state variable 'EntCliente1.76.EStaKg2' the value '1,01301872420531'. Previous value was '0'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Decide] Si3Tipos;Token branching on condition 'EntCliente.EStaNTipos >= 3'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Decide] Si3Tipos;Token sent to 'True' exit.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Assign] Tipos3AComprar;Assigning state variable 'EntCliente1.76.EStaTipo3' the value '1'. Previous value was '1'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Decide] Decide20;Token branching on condition 'EntCliente.EStaTipo3 != EntCliente.EStaTipo1 '.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Decide] Decide20;Token sent to 'True' exit.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Decide] Decide21;Token branching on condition 'EntCliente.EStaTipo3 != EntCliente.EStaTipo2'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Decide] Decide21;Token sent to 'True' exit.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[Assign] Kg3Comprar;Assigning state variable 'EntCliente1.76.EStaKg3' the value '1,8198298490701'. Previous value was '0'.
+0,431163504700484;EntCliente1.76;ModeloBase;5.ProcesoAsignarTiposCliente;[End];Process 'ProcesoAsignarTiposCliente' execution ended.
+0,431163504700484;EntCliente1.76;SrcClientes;4.OnEnteredProcessing;[Transfer] ToOutputBuffer;Entity 'EntCliente1.76' transferring from '[Station] SrcClientes.Processing' into station 'SrcClientes.OutputBuffer'.
+0,431163504700484;EntCliente1.76;SrcClientes;1.OnEntityArrival;[End];Process 'SrcClientes.OnEntityArrival' execution ended.
+0,431163504700484;EntCliente1.76;SrcClientes;5.OnEnteredOutputBuffer;[Begin];Process 'SrcClientes.OnEnteredOutputBuffer' execution started.
+0,431163504700484;EntCliente1.76;SrcClientes;5.OnEnteredOutputBuffer;[EndTransfer] IntoOutputBuffer;Entity 'EntCliente1.76' ending transfer into station 'SrcClientes.OutputBuffer'.
+0,431163504700484;EntCliente1.76;SrcClientes;5.OnEnteredOutputBuffer;[Transfer] ToOutputNode;Entity 'EntCliente1.76' transferring from '[Station] SrcClientes.OutputBuffer' into node 'Output@SrcClientes'.
+0,431163504700484;EntCliente1.76;Output@SrcClientes;1.OnEnteredFromAssociatedObject;[Begin];Process 'Output@SrcClientes.OnEnteredFromAssociatedObject' execution started.
+0,431163504700484;EntCliente1.76;Output@SrcClientes;1.OnEnteredFromAssociatedObject;[Fire] EnteredEvent;Firing event 'Output@SrcClientes.Entered'.
+0,431163504700484;EntCliente1.76;Output@SrcClientes;1.OnEnteredFromAssociatedObject;[Transfer] ToOutboundLink;Entity 'EntCliente1.76' transferring from '[Node] Output@SrcClientes' into node 'Input@SrvVenta'.
+0,431163504700484;EntCliente1.76;Input@SrvVenta;0.OnEnteredToAssociatedObject;[Begin];Process 'Input@SrvVenta.OnEnteredToAssociatedObject' execution started.
+0,431163504700484;EntCliente1.76;Input@SrvVenta;0.OnEnteredToAssociatedObject;[Fire] EnteredEvent;Firing event 'Input@SrvVenta.Entered'.
+0,431163504700484;EntCliente1.76;Input@SrvVenta;0.OnEnteredToAssociatedObject;[Transfer] ToAssociatedObject;Entity 'EntCliente1.76' transferring from '[Node] Input@SrvVenta' into object 'SrvVenta'.
+0,431163504700484;EntCliente1.76;Input@SrvVenta;0.OnEnteredToAssociatedObject;[Transfer] ToAssociatedObject;Entity 'EntCliente1.76' transferring from '[Node] Input@SrvVenta' into station 'SrvVenta.InputBuffer'.
+0,431163504700484;EntCliente1.76;SrcClientes;4.OnEnteredProcessing;[End];Process 'SrcClientes.OnEnteredProcessing' execution ended.
+0,431163504700484;EntCliente1.76;SrvVenta;6.OnEnteredInputBuffer;[Begin];Process 'SrvVenta.OnEnteredInputBuffer' execution started.
+0,431163504700484;EntCliente1.76;SrvVenta;6.OnEnteredInputBuffer;[Execute] EnteredAddOnProcess;Executing process 'ProcVentaCliente'.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Begin];Process 'ProcVentaCliente' execution started.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Decide] SiInventario1;Token branching on condition 'MStaInventario[EntCliente.EStaTipo1] >= EntCliente.EStaKg1'.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Decide] SiInventario1;Token sent to 'True' exit.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Assign] QuitaDeInv1;Assigning state variable 'ModeloBase.MStaInventario[2]' the value '163,410613145202'. Previous value was '164,119051367979'.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Assign] Venta1;Assigning state variable 'ModeloBase.MStaVentas[2]' the value '2,58938685479819'. Previous value was '1,88094863202114'.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Decide] SiTipo2;Token branching on condition 'EntCliente.EStaNTipos >= 2'.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Decide] SiTipo2;Token sent to 'True' exit.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Decide] SiInventario2;Token branching on condition 'MStaInventario[EntCliente.EStaTipo2] >= EntCliente.EStaKg2'.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Decide] SiInventario2;Token sent to 'True' exit.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Assign] QuitaDeInv3;Assigning state variable 'ModeloBase.MStaInventario[4]' the value '108,986981275795'. Previous value was '110'.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Assign] Venta2;Assigning state variable 'ModeloBase.MStaVentas[4]' the value '2,01301872420531'. Previous value was '1'.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Decide] SiTipo3;Token branching on condition 'EntCliente.EStaNTipos >= 3'.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Decide] SiTipo3;Token sent to 'True' exit.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Decide] SiInventario3;Token branching on condition 'MStaInventario[EntCliente.EStaTipo3] >= EntCliente.EStaKg3'.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Decide] SiInventario3;Token sent to 'True' exit.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Assign] QuitaDeInv3;Assigning state variable 'ModeloBase.MStaInventario[1]' the value '238,18017015093'. Previous value was '240'.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[Assign] Venta3;Assigning state variable 'ModeloBase.MStaVentas[1]' the value '2,8198298490701'. Previous value was '1'.
+0,431163504700484;EntCliente1.76;ModeloBase;4.ProcVentaCliente;[End];Process 'ProcVentaCliente' execution ended.
+0,431163504700484;EntCliente1.76;SrvVenta;6.OnEnteredInputBuffer;[EndTransfer] IntoInputBuffer;Entity 'EntCliente1.76' ending transfer into station 'SrvVenta.InputBuffer'.
+0,431163504700484;EntCliente1.76;Output@SrcClientes;4.OnExited;[Begin];Process 'Output@SrcClientes.OnExited' execution started.
+0,431163504700484;EntCliente1.76;Output@SrcClientes;4.OnExited;[Fire] ExitedEvent;Firing event 'Output@SrcClientes.Exited'.
+0,431163504700484;EntCliente1.76;Output@SrcClientes;4.OnExited;[End];Process 'Output@SrcClientes.OnExited' execution ended.
+0,431163504700484;EntCliente1.76;Input@SrvVenta;4.OnExited;[Begin];Process 'Input@SrvVenta.OnExited' execution started.
+0,431163504700484;EntCliente1.76;Input@SrvVenta;4.OnExited;[Fire] ExitedEvent;Firing event 'Input@SrvVenta.Exited'.
+0,431163504700484;EntCliente1.76;Input@SrvVenta;4.OnExited;[End];Process 'Input@SrvVenta.OnExited' execution ended.
+0,431163504700484;EntCliente1.76;SrvVenta;6.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.76' waiting to seize '1' resource(s) of resource type '[ParentObject] SrvVenta'.
+0,431163504700484;EntCliente1.76;SrcClientes;5.OnEnteredOutputBuffer;[End];Process 'SrcClientes.OnEnteredOutputBuffer' execution ended.
+0,431163504700484;EntCliente1.76;Output@SrcClientes;1.OnEnteredFromAssociatedObject;[End];Process 'Output@SrcClientes.OnEnteredFromAssociatedObject' execution ended.
+0,431163504700484;EntCliente1.76;Input@SrvVenta;0.OnEnteredToAssociatedObject;[End];Process 'Input@SrvVenta.OnEnteredToAssociatedObject' execution ended.
+0,431163504700484;--;--;--;--;Resource 'SrvVenta' checking allocation queue which contains '1' item(s).
+0,431163504700484;EntCliente1.76;SrvVenta;6.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.76' checking availability to seize '1' resource(s) of resource type '[ParentObject] SrvVenta'.
+0,431163504700484;EntCliente1.76;SrvVenta;6.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.76' checking availability to seize '1' capacity unit(s) of resource 'SrvVenta’.
+0,431163504700484;EntCliente1.76;SrvVenta;6.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.76' found ‘998’ currently available capacity unit(s) of resource 'SrvVenta’.
+0,431163504700484;EntCliente1.76;SrvVenta;6.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.76' found '1' currently available resource(s) of resource type '[ParentObject] SrvVenta'.
+0,431163504700484;--;--;--;--;Resource 'SrvVenta' selecting object 'EntCliente1.76' waiting at rank position '1' in allocation queue which contains '1' item(s).
+0,431163504700484;EntCliente1.76;SrvVenta;6.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.76' seized '1' capacity unit(s) of resource 'SrvVenta'.
+0,431163504700484;EntCliente1.76;SrvVenta;6.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.76' completed seize of '1' resource(s) of resource type '[ParentObject] SrvVenta'.
+0,431163504700484;EntCliente1.76;SrvVenta;6.OnEnteredInputBuffer;[Transfer] ToProcessing;Entity 'EntCliente1.76' transferring from '[Station] SrvVenta.InputBuffer' into station 'SrvVenta.Processing'.
+0,431163504700484;EntCliente1.76;SrvVenta;0.OnEnteredProcessing;[Begin];Process 'SrvVenta.OnEnteredProcessing' execution started.
+0,431163504700484;EntCliente1.76;SrvVenta;0.OnEnteredProcessing;[EndTransfer] IntoProcessing;Entity 'EntCliente1.76' ending transfer into station 'SrvVenta.Processing'.
+0,431163504700484;EntCliente1.76;SrvVenta;0.OnEnteredProcessing;[Decide] IfProcessTypeSpecificTime;Token branching on condition 'ProcessType==Enum.TaskProcessType.SpecificTime'.
+0,431163504700484;EntCliente1.76;SrvVenta;0.OnEnteredProcessing;[Decide] IfProcessTypeSpecificTime;Token sent to 'True' exit.
+0,431163504700484;EntCliente1.76;SrvVenta;0.OnEnteredProcessing;[Delay] ProcessingTime;Delaying token for '0,5' Minutes until time '0,931163504700484' Minutes. Delay multiplier was '1'.
+0,431163504700484;EntCliente1.76;SrvVenta;6.OnEnteredInputBuffer;[End];Process 'SrvVenta.OnEnteredInputBuffer' execution ended.
+0,623635379617178;EntCliente1.75;SrvVenta;2.OnEnteredProcessing;[Transfer] ToOutputBuffer;Entity 'EntCliente1.75' transferring from '[Station] SrvVenta.Processing' into station 'SrvVenta.OutputBuffer'.
+0,623635379617178;EntCliente1.75;SrvVenta;6.OnEnteredOutputBuffer;[Begin];Process 'SrvVenta.OnEnteredOutputBuffer' execution started.
+0,623635379617178;EntCliente1.75;SrvVenta;6.OnEnteredOutputBuffer;[EndTransfer] IntoOutputBuffer;Entity 'EntCliente1.75' ending transfer into station 'SrvVenta.OutputBuffer'.
+0,623635379617178;EntCliente1.75;SrvVenta;6.OnEnteredOutputBuffer;[Release] Server;Object 'EntCliente1.75' attempting to release '1' resource(s) of resource type '[ParentObject] SrvVenta'.
+0,623635379617178;EntCliente1.75;SrvVenta;6.OnEnteredOutputBuffer;[Release] Server;Object 'EntCliente1.75' released '1' capacity unit(s) of resource 'SrvVenta'.
+0,623635379617178;EntCliente1.75;SrvVenta;6.OnEnteredOutputBuffer;[Transfer] ToOutputNode;Entity 'EntCliente1.75' transferring from '[Station] SrvVenta.OutputBuffer' into node 'Output@SrvVenta'.
+0,623635379617178;EntCliente1.75;Output@SrvVenta;1.OnEnteredFromAssociatedObject;[Begin];Process 'Output@SrvVenta.OnEnteredFromAssociatedObject' execution started.
+0,623635379617178;EntCliente1.75;Output@SrvVenta;1.OnEnteredFromAssociatedObject;[Fire] EnteredEvent;Firing event 'Output@SrvVenta.Entered'.
+0,623635379617178;EntCliente1.75;Output@SrvVenta;1.OnEnteredFromAssociatedObject;[Transfer] ToOutboundLink;Entity 'EntCliente1.75' transferring from '[Node] Output@SrvVenta' into node 'Input@SnkClienteSale'.
+0,623635379617178;EntCliente1.75;Input@SnkClienteSale;5.OnEnteredToAssociatedObject;[Begin];Process 'Input@SnkClienteSale.OnEnteredToAssociatedObject' execution started.
+0,623635379617178;EntCliente1.75;Input@SnkClienteSale;5.OnEnteredToAssociatedObject;[Fire] EnteredEvent;Firing event 'Input@SnkClienteSale.Entered'.
+0,623635379617178;EntCliente1.75;Input@SnkClienteSale;5.OnEnteredToAssociatedObject;[Transfer] ToAssociatedObject;Entity 'EntCliente1.75' transferring from '[Node] Input@SnkClienteSale' into object 'SnkClienteSale'.
+0,623635379617178;EntCliente1.75;Input@SnkClienteSale;5.OnEnteredToAssociatedObject;[Transfer] ToAssociatedObject;Entity 'EntCliente1.75' transferring from '[Node] Input@SnkClienteSale' into station 'SnkClienteSale.InputBuffer'.
+0,623635379617178;EntCliente1.75;SrvVenta;2.OnEnteredProcessing;[End];Process 'SrvVenta.OnEnteredProcessing' execution ended.
+0,623635379617178;EntCliente1.75;SnkClienteSale;4.OnEnteredInputBuffer;[Begin];Process 'SnkClienteSale.OnEnteredInputBuffer' execution started.
+0,623635379617178;EntCliente1.75;SnkClienteSale;4.OnEnteredInputBuffer;[EndTransfer] IntoInputBuffer;Entity 'EntCliente1.75' ending transfer into station 'SnkClienteSale.InputBuffer'.
+0,623635379617178;EntCliente1.75;Output@SrvVenta;2.OnExited;[Begin];Process 'Output@SrvVenta.OnExited' execution started.
+0,623635379617178;EntCliente1.75;Output@SrvVenta;2.OnExited;[Fire] ExitedEvent;Firing event 'Output@SrvVenta.Exited'.
+0,623635379617178;EntCliente1.75;Output@SrvVenta;2.OnExited;[End];Process 'Output@SrvVenta.OnExited' execution ended.
+0,623635379617178;EntCliente1.75;Input@SnkClienteSale;2.OnExited;[Begin];Process 'Input@SnkClienteSale.OnExited' execution started.
+0,623635379617178;EntCliente1.75;Input@SnkClienteSale;2.OnExited;[Fire] ExitedEvent;Firing event 'Input@SnkClienteSale.Exited'.
+0,623635379617178;EntCliente1.75;Input@SnkClienteSale;2.OnExited;[End];Process 'Input@SnkClienteSale.OnExited' execution ended.
+0,623635379617178;EntCliente1.75;SnkClienteSale;4.OnEnteredInputBuffer;[Tally] TimeInSystem;Recording ‘1’ observation value(s) of type ‘Expression’ for tally statistic ‘SnkClienteSale.TimeInSystem’.
+0,623635379617178;EntCliente1.75;SnkClienteSale;4.OnEnteredInputBuffer;[Tally] TimeInSystem;Recording observation value '0,5' Minutes for tally statistic 'SnkClienteSale.TimeInSystem'.
+0,623635379617178;EntCliente1.75;SnkClienteSale;4.OnEnteredInputBuffer;[Destroy] Entity;Destroying object 'EntCliente1.75'.
+0,623635379617178;--;--;--;--;Object 'EntCliente1.75' destroyed.
+0,623635379617178; ;SnkClienteSale;4.OnEnteredInputBuffer;[End];Process 'SnkClienteSale.OnEnteredInputBuffer' execution ended.
+0,623635379617178; ;SrvVenta;6.OnEnteredOutputBuffer;[End];Process 'SrvVenta.OnEnteredOutputBuffer' execution ended.
+0,623635379617178; ;Output@SrvVenta;1.OnEnteredFromAssociatedObject;[End];Process 'Output@SrvVenta.OnEnteredFromAssociatedObject' execution ended.
+0,623635379617178; ;Input@SnkClienteSale;5.OnEnteredToAssociatedObject;[End];Process 'Input@SnkClienteSale.OnEnteredToAssociatedObject' execution ended.
+0,931163504700484;EntCliente1.76;SrvVenta;0.OnEnteredProcessing;[Transfer] ToOutputBuffer;Entity 'EntCliente1.76' transferring from '[Station] SrvVenta.Processing' into station 'SrvVenta.OutputBuffer'.
+0,931163504700484;EntCliente1.76;SrvVenta;5.OnEnteredOutputBuffer;[Begin];Process 'SrvVenta.OnEnteredOutputBuffer' execution started.
+0,931163504700484;EntCliente1.76;SrvVenta;5.OnEnteredOutputBuffer;[EndTransfer] IntoOutputBuffer;Entity 'EntCliente1.76' ending transfer into station 'SrvVenta.OutputBuffer'.
+0,931163504700484;EntCliente1.76;SrvVenta;5.OnEnteredOutputBuffer;[Release] Server;Object 'EntCliente1.76' attempting to release '1' resource(s) of resource type '[ParentObject] SrvVenta'.
+0,931163504700484;EntCliente1.76;SrvVenta;5.OnEnteredOutputBuffer;[Release] Server;Object 'EntCliente1.76' released '1' capacity unit(s) of resource 'SrvVenta'.
+0,931163504700484;--;--;--;--;Changing from AutoState 'Busy' to 'Starved' on resource 'SrvVenta'.
+0,931163504700484;--;--;--;--;Assigning state variable 'SrvVenta.ResourceState' the value '0'. Previous value was '1'.
+0,931163504700484;EntCliente1.76;SrvVenta;5.OnEnteredOutputBuffer;[Transfer] ToOutputNode;Entity 'EntCliente1.76' transferring from '[Station] SrvVenta.OutputBuffer' into node 'Output@SrvVenta'.
+0,931163504700484;EntCliente1.76;Output@SrvVenta;1.OnEnteredFromAssociatedObject;[Begin];Process 'Output@SrvVenta.OnEnteredFromAssociatedObject' execution started.
+0,931163504700484;EntCliente1.76;Output@SrvVenta;1.OnEnteredFromAssociatedObject;[Fire] EnteredEvent;Firing event 'Output@SrvVenta.Entered'.
+0,931163504700484;EntCliente1.76;Output@SrvVenta;1.OnEnteredFromAssociatedObject;[Transfer] ToOutboundLink;Entity 'EntCliente1.76' transferring from '[Node] Output@SrvVenta' into node 'Input@SnkClienteSale'.
+0,931163504700484;EntCliente1.76;Input@SnkClienteSale;6.OnEnteredToAssociatedObject;[Begin];Process 'Input@SnkClienteSale.OnEnteredToAssociatedObject' execution started.
+0,931163504700484;EntCliente1.76;Input@SnkClienteSale;6.OnEnteredToAssociatedObject;[Fire] EnteredEvent;Firing event 'Input@SnkClienteSale.Entered'.
+0,931163504700484;EntCliente1.76;Input@SnkClienteSale;6.OnEnteredToAssociatedObject;[Transfer] ToAssociatedObject;Entity 'EntCliente1.76' transferring from '[Node] Input@SnkClienteSale' into object 'SnkClienteSale'.
+0,931163504700484;EntCliente1.76;Input@SnkClienteSale;6.OnEnteredToAssociatedObject;[Transfer] ToAssociatedObject;Entity 'EntCliente1.76' transferring from '[Node] Input@SnkClienteSale' into station 'SnkClienteSale.InputBuffer'.
+0,931163504700484;EntCliente1.76;SrvVenta;0.OnEnteredProcessing;[End];Process 'SrvVenta.OnEnteredProcessing' execution ended.
+0,931163504700484;EntCliente1.76;SnkClienteSale;4.OnEnteredInputBuffer;[Begin];Process 'SnkClienteSale.OnEnteredInputBuffer' execution started.
+0,931163504700484;EntCliente1.76;SnkClienteSale;4.OnEnteredInputBuffer;[EndTransfer] IntoInputBuffer;Entity 'EntCliente1.76' ending transfer into station 'SnkClienteSale.InputBuffer'.
+0,931163504700484;EntCliente1.76;Output@SrvVenta;0.OnExited;[Begin];Process 'Output@SrvVenta.OnExited' execution started.
+0,931163504700484;EntCliente1.76;Output@SrvVenta;0.OnExited;[Fire] ExitedEvent;Firing event 'Output@SrvVenta.Exited'.
+0,931163504700484;EntCliente1.76;Output@SrvVenta;0.OnExited;[End];Process 'Output@SrvVenta.OnExited' execution ended.
+0,931163504700484;EntCliente1.76;Input@SnkClienteSale;0.OnExited;[Begin];Process 'Input@SnkClienteSale.OnExited' execution started.
+0,931163504700484;EntCliente1.76;Input@SnkClienteSale;0.OnExited;[Fire] ExitedEvent;Firing event 'Input@SnkClienteSale.Exited'.
+0,931163504700484;EntCliente1.76;Input@SnkClienteSale;0.OnExited;[End];Process 'Input@SnkClienteSale.OnExited' execution ended.
+0,931163504700484;EntCliente1.76;SnkClienteSale;4.OnEnteredInputBuffer;[Tally] TimeInSystem;Recording ‘1’ observation value(s) of type ‘Expression’ for tally statistic ‘SnkClienteSale.TimeInSystem’.
+0,931163504700484;EntCliente1.76;SnkClienteSale;4.OnEnteredInputBuffer;[Tally] TimeInSystem;Recording observation value '0,5' Minutes for tally statistic 'SnkClienteSale.TimeInSystem'.
+0,931163504700484;EntCliente1.76;SnkClienteSale;4.OnEnteredInputBuffer;[Destroy] Entity;Destroying object 'EntCliente1.76'.
+0,931163504700484;--;--;--;--;Object 'EntCliente1.76' destroyed.
+0,931163504700484; ;SnkClienteSale;4.OnEnteredInputBuffer;[End];Process 'SnkClienteSale.OnEnteredInputBuffer' execution ended.
+0,931163504700484; ;SrvVenta;5.OnEnteredOutputBuffer;[End];Process 'SrvVenta.OnEnteredOutputBuffer' execution ended.
+0,931163504700484; ;Output@SrvVenta;1.OnEnteredFromAssociatedObject;[End];Process 'Output@SrvVenta.OnEnteredFromAssociatedObject' execution ended.
+0,931163504700484; ;Input@SnkClienteSale;6.OnEnteredToAssociatedObject;[End];Process 'Input@SnkClienteSale.OnEnteredToAssociatedObject' execution ended.
+1,11463358043867;--;--;--;--;Firing event 'SrcClientes.EntityArrivals.Event'.
+1,11463358043867;--;--;--;--;Time until next event of timer 'SrcClientes.EntityArrivals' is '0,337653292941078' Minutes.
+1,11463358043867;SrcClientes;SrcClientes;6.OnEntityArrival;[Begin];Process 'SrcClientes.OnEntityArrival' execution started.
+1,11463358043867;SrcClientes;SrcClientes;6.OnEntityArrival;[Create] Entities;Creating '1' new object(s) of entity type 'EntCliente1'.
+1,11463358043867;SrcClientes;SrcClientes;6.OnEntityArrival;[Create] Entities;Created object 'EntCliente1.77'.
+1,11463358043867;EntCliente1.77;SrcClientes;1.OnEntityArrival;[Transfer] ToProcessing;Entity 'EntCliente1.77' transferring from '[FreeSpace] SrcClientes' into station 'SrcClientes.Processing'.
+1,11463358043867;SrcClientes;SrcClientes;6.OnEntityArrival;[End];Process 'SrcClientes.OnEntityArrival' execution ended.
+1,11463358043867;EntCliente1.77;SrcClientes;5.OnEnteredProcessing;[Begin];Process 'SrcClientes.OnEnteredProcessing' execution started.
+1,11463358043867;EntCliente1.77;SrcClientes;5.OnEnteredProcessing;[EndTransfer] IntoProcessing;Entity 'EntCliente1.77' ending transfer into station 'SrcClientes.Processing'.
+1,11463358043867;EntCliente1.77;SrcClientes;5.OnEnteredProcessing;[Execute] CreatedEntityAddOnProcess;Executing process 'ProcesoAsignarTiposCliente'.
+1,11463358043867;EntCliente1.77;ModeloBase;6.ProcesoAsignarTiposCliente;[Begin];Process 'ProcesoAsignarTiposCliente' execution started.
+1,11463358043867;EntCliente1.77;ModeloBase;6.ProcesoAsignarTiposCliente;[Assign] IdHora;Assigning state variable 'ModeloBase.MStaHoraIdx' the value '1'. Previous value was '1'.
+1,11463358043867;EntCliente1.77;ModeloBase;6.ProcesoAsignarTiposCliente;[Assign] Tipos;Assigning state variable 'EntCliente1.77.EStaNTipos' the value '1'. Previous value was '1'.
+1,11463358043867;EntCliente1.77;ModeloBase;6.ProcesoAsignarTiposCliente;[Assign] TipoAComprar;Assigning state variable 'EntCliente1.77.EStaTipo1' the value '8'. Previous value was '1'.
+1,11463358043867;EntCliente1.77;ModeloBase;6.ProcesoAsignarTiposCliente;[Assign] KgComprar;Assigning state variable 'EntCliente1.77.EStaKg1' the value '0,612834993768847'. Previous value was '0'.
+1,11463358043867;EntCliente1.77;ModeloBase;6.ProcesoAsignarTiposCliente;[Decide] Si2Tipos;Token branching on condition 'EntCliente.EStaNTipos >= 2'.
+1,11463358043867;EntCliente1.77;ModeloBase;6.ProcesoAsignarTiposCliente;[Decide] Si2Tipos;Token sent to 'False' exit.
+1,11463358043867;EntCliente1.77;ModeloBase;6.ProcesoAsignarTiposCliente;[End];Process 'ProcesoAsignarTiposCliente' execution ended.
+1,11463358043867;EntCliente1.77;SrcClientes;5.OnEnteredProcessing;[Transfer] ToOutputBuffer;Entity 'EntCliente1.77' transferring from '[Station] SrcClientes.Processing' into station 'SrcClientes.OutputBuffer'.
+1,11463358043867;EntCliente1.77;SrcClientes;1.OnEntityArrival;[End];Process 'SrcClientes.OnEntityArrival' execution ended.
+1,11463358043867;EntCliente1.77;SrcClientes;6.OnEnteredOutputBuffer;[Begin];Process 'SrcClientes.OnEnteredOutputBuffer' execution started.
+1,11463358043867;EntCliente1.77;SrcClientes;6.OnEnteredOutputBuffer;[EndTransfer] IntoOutputBuffer;Entity 'EntCliente1.77' ending transfer into station 'SrcClientes.OutputBuffer'.
+1,11463358043867;EntCliente1.77;SrcClientes;6.OnEnteredOutputBuffer;[Transfer] ToOutputNode;Entity 'EntCliente1.77' transferring from '[Station] SrcClientes.OutputBuffer' into node 'Output@SrcClientes'.
+1,11463358043867;EntCliente1.77;Output@SrcClientes;1.OnEnteredFromAssociatedObject;[Begin];Process 'Output@SrcClientes.OnEnteredFromAssociatedObject' execution started.
+1,11463358043867;EntCliente1.77;Output@SrcClientes;1.OnEnteredFromAssociatedObject;[Fire] EnteredEvent;Firing event 'Output@SrcClientes.Entered'.
+1,11463358043867;EntCliente1.77;Output@SrcClientes;1.OnEnteredFromAssociatedObject;[Transfer] ToOutboundLink;Entity 'EntCliente1.77' transferring from '[Node] Output@SrcClientes' into node 'Input@SrvVenta'.
+1,11463358043867;EntCliente1.77;Input@SrvVenta;4.OnEnteredToAssociatedObject;[Begin];Process 'Input@SrvVenta.OnEnteredToAssociatedObject' execution started.
+1,11463358043867;EntCliente1.77;Input@SrvVenta;4.OnEnteredToAssociatedObject;[Fire] EnteredEvent;Firing event 'Input@SrvVenta.Entered'.
+1,11463358043867;EntCliente1.77;Input@SrvVenta;4.OnEnteredToAssociatedObject;[Transfer] ToAssociatedObject;Entity 'EntCliente1.77' transferring from '[Node] Input@SrvVenta' into object 'SrvVenta'.
+1,11463358043867;EntCliente1.77;Input@SrvVenta;4.OnEnteredToAssociatedObject;[Transfer] ToAssociatedObject;Entity 'EntCliente1.77' transferring from '[Node] Input@SrvVenta' into station 'SrvVenta.InputBuffer'.
+1,11463358043867;EntCliente1.77;SrcClientes;5.OnEnteredProcessing;[End];Process 'SrcClientes.OnEnteredProcessing' execution ended.
+1,11463358043867;EntCliente1.77;SrvVenta;0.OnEnteredInputBuffer;[Begin];Process 'SrvVenta.OnEnteredInputBuffer' execution started.
+1,11463358043867;EntCliente1.77;SrvVenta;0.OnEnteredInputBuffer;[Execute] EnteredAddOnProcess;Executing process 'ProcVentaCliente'.
+1,11463358043867;EntCliente1.77;ModeloBase;5.ProcVentaCliente;[Begin];Process 'ProcVentaCliente' execution started.
+1,11463358043867;EntCliente1.77;ModeloBase;5.ProcVentaCliente;[Decide] SiInventario1;Token branching on condition 'MStaInventario[EntCliente.EStaTipo1] >= EntCliente.EStaKg1'.
+1,11463358043867;EntCliente1.77;ModeloBase;5.ProcVentaCliente;[Decide] SiInventario1;Token sent to 'True' exit.
+1,11463358043867;EntCliente1.77;ModeloBase;5.ProcVentaCliente;[Assign] QuitaDeInv1;Assigning state variable 'ModeloBase.MStaInventario[8]' the value '49,3871650062312'. Previous value was '50'.
+1,11463358043867;EntCliente1.77;ModeloBase;5.ProcVentaCliente;[Assign] Venta1;Assigning state variable 'ModeloBase.MStaVentas[8]' the value '1,61283499376885'. Previous value was '1'.
+1,11463358043867;EntCliente1.77;ModeloBase;5.ProcVentaCliente;[Decide] SiTipo2;Token branching on condition 'EntCliente.EStaNTipos >= 2'.
+1,11463358043867;EntCliente1.77;ModeloBase;5.ProcVentaCliente;[Decide] SiTipo2;Token sent to 'False' exit.
+1,11463358043867;EntCliente1.77;ModeloBase;5.ProcVentaCliente;[End];Process 'ProcVentaCliente' execution ended.
+1,11463358043867;EntCliente1.77;SrvVenta;0.OnEnteredInputBuffer;[EndTransfer] IntoInputBuffer;Entity 'EntCliente1.77' ending transfer into station 'SrvVenta.InputBuffer'.
+1,11463358043867;EntCliente1.77;Output@SrcClientes;5.OnExited;[Begin];Process 'Output@SrcClientes.OnExited' execution started.
+1,11463358043867;EntCliente1.77;Output@SrcClientes;5.OnExited;[Fire] ExitedEvent;Firing event 'Output@SrcClientes.Exited'.
+1,11463358043867;EntCliente1.77;Output@SrcClientes;5.OnExited;[End];Process 'Output@SrcClientes.OnExited' execution ended.
+1,11463358043867;EntCliente1.77;Input@SrvVenta;5.OnExited;[Begin];Process 'Input@SrvVenta.OnExited' execution started.
+1,11463358043867;EntCliente1.77;Input@SrvVenta;5.OnExited;[Fire] ExitedEvent;Firing event 'Input@SrvVenta.Exited'.
+1,11463358043867;EntCliente1.77;Input@SrvVenta;5.OnExited;[End];Process 'Input@SrvVenta.OnExited' execution ended.
+1,11463358043867;EntCliente1.77;SrvVenta;0.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.77' waiting to seize '1' resource(s) of resource type '[ParentObject] SrvVenta'.
+1,11463358043867;EntCliente1.77;SrcClientes;6.OnEnteredOutputBuffer;[End];Process 'SrcClientes.OnEnteredOutputBuffer' execution ended.
+1,11463358043867;EntCliente1.77;Output@SrcClientes;1.OnEnteredFromAssociatedObject;[End];Process 'Output@SrcClientes.OnEnteredFromAssociatedObject' execution ended.
+1,11463358043867;EntCliente1.77;Input@SrvVenta;4.OnEnteredToAssociatedObject;[End];Process 'Input@SrvVenta.OnEnteredToAssociatedObject' execution ended.
+1,11463358043867;--;--;--;--;Resource 'SrvVenta' checking allocation queue which contains '1' item(s).
+1,11463358043867;EntCliente1.77;SrvVenta;0.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.77' checking availability to seize '1' resource(s) of resource type '[ParentObject] SrvVenta'.
+1,11463358043867;EntCliente1.77;SrvVenta;0.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.77' checking availability to seize '1' capacity unit(s) of resource 'SrvVenta’.
+1,11463358043867;EntCliente1.77;SrvVenta;0.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.77' found ‘999’ currently available capacity unit(s) of resource 'SrvVenta’.
+1,11463358043867;EntCliente1.77;SrvVenta;0.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.77' found '1' currently available resource(s) of resource type '[ParentObject] SrvVenta'.
+1,11463358043867;--;--;--;--;Resource 'SrvVenta' selecting object 'EntCliente1.77' waiting at rank position '1' in allocation queue which contains '1' item(s).
+1,11463358043867;EntCliente1.77;SrvVenta;0.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.77' seized '1' capacity unit(s) of resource 'SrvVenta'.
+1,11463358043867;--;--;--;--;Changing from AutoState 'Starved' to 'Busy' on resource 'SrvVenta'.
+1,11463358043867;--;--;--;--;Assigning state variable 'SrvVenta.ResourceState' the value '1'. Previous value was '0'.
+1,11463358043867;EntCliente1.77;SrvVenta;0.OnEnteredInputBuffer;[Seize] Server;Object 'EntCliente1.77' completed seize of '1' resource(s) of resource type '[ParentObject] SrvVenta'.
+1,11463358043867;EntCliente1.77;SrvVenta;0.OnEnteredInputBuffer;[Transfer] ToProcessing;Entity 'EntCliente1.77' transferring from '[Station] SrvVenta.InputBuffer' into station 'SrvVenta.Processing'.
+1,11463358043867;EntCliente1.77;SrvVenta;4.OnEnteredProcessing;[Begin];Process 'SrvVenta.OnEnteredProcessing' execution started.
+1,11463358043867;EntCliente1.77;SrvVenta;4.OnEnteredProcessing;[EndTransfer] IntoProcessing;Entity 'EntCliente1.77' ending transfer into station 'SrvVenta.Processing'.
+1,11463358043867;EntCliente1.77;SrvVenta;4.OnEnteredProcessing;[Decide] IfProcessTypeSpecificTime;Token branching on condition 'ProcessType==Enum.TaskProcessType.SpecificTime'.
+1,11463358043867;EntCliente1.77;SrvVenta;4.OnEnteredProcessing;[Decide] IfProcessTypeSpecificTime;Token sent to 'True' exit.
+1,11463358043867;EntCliente1.77;SrvVenta;4.OnEnteredProcessing;[Delay] ProcessingTime;Delaying token for '0,5' Minutes until time '1,61463358043867' Minutes. Delay multiplier was '1'.
+1,11463358043867;EntCliente1.77;SrvVenta;0.OnEnteredInputBuffer;[End];Process 'SrvVenta.OnEnteredInputBuffer' execution ended.
+
