@@ -15,8 +15,8 @@
 | Eje | Palanca | Naturaleza | Niveles evaluados |
 |---|---|---|---|
 | **A** | Política de Producción | "¿Qué y cuándo lanzar?" | (1) Plan puro · (2) Plan + Reactivo (Híbrida) · (3) PULL puro (Kanban/ROP) |
-| **B** | Política de Secuencia de Horno | "¿Qué hornear primero?" | (1) Menor stock en sala · (2) Mayor demanda esperada · (3) Fija F1→F2→F3 · (4) Híbrida (stock bajo + demanda) |
-| **C** | Dimensionamiento de Recursos | "¿Cuánta capacidad instalada?" | Mezcladoras {4·5·6} · Panaderos {8·9·10} · Hornos {1·2·3} · Manipuladores horno {3·4·5} |
+| **B** | Política de Secuencia de Horno | "¿Qué hornear primero?" | (1) Fija F1→F2→F3 · (2) Menor stock en sala |
+| **C** | Dimensionamiento de Recursos | "¿Cuánta capacidad instalada?" | Mezcladoras {4·5·6} · Panaderos {8·9·10} · Hornos {2·4·6} · Manipuladores horno {3·4·5} |
 
 ### 1.2 Estrategia experimental — narrativa de "embudo"
 
@@ -25,7 +25,7 @@ En lugar de presentar la matriz completa (24+ combinaciones), se siguen **3 bloq
 | Bloque | Variable que se mueve | Variables fijas | Slide |
 |---|---|---|---|
 | **1** | Política Producción (3 niveles) | Recursos = base teórica · Horno = Fija F1→F2→F3 | 7 |
-| **2** | Política Horno (4 niveles) | Recursos = base teórica · Producción = ganadora B1 | 8 |
+| **2** | Política Horno (2 niveles) | Recursos = base teórica · Producción = ganadora B1 | 8 |
 | **3** | Recursos (OFAT, 3 niveles cada uno) | Política Producción = ganadora B1 · Política Horno = ganadora B2 | 9 |
 
 ### 1.3 Configuración base (configuración mínima viable)
@@ -50,10 +50,10 @@ En lugar de presentar la matriz completa (24+ combinaciones), se siguen **3 bloq
 - **Warm-up**: 0 (la pre-apertura 06:00–09:00 actúa como warm-up natural del inventario)
 - **Total estimado de corridas**:
   - Bloque 1: 3 × 20 = **60**
-  - Bloque 2: 3 × 20 = **60** (la política Fija F1→F2→F3 ya fue corrida en B1, se reutiliza)
+  - Bloque 2: 1 × 20 = **20** (Menor-stock; la política Fija F1→F2→F3 ya fue corrida en B1, se reutiliza)
   - Bloque 3 (OFAT con 4 recursos × 3 niveles, excluyendo el base ya corrido): 8 × 20 = **160**
   - Escenario campeón consolidado: 1 × 20 = **20**
-  - **TOTAL ≈ 300 corridas**
+  - **TOTAL ≈ 260 corridas**
 
 ### 1.5 Métricas reportadas (todos los experimentos)
 
@@ -163,15 +163,15 @@ Por cada escenario × réplica se registrarán los siguientes KPIs (media e inte
 
 ### SLIDE 5 — Las 3 palancas y el diseño experimental
 
-**Mensaje clave**: *"Probamos 3 × 4 × N combinaciones con 20 réplicas cada una"*.
+**Mensaje clave**: *"Probamos 3 × 2 × N combinaciones con 20 réplicas cada una"*.
 
 **Visual principal**: matriz 3D / tabla resumen del diseño experimental:
 
 | Eje | Niveles probados | Cantidad |
 |---|---|---|
 | 🎛️ Producción | Plan puro · Plan + Reactivo (Híbrida) · PULL puro | 3 |
-| 🔥 Horno | Menor-stock · Mayor-demanda · Fija F1→F2→F3 · Híbrida | 4 |
-| 📦 Recursos | Mezcladoras {4,5,6} · Panaderos {8,9,10} · Hornos {1,2,3} · Manipuladores {3,4,5} | OFAT |
+| 🔥 Horno | Fija F1→F2→F3 · Menor stock en sala | 2 |
+| 📦 Recursos | Mezcladoras {4,5,6} · Panaderos {8,9,10} · Hornos {2,4,6} · Manipuladores {3,4,5} | OFAT |
 
 **Bullets**:
 - Estrategia tipo "embudo": cada bloque cierra una decisión y fija esa variable para el siguiente
@@ -179,7 +179,7 @@ Por cada escenario × réplica se registrarán los siguientes KPIs (media e inte
 - Política horno por defecto en bloque 1: Fija F1→F2→F3 (la más conservadora, para aislar el efecto de producción)
 - Las 3 políticas de producción cubren un **espectro de reactividad**: 0% (Plan puro) → reactividad moderada cada 30 min (Híbrida) → 100% reactiva por ROP (PULL)
 
-**Notas**: 45 seg. *"La matriz completa sería 24 combinaciones; el pitch las recorre en 3 pasos."*
+**Notas**: 45 seg. *"La matriz completa sería 6 combinaciones base; el pitch las recorre en 3 pasos."*
 
 ---
 
@@ -263,38 +263,46 @@ Por cada escenario × réplica se registrarán los siguientes KPIs (media e inte
 
 ### SLIDE 8 — Eje B: ¿Cuál secuencia de horno?
 
-**Mensaje clave**: *"La política de horno que mira el stock en sala lidera en peak; la fija es robusta pero rígida"*. **[VALIDAR CON DATOS]**
+**Mensaje clave**: *"Priorizar la familia con menor stock reduce quiebres en peak; la secuencia fija es predecible pero rígida"*. **[VALIDAR CON DATOS]**
 
 **Bloque experimental**:
-- Variable: Política Horno ∈ {Menor-stock, Mayor-demanda, Fija F1→F2→F3, Híbrida}
+- Variable: Política Horno ∈ {Fija F1→F2→F3, Menor stock en sala}
 - Fijo: Recursos = base · Producción = ganadora del Slide 7
-- 4 escenarios × 20 réplicas = 80 corridas
+- 1 escenario nuevo × 20 réplicas = 20 corridas (Fija F1→F2→F3 se reutiliza de B1)
 
-**Visual principal**: gráfico de líneas
-- Eje X: 10 SKUs
+**Visual principal**: gráfico de líneas con 2 series
+- Eje X: 10 SKUs (ordenados por demanda decreciente)
 - Eje Y: % demanda satisfecha
-- 4 series (una por política), con bandas de confianza 95%
+- 2 series con bandas de confianza 95%: Fija F1→F2→F3 (gris) · Menor stock (azul)
 - Línea horizontal objetivo: 95%
 
-**Visual secundario**: heatmap "ganador por SKU × política":
+```
+% Servicio por SKU — Política Horno
+100% ┤ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ (objetivo 95%)
+ 95% ┤     ●─────●─────●    ...    ← Menor stock [PH]
+ 90% ┤  ●──             ──●  ...  ← Fija [PH]
+ 85% ┤
+     └─ Marraq Hallull HotDog MarraqInt ...
+        ── Fija F1→F2→F3 · ── Menor stock
+```
 
-| SKU | Menor-stock | Mayor-demanda | Fija | Híbrida |
+**Visual secundario**: heatmap "ganador por SKU":
+
+| SKU | Fija F1→F2→F3 | Menor stock en sala | Ganadora |
+|---|---|---|---|
+| Marraqueta | `[PH]` 🟢/🟡/🔴 | `[PH]` 🟢/🟡/🔴 | `[PH]` |
+| ... (10 filas) | | | |
+
+**KPI cards comparativos**:
+
+| Política Horno | Fill global | Kg perdidos | Sobrantes | Setups/día |
 |---|---|---|---|---|
-| Marraqueta | `[PH]` 🟢/🟡/🔴 | `[PH]` | `[PH]` | `[PH]` |
-| ... (10 filas) | | | | |
-
-**KPI cards (4)**: fill rate global por política horno.
-
-| Política Horno | Fill global | Kg perdidos | Sobrantes | Setups día |
-|---|---|---|---|---|
-| Menor-stock | `[PH]` | `[PH]` | `[PH]` | `[PH]` |
-| Mayor-demanda | `[PH]` | `[PH]` | `[PH]` | `[PH]` |
 | Fija F1→F2→F3 | `[PH]` | `[PH]` | `[PH]` | `[PH]` |
-| Híbrida | `[PH]` | `[PH]` | `[PH]` | `[PH]` |
+| Menor stock en sala | `[PH]` | `[PH]` | `[PH]` | `[PH]` |
 
 **Mensaje de cierre**: *"La política `[PH: ganadora]` será la base para evaluar el dimensionamiento de recursos."*
 
-**Notas**: 1 min 15 seg. Discutir el trade-off: Fija tiene 0 setups extra pero no se adapta; Menor-stock se adapta pero puede generar más cambios de familia (más setups, menos throughput).
+**Notas**: 1 min. Discutir el trade-off fundamental: Fija tiene setups predecibles y 0 overhead decisional, pero ignora el estado real del inventario; Menor-stock reacciona a la realidad de sala y protege mejor el peak, pero puede generar más cambios de familia (más setups, menos throughput bruto). **Si los datos muestran diferencia marginal, elegir Fija por simplicidad operativa.**
 
 ---
 
@@ -317,11 +325,11 @@ Mezcladoras (4·5·6)        Panaderos (8·9·10)
  60%┤                        80%┤  ●
     └─ 4  5  6                  └─ 8  9 10
 
-Hornos (1·2·3)             Manipuladores (3·4·5)
+Hornos (2·4·6)             Manipuladores (3·4·5)
    ↑ Fill                     ↑ Fill
 100%┤  ●─●─●               100%┤    ●─●
  80%┤                        90%┤  ●
-    └─ 1  2  3                  └─ 3  4  5
+    └─ 2  4  6                  └─ 3  4  5
 ```
 
 Para cada curva marcar:
@@ -353,7 +361,7 @@ Para cada curva marcar:
 | Dimensión | Configuración ganadora |
 |---|---|
 | Política producción | `[PH: Híbrida / PULL]` |
-| Política horno | `[PH: Menor-stock / Mayor-demanda / Fija / Híbrida]` |
+| Política horno | `[PH: Fija F1→F2→F3 / Menor stock en sala]` |
 | Mezcladoras | `[PH]` |
 | Panaderos | `[PH]` |
 | Hornos | `[PH]` |
@@ -405,29 +413,28 @@ Para cada curva marcar:
 
 ## 3. Anexo A — Matriz Maestra de Escenarios
 
-Total: 15 escenarios distintos × 20 réplicas = **300 corridas**.
+Total: 13 escenarios distintos × 20 réplicas = **260 corridas**.
 
 | ID | Bloque | Política Producción | Política Horno | Mezcl. | Panad. | Hornos | Manip. | Réplicas |
 |---|---|---|---|---|---|---|---|---|
 | E01 | B1 | Plan puro | Fija F1→F2→F3 | 5 | 9 | 2 | 4 | 20 |
 | E02 | B1 | Plan + Reactivo (Híbrida) | Fija F1→F2→F3 | 5 | 9 | 2 | 4 | 20 |
 | E03 | B1 | PULL puro | Fija F1→F2→F3 | 5 | 9 | 2 | 4 | 20 |
-| E04 | B2 | `[ganadora B1]` | Menor-stock | 5 | 9 | 2 | 4 | 20 |
-| E05 | B2 | `[ganadora B1]` | Mayor-demanda | 5 | 9 | 2 | 4 | 20 |
-| E06 | B2 | `[ganadora B1]` | Híbrida (stock + demanda) | 5 | 9 | 2 | 4 | 20 |
-| E07 | B3 | `[ganadora B1]` | `[ganadora B2]` | **4** | 9 | 2 | 4 | 20 |
-| E08 | B3 | `[ganadora B1]` | `[ganadora B2]` | **6** | 9 | 2 | 4 | 20 |
-| E09 | B3 | `[ganadora B1]` | `[ganadora B2]` | 5 | **8** | 2 | 4 | 20 |
-| E10 | B3 | `[ganadora B1]` | `[ganadora B2]` | 5 | **10** | 2 | 4 | 20 |
-| E11 | B3 | `[ganadora B1]` | `[ganadora B2]` | 5 | 9 | **1** | 4 | 20 |
-| E12 | B3 | `[ganadora B1]` | `[ganadora B2]` | 5 | 9 | **3** | 4 | 20 |
-| E13 | B3 | `[ganadora B1]` | `[ganadora B2]` | 5 | 9 | 2 | **3** | 20 |
-| E14 | B3 | `[ganadora B1]` | `[ganadora B2]` | 5 | 9 | 2 | **5** | 20 |
-| E15 | Campeón | `[ganadora B1]` | `[ganadora B2]` | `[opt]` | `[opt]` | `[opt]` | `[opt]` | 20 |
+| E04 | B2 | `[ganadora B1]` | Menor stock en sala | 5 | 9 | 2 | 4 | 20 |
+| E05 | B3 | `[ganadora B1]` | `[ganadora B2]` | **4** | 9 | 2 | 4 | 20 |
+| E06 | B3 | `[ganadora B1]` | `[ganadora B2]` | **6** | 9 | 2 | 4 | 20 |
+| E07 | B3 | `[ganadora B1]` | `[ganadora B2]` | 5 | **8** | 2 | 4 | 20 |
+| E08 | B3 | `[ganadora B1]` | `[ganadora B2]` | 5 | **10** | 2 | 4 | 20 |
+| E09 | B3 | `[ganadora B1]` | `[ganadora B2]` | 5 | 9 | **4** | 4 | 20 |
+| E10 | B3 | `[ganadora B1]` | `[ganadora B2]` | 5 | 9 | **6** | 4 | 20 |
+| E11 | B3 | `[ganadora B1]` | `[ganadora B2]` | 5 | 9 | 2 | **3** | 20 |
+| E12 | B3 | `[ganadora B1]` | `[ganadora B2]` | 5 | 9 | 2 | **5** | 20 |
+| E13 | Campeón | `[ganadora B1]` | `[ganadora B2]` | `[opt]` | `[opt]` | `[opt]` | `[opt]` | 20 |
 
 > **Reutilización entre bloques**:
-> - El escenario con política horno "Fija F1→F2→F3" del bloque B2 ya fue corrido en B1 (escenarios E01–E03 para sus respectivas políticas de producción). Tras elegir la política ganadora de B1, el resultado correspondiente sirve como cuarto punto de comparación de B2 — no se vuelve a correr.
-> - Si en B3 la combinación ganadora coincide con uno de los escenarios E04–E10, el "Campeón" (E15) puede omitirse usando ese resultado directamente.
+> - La política horno "Fija F1→F2→F3" ya fue corrida en B1 (escenarios E01–E03). Tras elegir la política ganadora de B1, el resultado correspondiente sirve como punto de comparación de B2 — no se vuelve a correr. Solo el escenario E04 (Menor-stock) es nuevo en B2.
+> - La base de recursos {Mezcl.=5, Panad.=9, Hornos=2, Manip.=4} ya fue corrida en B1/B2; los escenarios B3 solo añaden las variaciones no-base de cada recurso.
+> - Si en B3 la combinación ganadora coincide con uno de los escenarios E05–E12, el "Campeón" (E13) puede omitirse usando ese resultado directamente.
 
 ---
 
@@ -444,7 +451,7 @@ E03,1,PULL,Fija,5,9,2,4,Marraqueta,0.928,144,8,1856,31,N/A,...
 ```
 
 > **Convención de nombres recomendada para `politica_prod`**: `PlanPuro`, `PlanReactivo`, `PULL`.
-> **Convención para `politica_horno`**: `MenorStock`, `MayorDemanda`, `Fija`, `Hibrida`.
+> **Convención para `politica_horno`**: `Fija`, `MenorStock`.
 
 Con ese CSV se generan automáticamente los gráficos de los slides 7, 8, 9, 10 vía pivot/agregación por escenario.
 
