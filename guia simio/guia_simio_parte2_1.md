@@ -286,6 +286,8 @@ Los recursos humanos se modelan como **Resources** (no como capacidad del Server
 | Resource | `ResManipulador` | 2                    |
 | Resource | `ResAyudante`    | 2                    |
 
+> **Nota**: Estos Resources genéricos se reemplazan en FASE 6 por sub-recursos con Work Schedules (`ResPanaderoA/B/C`, `ResManipuladorA/B`, `ResAyudanteA/B`). Crear aquí primero como placeholder para verificar la topología.
+
 3. En cada Server que requiere recurso humano, configurar **Secondary Resources**:
    - Clic en el Server → Properties → **Secondary Resources** → **Seize**
    - Agregar el recurso requerido
@@ -314,81 +316,91 @@ Los recursos humanos se modelan como **Resources** (no como capacidad del Server
 
 Ir a **Data** → **Schedules** → en la sección **Day Patterns**, crear los siguientes patrones:
 
+> **Regla de diseño**: Cada patrón tiene exactamente **480 min productivos** (8 horas de trabajo efectivo) + **75 min de pausas** (2×15 min descanso + 45 min colación) = **555 min brutos = 9h 15m**.
+>
+> **Ref. Enunciado §II.D**: *"Los trabajadores tienen jornadas de 8 horas diarias de trabajo efectivo. **Además**, cuentan con 45 minutos para una colación, y dos periodos extra de descanso de 15 minutos."* → Las pausas son adicionales a las 8 horas efectivas.
+
 #### Patrón A: `PatronPanaderoGrupoA` (Descanso temprano)
 
-| Work Period            | Start Time | Duration | End Time | Value |
-| ---------------------- | ---------- | -------- | -------- | ----- |
-| Periodo 1              | 6:00 AM    | 2h 00m   | 8:00 AM  | 1     |
-| *(Descanso 15 min)*  |            |          |          |       |
-| Periodo 2              | 8:15 AM    | 2h 45m   | 11:00 AM | 1     |
-| *(Colación 45 min)* |            |          |          |       |
-| Periodo 3              | 11:45 AM   | 3h 00m   | 2:45 PM  | 1     |
-| *(Descanso 15 min)*  |            |          |          |       |
-| Periodo 4              | 3:00 PM    | 1h 00m   | 4:00 PM  | 1     |
+| Work Period            | Start Time | Duration | End Time  | Value |
+| ---------------------- | ---------- | -------- | --------- | ----- |
+| Periodo 1              | 6:00 AM    | 2h 00m   | 8:00 AM   | 1     |
+| *(Descanso 15 min)*  | 8:00 AM    |          | 8:15 AM   |       |
+| Periodo 2              | 8:15 AM    | 2h 30m   | 10:45 AM  | 1     |
+| *(Colación 45 min)* | 10:45 AM   |          | 11:30 AM  |       |
+| Periodo 3              | 11:30 AM   | 2h 00m   | 1:30 PM   | 1     |
+| *(Descanso 15 min)*  | 1:30 PM    |          | 1:45 PM   |       |
+| Periodo 4              | 1:45 PM    | 1h 30m   | 3:15 PM   | 1     |
 
-> Total neto = 8h 45min turno – (2×15 min + 45 min) = **405 min productivos** ✓
+> **Verificación**: 120 + 150 + 120 + 90 = **480 min** ✓. Pausas: 15 + 45 + 15 = **75 min** ✓. Bruto: 06:00–15:15 = **555 min** ✓.
 
-#### Patrón B: `PatronPanaderoGrupoB` (Descanso tardío, desfasado 30 min)
+#### Patrón B: `PatronPanaderoGrupoB` (Descanso desfasado +30 min)
 
-| Work Period            | Start Time | Duration | End Time | Value |
-| ---------------------- | ---------- | -------- | -------- | ----- |
-| Periodo 1              | 6:00 AM    | 2h 30m   | 8:30 AM  | 1     |
-| *(Descanso 15 min)*  |            |          |          |       |
-| Periodo 2              | 8:45 AM    | 2h 45m   | 11:30 AM | 1     |
-| *(Colación 45 min)* |            |          |          |       |
-| Periodo 3              | 12:15 PM   | 2h 30m   | 2:45 PM  | 1     |
-| *(Descanso 15 min)*  |            |          |          |       |
-| Periodo 4              | 3:00 PM    | 1h 00m   | 4:00 PM  | 1     |
+| Work Period            | Start Time | Duration | End Time  | Value |
+| ---------------------- | ---------- | -------- | --------- | ----- |
+| Periodo 1              | 6:00 AM    | 2h 30m   | 8:30 AM   | 1     |
+| *(Descanso 15 min)*  | 8:30 AM    |          | 8:45 AM   |       |
+| Periodo 2              | 8:45 AM    | 2h 30m   | 11:15 AM  | 1     |
+| *(Colación 45 min)* | 11:15 AM   |          | 12:00 PM  |       |
+| Periodo 3              | 12:00 PM   | 1h 45m   | 1:45 PM   | 1     |
+| *(Descanso 15 min)*  | 1:45 PM    |          | 2:00 PM   |       |
+| Periodo 4              | 2:00 PM    | 1h 15m   | 3:15 PM   | 1     |
 
-> Total neto = **405 min** ✓. Los descansos están desfasados 30 min respecto al Grupo A.
+> **Verificación**: 150 + 150 + 105 + 75 = **480 min** ✓. Bruto: 06:00–15:15 = **555 min** ✓.
 
-#### Patrón C: `PatronPanaderoGrupoC` (Descanso intermedio)
+#### Patrón C: `PatronPanaderoGrupoC` (Descanso desfasado +15 min)
 
-| Work Period            | Start Time | Duration | End Time | Value |
-| ---------------------- | ---------- | -------- | -------- | ----- |
-| Periodo 1              | 6:00 AM    | 2h 15m   | 8:15 AM  | 1     |
-| *(Descanso 15 min)*  |            |          |          |       |
-| Periodo 2              | 8:30 AM    | 2h 30m   | 11:00 AM | 1     |
-| *(Colación 45 min)* |            |          |          |       |
-| Periodo 3              | 11:45 AM   | 3h 00m   | 2:45 PM  | 1     |
-| *(Descanso 15 min)*  |            |          |          |       |
-| Periodo 4              | 3:00 PM    | 1h 00m   | 4:00 PM  | 1     |
+| Work Period            | Start Time | Duration | End Time  | Value |
+| ---------------------- | ---------- | -------- | --------- | ----- |
+| Periodo 1              | 6:00 AM    | 2h 15m   | 8:15 AM   | 1     |
+| *(Descanso 15 min)*  | 8:15 AM    |          | 8:30 AM   |       |
+| Periodo 2              | 8:30 AM    | 2h 30m   | 11:00 AM  | 1     |
+| *(Colación 45 min)* | 11:00 AM   |          | 11:45 AM  |       |
+| Periodo 3              | 11:45 AM   | 1h 45m   | 1:30 PM   | 1     |
+| *(Descanso 15 min)*  | 1:30 PM    |          | 1:45 PM   |       |
+| Periodo 4              | 1:45 PM    | 1h 30m   | 3:15 PM   | 1     |
 
-> Total neto = **405 min** ✓
+> **Verificación**: 135 + 150 + 105 + 90 = **480 min** ✓. Bruto: 06:00–15:15 = **555 min** ✓.
 
-#### Patrón D: `PatronManipulador` (Turno completo)
+#### Patrón D: `PatronManipuladorTurnoA` (Turno matutino)
 
-| Work Period            | Start Time | Duration | End Time | Value |
-| ---------------------- | ---------- | -------- | -------- | ----- |
-| Periodo 1              | 6:00 AM    | 3h 45m   | 9:45 AM  | 1     |
-| *(Descanso 15 min)*  |            |          |          |       |
-| Periodo 2              | 10:00 AM   | 2h 30m   | 12:30 PM | 1     |
-| *(Colación 45 min)* |            |          |          |       |
-| Periodo 3              | 1:15 PM    | 2h 15m   | 3:30 PM  | 1     |
-| *(Descanso 15 min)*  |            |          |          |       |
-| Periodo 4              | 3:45 PM    | 2h 15m   | 6:00 PM  | 1     |
+| Work Period            | Start Time | Duration | End Time  | Value |
+| ---------------------- | ---------- | -------- | --------- | ----- |
+| Periodo 1              | 6:00 AM    | 2h 30m   | 8:30 AM   | 1     |
+| *(Descanso 15 min)*  | 8:30 AM    |          | 8:45 AM   |       |
+| Periodo 2              | 8:45 AM    | 2h 30m   | 11:15 AM  | 1     |
+| *(Colación 45 min)* | 11:15 AM   |          | 12:00 PM  |       |
+| Periodo 3              | 12:00 PM   | 1h 30m   | 1:30 PM   | 1     |
+| *(Descanso 15 min)*  | 1:30 PM    |          | 1:45 PM   |       |
+| Periodo 4              | 1:45 PM    | 1h 30m   | 3:15 PM   | 1     |
 
-#### Patrón E: `PatronRefuerzoVespertino` (Turno parcial para peak)
+> **Verificación**: 150 + 150 + 90 + 90 = **480 min** ✓. Bruto: 06:00–15:15 = **555 min** ✓.
 
-| Work Period           | Start Time | Duration | End Time | Value |
-| --------------------- | ---------- | -------- | -------- | ----- |
-| Periodo 1             | 2:00 PM    | 3h 45m   | 5:45 PM  | 1     |
-| *(Descanso 15 min)* |            |          |          |       |
-| Periodo 2             | 6:00 PM    | 4h 00m   | 10:00 PM | 1     |
+#### Patrón E: `PatronManipuladorTurnoB` (Turno vespertino)
 
-> Total neto = **465 min** (7h 45m). Cubre producción para el peak de 18:00–20:00.
+| Work Period            | Start Time | Duration | End Time  | Value |
+| ---------------------- | ---------- | -------- | --------- | ----- |
+| Periodo 1              | 12:00 PM   | 2h 30m   | 2:30 PM   | 1     |
+| *(Descanso 15 min)*  | 2:30 PM    |          | 2:45 PM   |       |
+| Periodo 2              | 2:45 PM    | 2h 30m   | 5:15 PM   | 1     |
+| *(Colación 45 min)* | 5:15 PM    |          | 6:00 PM   |       |
+| Periodo 3              | 6:00 PM    | 1h 30m   | 7:30 PM   | 1     |
+| *(Descanso 15 min)*  | 7:30 PM    |          | 7:45 PM   |       |
+| Periodo 4              | 7:45 PM    | 1h 30m   | 9:15 PM   | 1     |
+
+> **Verificación**: 150 + 150 + 90 + 90 = **480 min** ✓. Bruto: 12:00–21:15 = **555 min** ✓.
 
 ### Paso 6.2 — Crear Work Schedules
 
 En **Data** → **Schedules** → sección **Work Schedules**:
 
-| Work Schedule        | Day Pattern                  | Days       | Start Date |
-| -------------------- | ---------------------------- | ---------- | ---------- |
-| `TurnoPanaderoA`   | `PatronPanaderoGrupoA`     | 1 (diario) | Lunes      |
-| `TurnoPanaderoB`   | `PatronPanaderoGrupoB`     | 1 (diario) | Lunes      |
-| `TurnoPanaderoC`   | `PatronPanaderoGrupoC`     | 1 (diario) | Lunes      |
-| `TurnoManipulador` | `PatronManipulador`        | 1 (diario) | Lunes      |
-| `TurnoRefuerzo`    | `PatronRefuerzoVespertino` | 1 (diario) | Lunes      |
+| Work Schedule           | Day Pattern                  | Days       | Start Date |
+| ----------------------- | ---------------------------- | ---------- | ---------- |
+| `TurnoPanaderoA`      | `PatronPanaderoGrupoA`     | 1 (diario) | Lunes      |
+| `TurnoPanaderoB`      | `PatronPanaderoGrupoB`     | 1 (diario) | Lunes      |
+| `TurnoPanaderoC`      | `PatronPanaderoGrupoC`     | 1 (diario) | Lunes      |
+| `TurnoManipuladorA`   | `PatronManipuladorTurnoA`  | 1 (diario) | Lunes      |
+| `TurnoManipuladorB`   | `PatronManipuladorTurnoB`  | 1 (diario) | Lunes      |
 
 > **Ref. SASMAA7 §7.2.1**: "A Work Schedule includes a combination of Day Patterns to make up a repeating work period. The repeating period can be between 1 and 28 days."
 
@@ -428,37 +440,44 @@ En cada Server que requiere un panadero:
 
 > Esto permite que cuando el Grupo A está en descanso, los Servers automáticamente toman panaderos de los Grupos B o C que siguen activos.
 
-#### Paso 6.3.4 — Configurar Manipuladores
+#### Paso 6.3.4 — Configurar Manipuladores (2 turnos)
 
-| Resource | Nombre             | Initial Capacity | Capacity Type | Work Schedule        |
-| -------- | ------------------ | ---------------- | ------------- | -------------------- |
-| Resource | `ResManipulador` | 2                | Work Schedule | `TurnoManipulador` |
-| Resource | `ResAyudante`    | 2                | Work Schedule | `TurnoManipulador` |
+| Resource | Nombre              | Initial Capacity | Capacity Type | Work Schedule         |
+| -------- | ------------------- | ---------------- | ------------- | --------------------- |
+| Resource | `ResManipuladorA` | 2                | Work Schedule | `TurnoManipuladorA` |
+| Resource | `ResManipuladorB` | 2                | Work Schedule | `TurnoManipuladorB` |
 
-#### Paso 6.3.5 — Configurar Refuerzo Vespertino (opcional, para experimentar)
+Crear una **Resource List** `ListaManipuladores` con ambos recursos, y usarla en los Servers `SrvCargaHorno` y `SrvDescargaHorno` (mismo patrón que `ListaPanaderos`).
 
-| Resource | Nombre                  | Initial Capacity | Capacity Type | Work Schedule     |
-| -------- | ----------------------- | ---------------- | ------------- | ----------------- |
-| Resource | `ResPanaderoRefuerzo` | 2                | Work Schedule | `TurnoRefuerzo` |
+> **Traslape**: Los turnos A (06:00–15:15) y B (12:00–21:15) se traslapan 3h 15m (12:00–15:15), proporcionando máxima capacidad de horno durante la preparación del peak.
 
-Agregar `ResPanaderoRefuerzo` a `ListaPanaderos` para que esté disponible automáticamente durante el turno vespertino.
+#### Paso 6.3.5 — Configurar Ayudantes
+
+| Resource | Nombre           | Initial Capacity | Capacity Type | Work Schedule         |
+| -------- | ---------------- | ---------------- | ------------- | --------------------- |
+| Resource | `ResAyudanteA` | 1                | Work Schedule | `TurnoManipuladorA` |
+| Resource | `ResAyudanteB` | 1                | Work Schedule | `TurnoManipuladorB` |
+
+> Los ayudantes siguen los mismos patrones que los manipuladores.
 
 ### Paso 6.4 — Cobertura resultante (verificación)
 
 La siguiente tabla muestra la cobertura mínima garantizada por hora:
 
-| Hora         | Grupo A   | Grupo B   | Grupo C   | Refuerzo | **Mínimo disponible** |
-| ------------ | --------- | --------- | --------- | -------- | ---------------------------- |
-| 06:00–08:00 | ✓ (3)    | ✓ (3)    | ✓ (3)    | —       | **9**                  |
-| 08:00–08:15 | ✗        | ✓ (3)    | ✓ (3)    | —       | **6**                  |
-| 08:15–08:30 | ✓ (3)    | ✓ (3)    | ✗        | —       | **6**                  |
-| 08:30–08:45 | ✓ (3)    | ✓ (3)    | ✓ (3)    | —       | **9**                  |
-| 11:00–11:45 | ✗ (col.) | ✓ (3)    | ✗ (col.) | —       | **3**                  |
-| 11:45–12:15 | ✓ (3)    | ✗ (col.) | ✓ (3)    | —       | **6**                  |
-| 14:00–16:00 | ✓ (3)    | ✓ (3)    | ✓ (3)    | ✓ (2)   | **11**                 |
-| 18:00–20:00 | —        | —        | —        | ✓ (2)   | **2**                  |
+| Hora         | Panaderos (A+B+C) | Manip. Turno A | Manip. Turno B | **Mín. Panaderos** | **Mín. Manip.** |
+| ------------ | ------------------ | -------------- | -------------- | ------------------------- | ---------------------- |
+| 06:00–08:00 | 9 (todos activos) | ✓ (2)        | —             | **9**                | **2**             |
+| 08:00–08:45 | 6 (1 grupo desc.)  | ✓ (2)        | —             | **6**                | **2**             |
+| 09:00–10:45 | 9                  | ✓ (2)        | —             | **9**                | **2**             |
+| 10:45–12:00 | 3–6 (colación)    | ✓ (2)        | ✓ (2)        | **3**                | **2–4**           |
+| 12:00–13:45 | 6–9               | ✓ (2)        | ✓ (2)        | **6**                | **4**             |
+| 13:45–15:15 | 6–9               | ✓ (2)        | ✓ (2)        | **6**                | **4**             |
+| 15:15–17:15 | —                 | —             | ✓ (2)        | **0**                | **2**             |
+| 17:15–21:15 | —                 | —             | ✓ (2)*       | **0**                | **2***            |
 
-> **Resultado**: Durante la colación, siempre hay al menos 3 panaderos activos. Nunca se detiene la producción completamente.
+*(\* con pausas internas del Turno B)*
+
+> **Resultado**: Durante la colación de panaderos, siempre hay al menos 3 panaderos activos. La producción de panadería termina a las 15:15, pero los manipuladores del Turno B procesan los últimos lotes por el horno y trasladan a sala hasta las 21:15. El peak de 18:00–20:00 se atiende con inventario pre-producido.
 
 ### Paso 6.5 — Off-Shift Behavior
 
