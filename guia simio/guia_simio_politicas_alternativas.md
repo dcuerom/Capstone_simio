@@ -32,30 +32,40 @@ En lugar de generar lotes cada 4 minutos con un `Interarrival Time`, usaremos un
    - **Time Interval**: `5` (minutos).
 2. Ir a **Definitions** → **Processes** → Crear `ProcControlPull`.
    - **Triggering Event**: `TimerRevisionPull.Event`
-   - **Condition**: `PropPoliticaProduccion == 2` (Solo se ejecuta si la política PULL está activa).
+   - Configurar **Token States**: En las propiedades del proceso, ir a **Token States** → **Add State** de tipo `Integer` llamado `TipoActual`. Añadir otro `Integer` llamado `LotesCreados`.
 
 ### Fase C: Lógica del Proceso (`ProcControlPull`)
 El proceso recorre los 10 tipos de pan, evalúa su nivel de stock, y si amerita, crea los lotes.
 
-1. **Step Assign** (Inicializar): `Token.TipoActual = 1` (Necesitas crear un estado temporal Real `TipoActual` en el Token del proceso).
-2. **Step Decide** (Evaluación de Reorden): 
-   - Condition: `Model.MStaInventario[Token.TipoActual] + Model.MStaEnProceso[Token.TipoActual] <= TableProceso[Token.TipoActual].PuntoReorden`
-3. **Rama True (Crear Lotes)**:
-   - **Step Create**: 
-     - Entity Type: `EntLote`
-     - Number of Entities: `TableProceso[Token.TipoActual].LotesAReponer`
-     - Create Location: `Node` (Seleccionar el Input Node de `SrvPesado`).
-   - **Step Assign** (Asignar atributos al lote creado, conectando la salida "Created" del Create step):
-     - `EntLote.EStaTipoPan = Token.TipoActual`
-     - `EntLote.EStaFamilia = TableProceso[Token.TipoActual].FamiliaID`
-     - `EntLote.EStaKgLote = TableProceso[Token.TipoActual].KgPorBatch`
-     - `Model.MStaEnProceso[Token.TipoActual] = Model.MStaEnProceso[Token.TipoActual] + EntLote.EStaKgLote`
-4. **Rama False & Convergencia**:
-   - Ambas ramas (la salida de asignación y el False del Decide) van a un **Step Assign** para iterar: `Token.TipoActual = Token.TipoActual + 1`.
-5. **Step Decide** (Loop):
+1. **Step Decide** (Filtro de Política):
+   - Condition: `Model.PropPoliticaProduccion == 2`
+   - **False**: `EndProcess` (termina sin hacer nada).
+   - **True**: Continúa al siguiente step.
+2. **Step Assign** (Inicializar): `Token.TipoActual = 1`
+3. **Step Decide** (Evaluación de Reorden): 
+   - Condition (ejemplo asumiendo tabla consolidada): `Model.MStaInventario[Token.TipoActual] + Model.MStaEnProceso[Token.TipoActual] <= TableProceso[Token.TipoActual].PuntoReorden`
+4. **Rama True (Crear Lotes)**:
+   - **Step Assign** (Iniciar contador): `Token.LotesCreados = 0`
+   - **Step Decide** (Loop de lotes): `Token.LotesCreados < TableProceso[Token.TipoActual].LotesAReponer`
+   - **Rama True (Crear 1 lote)**:
+     - **Step Create**: 
+       - Entity Type: `EntLote`
+       - Number of Entities: `1`
+       - Starting Node: `Input@SrvPesado` (o el nodo Input respectivo).
+     - **Step Assign** (En el nodo `Created` del step Create):
+       - `EntLote.EStaTipoPan = Token.TipoActual`
+       - `EntLote.EStaFamilia = TableProceso[Token.TipoActual].FamiliaID`
+       - `EntLote.EStaKgLote = TableProceso[Token.TipoActual].KgPorBatch`
+       - `Model.MStaEnProceso[Token.TipoActual] = Model.MStaEnProceso[Token.TipoActual] + EntLote.EStaKgLote`
+     - **Step Assign** (En la salida principal del step Create): `Token.LotesCreados = Token.LotesCreados + 1`
+     - Ligar esta salida de vuelta al **Step Decide** del loop de lotes.
+   - **Rama False (Fin lotes)**: Confluye con la rama False del Step Decide de Evaluación de Reorden.
+5. **Convergencia y Loop Principal**:
+   - **Step Assign**: `Token.TipoActual = Token.TipoActual + 1`
+6. **Step Decide** (Fin de iteración tipos):
    - Condition: `Token.TipoActual <= 10`
-   - **True**: Vuelve al inicio del Step Decide de Evaluación.
-   - **False**: FIN.
+   - **True**: Vuelve al inicio del Step Decide de Evaluación (Paso 3).
+   - **False**: FIN (`EndProcess`).
 
 ---
 
@@ -70,26 +80,39 @@ Para simplificar: usaremos un **Timer** muy frecuente, pero que solo avanza si h
 1. Crear `TimerCriticidad` con Interval de `2` minutos.
 2. Ir a **Definitions** → **Processes** → Crear `ProcGenerarLoteCritico`.
    - **Triggering Event**: `TimerCriticidad.Event`
-   - **Condition**: `PropPoliticaProduccion == 3 AND (SrvPesado.InputBuffer.Contents < 2)` (Para no inundar el sistema, solo genera si hay espacio en la fila).
+   - **Token States**: En las propiedades del proceso, agregar: `TipoCritico` (Integer), `Indice` (Integer), `MaxCriticidad` (Real), `CritActual` (Real), y `DemandaActual` (Real).
 
 ### Fase B: Lógica de Búsqueda del Más Crítico (`ProcGenerarLoteCritico`)
-1. **Estados del Token**: Crear en las propiedades del proceso `Token.TipoCritico` (Integer) y `Token.MaxCriticidad` (Real).
+1. **Step Decide** (Filtro de Política y Capacidad):
+   - Condition: `Model.PropPoliticaProduccion == 3 AND (SrvPesado.InputBuffer.Contents < 2)` (Para no inundar el sistema).
+   - **False**: `EndProcess`.
+   - **True**: Continúa.
 2. **Step Assign** (Inicializar): 
    - `Token.MaxCriticidad = -9999`
    - `Token.TipoCritico = 0`
    - `Token.Indice = 1`
 3. **Bloque de Loop (1 a 10)**:
+   - **Assign** (Extraer demanda actual): 
+     - *SIMIO no permite indexar columnas dinámicamente (`Dem1`, `Dem2`, etc.). Se usa una suma condicional:*
+     - `Token.DemandaActual = (Token.Indice==1)*TableDemandaHora[Model.MStaHoraIdx].Dem1 + (Token.Indice==2)*TableDemandaHora[Model.MStaHoraIdx].Dem2 + ... + (Token.Indice==10)*TableDemandaHora[Model.MStaHoraIdx].Dem10`
    - **Assign** (Calcular Criticidad): 
-     - Crear `Token.CritActual` (Real) = `(TableDemandaHora[Model.MStaHoraIdx].DemKg - Model.MStaInventario[Token.Indice] - Model.MStaEnProceso[Token.Indice]) / TableProceso[Token.Indice].KgPorBatch`
+     - `Token.CritActual = (Token.DemandaActual - Model.MStaInventario[Token.Indice] - Model.MStaEnProceso[Token.Indice]) / TableProceso[Token.Indice].KgPorBatch`
      > *Tip: Sumar extra puntos si `TableProceso[Token.Indice].FamiliaID` es igual a la última familia horneada, para minimizar Setups.*
    - **Decide**: `Token.CritActual > Token.MaxCriticidad`
    - **Rama True**: `Token.MaxCriticidad = Token.CritActual`, `Token.TipoCritico = Token.Indice`.
-   - Iterar `Token.Indice = Token.Indice + 1` y regresar hasta 10.
+   - Ambas ramas van a: **Step Assign**: `Token.Indice = Token.Indice + 1`
+   - **Step Decide** (Loop): `Token.Indice <= 10`
+     - **True**: Vuelve al inicio del Step Assign para extraer demanda.
+     - **False**: Continúa al siguiente paso.
 4. **Step Decide (Post-Loop)**:
    - Condition: `Token.TipoCritico > 0`
 5. **Rama True (Crear Lote)**:
-   - **Step Create**: 1 entidad de `EntLote` en el Input Node de `SrvPesado`.
-   - **Step Assign** (en nodo Created): Asignar Tipo, Familia, Kg, y sumar a `MStaEnProceso` (Igual que en Alternativa 1).
+   - **Step Create**: Entity Type: `EntLote`, Number of Entities: `1`, Starting Node: `Input@SrvPesado`.
+   - **Step Assign** (en nodo `Created`): 
+     - `EntLote.EStaTipoPan = Token.TipoCritico`
+     - `EntLote.EStaFamilia = TableProceso[Token.TipoCritico].FamiliaID`
+     - `EntLote.EStaKgLote = TableProceso[Token.TipoCritico].KgPorBatch`
+     - `Model.MStaEnProceso[Token.TipoCritico] = Model.MStaEnProceso[Token.TipoCritico] + EntLote.EStaKgLote`
 
 ---
 
@@ -99,21 +122,36 @@ Similar a la versión híbrida actual, pero recalcula el plan masivo en horas es
 
 ### Fase A: Disparador por Bloques
 1. Ir a **Definitions** → **Elements** → **Timers** → Crear `TimerBloqueHorario`.
-   - En lugar de un intervalo fijo, puedes configurarlo con eventos o un intervalo de `240` minutos (4 horas). Ej: evalúa a las 06:00, 10:00, 14:00.
+   - En lugar de un intervalo fijo, puedes configurarlo con un intervalo de `240` minutos (4 horas). Ej: evalúa a las 06:00, 10:00, 14:00.
 
 ### Fase B: Lógica de Planificación en Bloque (`ProcGenerarBloque`)
-- **Triggering Event**: `TimerBloqueHorario.Event`
-- **Condition**: `PropPoliticaProduccion == 4`
+1. Ir a **Definitions** → **Processes** → Crear `ProcGenerarBloque`.
+   - **Triggering Event**: `TimerBloqueHorario.Event`
+   - **Token States**: Añadir `Tipo` (Integer), `LotesCreados` (Integer), `DeficitBloque` (Real), `DemandaProximas4Horas` (Real), y `NumLotes` (Integer).
+2. **Step Decide** (Filtro de Política):
+   - Condition: `Model.PropPoliticaProduccion == 4`
+   - **False**: `EndProcess`.
+   - **True**: Continúa.
+3. **Step Assign** (Inicializar): `Token.Tipo = 1`
+4. **Bloque de Loop (1 a 10)**:
+   - **Assign**: Calcula `Token.DemandaProximas4Horas`. *(Pre-calcular esto en una columna de la tabla `TableDemandaHora` llamada `DemAcum4h`, o sumarlo condicionalmente).*
+   - **Assign**: `Token.DeficitBloque = Token.DemandaProximas4Horas - Model.MStaInventario[Token.Tipo] - Model.MStaEnProceso[Token.Tipo]`
+   - **Decide**: `Token.DeficitBloque > 0`
+   - **Rama True**:
+     - **Assign** (Fórmula de redondeo hacia arriba, SIMIO no tiene Math.Ceiling): `Token.NumLotes = Math.Floor((Token.DeficitBloque + TableProceso[Token.Tipo].KgPorBatch - 0.01) / TableProceso[Token.Tipo].KgPorBatch)`
+     - **Assign** (Iniciar loop de creación): `Token.LotesCreados = 0`
+     - **Decide** (Loop): `Token.LotesCreados < Token.NumLotes`
+       - **True**: 
+         - **Step Create**: 1 entidad en `Input@SrvPesado`.
+         - **Step Assign** (En nodo `Created`): Asignar atributos (`EStaTipoPan = Token.Tipo`, `EStaFamilia`, `EStaKgLote`, sumar a `MStaEnProceso`) y prioridad: `EntLote.Priority = TableProceso[Token.Tipo].FamiliaID`.
+         - **Step Assign** (Flujo principal de Create): `Token.LotesCreados = Token.LotesCreados + 1` y vuelve al Decide de creación.
+   - **Convergencia**: **Step Assign**: `Token.Tipo = Token.Tipo + 1`
+   - **Step Decide** (Fin loop tipos): `Token.Tipo <= 10`
+     - **True**: Vuelve al inicio para el siguiente tipo.
+     - **False**: FIN (`EndProcess`).
 
-1. Este proceso recorre los 10 tipos de pan.
-2. Para cada tipo, calcula la demanda requerida para el **próximo bloque** (próximas 4 horas).
-3. `DeficitBloque = DemandaProximas4Horas - Model.MStaInventario[Tipo] - Model.MStaEnProceso[Tipo]`.
-4. Si `DeficitBloque > 0`, calcula cuántos lotes: `NumLotes = Math.Ceiling(DeficitBloque / TableProceso[Tipo].KgPorBatch)`.
-5. **Step Create**: Crea `NumLotes` entidades del `EntLote`.
 6. **Asignación Crucial (Prioridad de Familia)**:
-   Para que los hornos no hagan setups innecesarios, los lotes de este bloque que se envíen a la fila deben estar ordenados por familia.
-   - En el **Step Assign** de las entidades creadas, debes configurar la propiedad de entidad `Priority` basada en la Familia. Ej: `EntLote.Priority = TableProceso[Tipo].FamiliaID`.
-   - En `SrvPesado` y las filas siguientes, asegúrate de que el **Ranking Rule** del Input Buffer esté en `Highest Priority First` o `Lowest Priority First` para que las familias se agrupen solas dentro de la cola.
+   - En `SrvPesado` y las filas siguientes, asegúrate de que el **Ranking Rule** del Input Buffer esté en `Highest Priority First` o `Lowest Priority First` para que las familias se agrupen solas dentro de la cola basándose en la asignación hecha de `EntLote.Priority`.
 
 ---
 

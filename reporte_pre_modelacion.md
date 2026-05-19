@@ -587,23 +587,105 @@ Todos los valores se toman directamente del enunciado:
 
 ### 3.13 Turnos de trabajo
 
+#### 3.13.1 Datos del enunciado (§II.D)
+
 | Parámetro                       | Valor                                      |
 | -------------------------------- | ------------------------------------------ |
 | Jornada efectiva                 | 8 horas                                    |
 | Colación                        | 45 min                                     |
 | Descansos                        | 2 × 15 min                                |
-| **Tiempo productivo neto** | **6 hrs 45 min = 405 min**           |
+| **Tiempo productivo neto** | **8 hrs = 480 min**                |
+| Turno bruto (con pausas)         | 9 hrs 15 min = 555 min                    |
 | Escalonamiento                   | Obligatorio (≥1 persona/función siempre) |
+| Inicio de turnos                 | Flexible (no necesariamente a horas fijas) |
+
+> **Interpretación del enunciado**: El enunciado dice *"8 horas diarias de trabajo efectivo"* y *"además"* 75 min de pausas. La palabra **"además"** indica que las pausas son adicionales → **480 min productivos**, no 405.
+
+#### 3.13.2 Ventana operativa del sistema
+
+La panadería opera en tres fases:
+
+| Fase | Horario | Duración | Actividad |
+|---|---|---|---|
+| **Pre-apertura** | 06:00 – 09:00 | 3 hrs | Producción de inventario inicial (18 batches, §4.4) |
+| **Operación plena** | 09:00 – 15:15 | 6h 15m | Producción continua + venta al público |
+| **Venta + horno residual** | 15:15 – 21:15 | 6 hrs | Panaderos off; manipuladores Turno B procesan últimos lotes |
+| **Total** | **06:00 – 21:15** | **15h 15m** | Ventana completa de operación |
+
+> Los panaderos terminan a las 15:15. Los manipuladores del Turno B (12:00–21:15) procesan los últimos lotes por el horno y los trasladan a sala. El peak de 18:00–20:00 se atiende con inventario pre-producido.
+
+#### 3.13.3 Estructura de turnos por función
+
+**Panaderos** — 3 grupos con descansos desfasados (sin refuerzo vespertino):
+
+| Grupo | Horario | Turno bruto | Productivo neto | Rol |
+|---|---|---|---|---|
+| Grupo A (3 panaderos) | 06:00 – 15:15 | 9h 15m | 480 min | Descanso temprano |
+| Grupo B (3 panaderos) | 06:00 – 15:15 | 9h 15m | 480 min | Descanso desfasado +30 min |
+| Grupo C (3 panaderos) | 06:00 – 15:15 | 9h 15m | 480 min | Descanso desfasado +15 min |
+
+> Los 3 grupos comparten el mismo horario (06:00–15:15) pero sus pausas están **desfasadas ~15–30 minutos**, de modo que cuando un grupo descansa, los otros dos siguen activos.
+
+**Manipuladores/Ayudantes** — 2 turnos con traslape:
+
+| Grupo | Horario | Turno bruto | Productivo neto | Rol |
+|---|---|---|---|---|
+| Manipuladores Turno A (2) | 06:00 – 15:15 | 9h 15m | 480 min | Horno + traslado matutino |
+| Manipuladores Turno B (2) | 12:00 – 21:15 | 9h 15m | 480 min | Horno + traslado vespertino |
+| Ayudantes Turno A (1) | 06:00 – 15:15 | 9h 15m | 480 min | Apoyo matutino |
+| Ayudantes Turno B (1) | 12:00 – 21:15 | 9h 15m | 480 min | Apoyo vespertino |
+| **Traslape** | **12:00 – 15:15** | **3h 15m** | | Máxima capacidad de horno |
+
+#### 3.13.4 Regla de escalonamiento de pausas
+
+El enunciado exige que las pausas sean escalonadas: *"asegurando que al menos una persona de cada función está presente en todo momento"*.
+
+**Regla operacional**: Los 3 grupos de panaderos tienen descansos desfasados en ~15–30 minutos entre sí. En todo momento al menos 2 de los 3 grupos están activos (≥6 panaderos disponibles).
+
+**Esquema de pausas de los 3 grupos** (Panaderos, turno 06:00–15:15):
+
+| Pausa | Grupo A | Grupo C (+15 min) | Grupo B (+30 min) |
+|---|---|---|---|
+| Descanso 1 (15 min) | 08:00–08:15 | 08:15–08:30 | 08:30–08:45 |
+| Colación (45 min) | 10:45–11:30 | 11:00–11:45 | 11:15–12:00 |
+| Descanso 2 (15 min) | 13:30–13:45 | 13:30–13:45 | 13:45–14:00 |
+
+> Cuando el Grupo A está en colación (10:45–11:30), los Grupos B y C siguen activos → 6 panaderos disponibles.
+
+#### 3.13.5 Cobertura mínima durante el día
+
+| Hora | Panaderos | Manipuladores | Fase |
+|---|---|---|---|
+| 06:00–08:00 | 9 (A+B+C) | Turno A (2+1) | Pre-apertura |
+| 08:00–08:45 | 6 (1 grupo en descanso) | Turno A (2+1) | Pre-apertura (horno activo) |
+| 09:00–10:45 | 9 | Turno A (2+1) | Régimen bajo |
+| 10:45–12:00 | 3–6 (colación escalonada) | Turno A (2+1) + Turno B (2+1) | Régimen medio |
+| 12:00–13:45 | 6–9 | Turno A + B (4+2) | Traslape — máxima capacidad horno |
+| 13:45–15:15 | 6–9 | Turno A + B (4+2) | Última producción panaderos |
+| 15:15–17:15 | 0 | Turno B (2+1) | Solo horno/traslado residual |
+| 17:15–21:15 | 0 | Turno B (2+1)* | **Peak de demanda** (venta con inventario) |
+
+*(\* con pausas internas)*
+
+> **Observación**: La producción de panadería termina a las 15:15. El peak de 18:00–20:00 se cubre con inventario. Los manipuladores Turno B aseguran que los últimos lotes producidos antes de las 15:15 lleguen a sala.
 
 #### Derivación de §3.13 — Tiempo productivo neto
 
 > **Fuente**: Enunciado §II.D de `base_information.md`.
 
-El enunciado establece: jornada de 8 horas, colación de 45 min, y 2 descansos de 15 min. El tiempo productivo neto se calcula como:
+El enunciado establece: *"8 horas diarias de trabajo efectivo"* y *"además"* colación de 45 min y 2 descansos de 15 min. Las pausas son **adicionales** a las 8 horas:
 
 $$
-\text{Productivo} = 8 \text{ hrs} - 45 \text{ min} - 2 \times 15 \text{ min} = 480 - 45 - 30 = 405 \text{ min} = 6\text{h } 45\text{m}
+\text{Productivo} = 8 \text{ hrs} = 480 \text{ min}
 $$
+
+$$
+\text{Turno bruto} = 480 + 45 + 2 \times 15 = 480 + 75 = 555 \text{ min} = 9\text{h } 15\text{m}
+$$
+
+#### Derivación de §3.13 — Cobertura de horno vespertino
+
+Los panaderos terminan a las 15:15, pero los últimos lotes producidos aún necesitan pasar por fermentación (~30 min) + horno (~18–21 min) + enfriado/traslado (~12–15 min) = ~60–66 min adicionales. Por tanto, se requieren manipuladores hasta ~16:15–16:20 como mínimo. El Turno B de manipuladores (12:00–21:15) cubre este requerimiento con margen.
 
 ## 4. Supuestos Explícitos
 
@@ -629,10 +711,15 @@ $$
 | 🔷 S8  | **Split enfriado/traslado:** Enfriado ≈ 67% del tiempo combinado, Traslado ≈ 33%. Ver tabla detallada abajo.                                                                                                                                                                        | Proporción basada en que el enfriamiento es pasivo y más largo que el traslado activo       |
 | 🔷 S9  | **El enfriamiento tiene capacidad ilimitada** (espacio suficiente de racks/mesas para enfriar).                                                                                                                                                                                       | El enunciado no limita este recurso y sugiere evaluar esta decisión                          |
 | 🔷 S10 | **Los panes no vendidos al final del día se descartan.** No hay stock que pase al día siguiente.                                                                                                                                                                                    | Coherente con la operación de pan fresco                                                     |
-| 🔷 S11 | **La demanda se modela a nivel de cliente individual**, con llegadas según una **distribución empírica** (tabla de frecuencias) implementada como Rate Table en SIMIO. Las tasas por hora son las observadas directamente, sin ajuste paramétrico.                                    | Preserva el patrón real sin imponer supuestos distribucionales. SIMIO genera interarribos Exponenciales dentro de cada intervalo, manteniendo la variabilidad estocástica |
+| 🔷 S11 | **La demanda se modela a nivel de cliente individual**, con llegadas según una **distribución empírica** (tabla de frecuencias). Las tasas por hora son las observadas directamente, sin ajuste paramétrico.                                    | Preserva el patrón real sin imponer supuestos distribucionales |
 | 🔷 S12 | **Materias primas disponibles sin restricción.** No hay quiebres de insumos.                                                                                                                                                                                                         | Fuera del alcance del modelo                                                                  |
 | 🔷 S13 | **Todos los hornos son equivalentes e intercambiables.**                                                                                                                                                                                                                              | Supuesto operacional del enunciado                                                            |
 | 🔷 S14 | **Carros y bandejas suficientes.** Se modelan explícitamente pero se asume disponibilidad inicial suficiente. El reporte final indica cuántos se necesitan.                                                                                                                         | Indicado en el enunciado                                                                      |
+| 🔷 S15 | **La producción inicia a las 06:00 (pre-apertura).** Los 3 grupos de panaderos (9 panaderos) comienzan 3 horas antes de la apertura al público (09:00) para producir el inventario inicial de 18 batches. | El ciclo más largo (Ciabatta: 134 min) requiere ~2h15 mín.; 3 horas dan margen para múltiples batches paralelos |
+| 🔷 S16 | **Los panaderos se organizan en 3 grupos de 3** (total 9), con horario 06:00–15:15 (9h 15m bruto, 480 min productivos) y descansos desfasados en ~15–30 min entre grupos. **No hay refuerzo vespertino**: la producción para el peak debe completarse antes de las 15:15. | Garantiza cobertura mínima de 6 panaderos en todo momento. El peak de 18:00–20:00 se cubre con inventario pre-producido |
+| 🔷 S17 | **Las pausas se desfasan entre grupos**, no entre individuos. Cada grupo toma sus 3 pausas (2×15 min + 1×45 min) en bloque, con separación de ~15–30 min respecto al grupo siguiente. | Simplifica la implementación y garantiza que al menos 2 de 3 grupos están activos simultáneamente |
+| 🔷 S18 | **Manipuladores y ayudantes operan en 2 turnos**: Turno A (06:00–15:15) y Turno B (12:00–21:15), cada uno con 480 min productivos. El traslape de 3h 15m (12:00–15:15) maximiza la capacidad de horno. | Cubre el procesamiento de los últimos lotes después de que los panaderos terminan, y permite que el horno opere hasta ~21:15 |
+| 🔷 S19 | **Al finalizar el turno, el trabajador termina el lote en curso** antes de retirarse (política "Finish Work Already Started"). No abandona un lote a medio proceso. | Coherente con la operación real: no se deja masa sin procesar |
 
 ### 4.3 Split enfriado/traslado (Supuesto S8)
 
@@ -1011,11 +1098,12 @@ Estos cubren los tres pools (Producción, Gestión de Hornos, Sala de Ventas) co
 | Tiempo ocupado por batch  | 13-18 min (carga 2 + auto 10-15 + retiro 1) |
 | Total batches/día        | 155                                         |
 | Total mezcladora-min/día | **2.442 min (40,7 hrs)**              |
-| Con 1 mezcladora (16 hrs) | **254% utilización → INSUFICIENTE** |
-| Con 2 mezcladoras         | 127% → INSUFICIENTE                        |
-| Con 3 mezcladoras         | 85% → VIABLE                               |
+| Ventana disponible        | 555 min (turno único panaderos 06:00–15:15) |
+| Con 3 mezcladoras         | 147% → INSUFICIENTE                        |
+| Con 4 mezcladoras         | 110% → INSUFICIENTE                        |
+| Con 5 mezcladoras         | 88% → VIABLE                               |
 
-> **Hallazgo crítico**: La mezcladora es el recurso más restrictivo del sistema. Se requieren **mínimo 3 mezcladoras** para la producción diaria.
+> **Hallazgo crítico**: La mezcladora es el recurso más restrictivo del sistema. Las mezcladoras solo pueden operarse mientras haya panaderos para carga/descarga (turno único 06:00–15:15 = 555 min). Se requieren **mínimo 5 mezcladoras** para la producción diaria.
 
 #### Panadero
 
@@ -1023,18 +1111,19 @@ Estos cubren los tres pools (Producción, Gestión de Hornos, Sala de Ventas) co
 | -------------------------------------------- | --------------------------------------------- |
 | Tiempo hands-on por batch                    | 16-20 min (pesado + carga + retiro + formado) |
 | Total panadero-min/día (sin amasado manual) | 2.926 min (48,8 hrs)                          |
-| Tiempo productivo neto por turno             | 405 min (6h 45m)                              |
-| Mínimo panaderos (turno único)             | ⌈48,8 / 6,75⌉ =**8 panaderos**        |
-| Con amasado manual (+50% mezclado)           | ~3.600 min →**9 panaderos**            |
+| Tiempo productivo neto por turno             | 480 min (8h)                                  |
+| Mínimo panaderos (sin amasado manual)       | ⌈2.926 / 480⌉ = **7 panaderos**         |
+| Con amasado manual (+50% mezclado)           | ⌈3.914 / 480⌉ = **9 panaderos**         |
 
 #### Horno
 
-| Métrica                         | Valor                                                       |
-| -------------------------------- | ----------------------------------------------------------- |
-| Corridas totales/día            | 9 (mínimo teórico)                                        |
-| Tiempo total horno (sin setup)   | 250 min (4,2 hrs)                                           |
-| Tiempo total horno (con setup)   | 295 min (4,9 hrs)                                           |
-| Con 1 horno (16 hrs disponibles) | **31% utilización → 1 horno suficiente en teoría** |
+| Métrica                         | Valor                                                     |
+| -------------------------------- | --------------------------------------------------------- |
+| Corridas totales/día            | 9 (mínimo teórico)                                       |
+| Tiempo total horno (sin setup)   | 250 min (4,2 hrs)                                         |
+| Tiempo total horno (con setup)   | 295 min (4,9 hrs)                                         |
+| Ventana real de horno            | ~600 min (06:00–16:00, último lote + fermentación)       |
+| Con 1 horno                      | **49% utilización → 1 horno suficiente en teoría** |
 
 > **Nota**: Aunque 1 horno basta en volumen agregado, la restricción operativa es el **timing**: la producción debe distribuirse durante el día para evitar quiebres, especialmente antes del peak de 18:00–20:00. Probablemente se necesiten **2 hornos** para flexibilidad de secuenciamiento.
 
@@ -1045,7 +1134,8 @@ Estos cubren los tres pools (Producción, Gestión de Hornos, Sala de Ventas) co
 | Carga/descarga horno                 | 9 corridas × 10 min = 90 min              |
 | Traslado a sala                      | 155 batches × ~4 min = 620 min            |
 | Total manipulador-min/día           | **710 min (11,8 hrs)**               |
-| Mínimo manipuladores (turno único) | ⌈11,8 / 6,75⌉ =**2 manipuladores** |
+| Mínimo manipuladores (por turno)     | ⌈710 / 480⌉ = **2 manipuladores**    |
+| Con 2 turnos (A + B)                 | **Total: 4 manipuladores**           |
 
 #### Derivación de §6.2 — Cálculos de carga de recursos
 
@@ -1059,7 +1149,7 @@ $$
 
 Total = Σ (ciclo × batches). Ejemplo parcial: Marraqueta: 15 × 34 = 510 min, Hallulla: 17 × 31 = 527 min, ..., Amasado: 18 × 7 = 126 min. **Total = 2.442 min**.
 
-Utilización con N mezcladoras (jornada ~16 hrs = 960 min): `2.442 / (N × 960)`. Con 3: 85%.
+Utilización con N mezcladoras (ventana 555 min, turno único de panaderos 06:00–15:15): `2.442 / (N × 555)`. Con 5: 88%.
 
 **Panadero**: Tiempo "hands-on" por batch = `pesado (5) + carga_mezcladora (2) + retiro (1) + formado (Min4 del CSV)`:
 
@@ -1067,13 +1157,13 @@ $$
 \text{Hands-on}_{\text{Marraqueta}} = 5 + 2 + 1 + 10 = 18 \text{ min} \times 34 = 612 \text{ min}
 $$
 
-Total sin amasado manual = 2.926 min. Mínimo panaderos = `⌈2.926 / 405⌉` = `⌈7,2⌉` = 8 (donde 405 min = tiempo productivo neto por turno).
+Total sin amasado manual = 2.926 min. Mínimo panaderos = `⌈2.926 / 480⌉` = `⌈6,1⌉` = 7 (donde 480 min = tiempo productivo neto por turno).
 
-Con amasado manual (🔷 S6: ~50% del tiempo de mezclado auto): +988 min → 3.914 min → `⌈3.914/405⌉` = 10 panaderos.
+Con amasado manual (🔷 S6: ~50% del tiempo de mezclado auto): +988 min → 3.914 min → `⌈3.914/480⌉` = 9 panaderos.
 
-**Horno**: 9 corridas × (carga 5 + horneado + descarga 5). Sin setup: Fam1: 2×24 = 48, Fam2: 5×28 = 140, Fam3: 2×31 = 62 → **250 min**. Con setup peor caso (+5 min por cambio de familia, máx 8 cambios): 250 + 45 = **295 min**. Utilización: 295/960 = 31%.
+**Horno**: 9 corridas × (carga 5 + horneado + descarga 5). Sin setup: Fam1: 2×24 = 48, Fam2: 5×28 = 140, Fam3: 2×31 = 62 → **250 min**. Con setup peor caso (+5 min por cambio de familia, máx 8 cambios): 250 + 45 = **295 min**. Ventana real ~600 min (06:00–16:00). Utilización: 295/600 = 49%.
 
-**Manipulador**: Horno: 9 × (5+5) = 90 min. Traslado: Σ(traslado × batches) usando tiempos del split S8 → **620 min**. Total: 710 min = 11,8 hrs → `⌈11,8/6,75⌉` = 2.
+**Manipulador**: Horno: 9 × (5+5) = 90 min. Traslado: Σ(traslado × batches) usando tiempos del split S8 → **620 min**. Total: 710 min = 11,8 hrs → `⌈710/480⌉` = 2 por turno. Con 2 turnos (A: 06:00–15:15, B: 12:00–21:15) = **4 manipuladores total**.
 
 ### 6.3 Elementos que NO requieren modelado detallado
 
@@ -1087,16 +1177,17 @@ Con amasado manual (🔷 S6: ~50% del tiempo de mezclado auto): +988 min → 3.9
 
 ### 6.4 Resumen de recursos mínimos estimados (punto de partida para experimentación)
 
-| Recurso          | Mínimo estimado       | Notas                                               |
-| ---------------- | ---------------------- | --------------------------------------------------- |
-| Mezcladoras      | 3                      | Cuello de botella principal                         |
-| Amasadoras       | 2-3                    | Depende del tiempo de amasado manual (S6)           |
-| Mesas de formado | 2-3                    | Paralelo con mezcladoras                            |
-| Hornos           | 1-2                    | 1 basta en volumen; 2 para flexibilidad temporal    |
-| Panaderos        | 8-9 por turno          | Requiere 2+ turnos traslapados                      |
-| Manipuladores    | 2 por turno            | Con turnos traslapados                              |
-| Carros           | ~20-30 en circulación | 2 carros/batch × batches simultáneos              |
-| Bandejas         | ~400-500               | ~27 bandejas/batch promedio × batches simultáneos |
+| Recurso          | Mínimo estimado       | Notas                                                     |
+| ---------------- | ---------------------- | --------------------------------------------------------- |
+| Mezcladoras      | **5**            | Cuello de botella principal (ventana 555 min)              |
+| Amasadoras       | 2-3                    | Depende del tiempo de amasado manual (S6)                 |
+| Mesas de formado | 2-3                    | Paralelo con mezcladoras                                  |
+| Hornos           | 1-2                    | 1 basta (49% util.); 2 para flexibilidad temporal         |
+| Panaderos        | **9 total**      | 3 grupos × 3, turno único 06:00–15:15                     |
+| Manipuladores    | **2 por turno**  | 2 turnos (A: 06–15:15, B: 12–21:15), total 4             |
+| Ayudantes        | **1 por turno**  | Siguen patrón de manipuladores, total 2                   |
+| Carros           | ~20-30 en circulación | 2 carros/batch × batches simultáneos                    |
+| Bandejas         | ~400-500               | ~27 bandejas/batch promedio × batches simultáneos       |
 
 ---
 
