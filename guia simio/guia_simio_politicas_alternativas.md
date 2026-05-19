@@ -377,12 +377,48 @@ Agregar en **Experiments → Responses**:
 
 ### Políticas de producción (Parte I)
 
-1. En tu ventana de **Experiments**, añade una columna (Control) para la propiedad `PropPoliticaProduccion`.
-2. Crea 4 escenarios base, manteniendo los recursos iguales (ej: 3 Mezcladoras, 2 Hornos, etc.) pero variando la Política del 1 al 4.
-3. Observa las Responses que definiste en la Parte 3 de la guía:
-   - ¿Qué política minimiza el `QuiebreTotalKg`?
-   - ¿Qué política mantiene una `UtilMezcladora` más constante y reduce el agolpamiento?
-   - ¿Aumentan los Setups de los Hornos en la política Dinámica (Alt 2) vs la de Bloques (Alt 3)?
+Para configurar las políticas de producción en los Experimentos de SIMIO, necesitas usar un concepto llamado **Controls** (Controles). Los controles te permiten cambiar variables o propiedades del modelo para cada escenario sin tener que modificar la lógica base.
+
+#### Paso 1: Crear las propiedades de control en el Modelo Base
+1. Ve a la pestaña **Facility** o **Definitions**.
+2. En el panel izquierdo, selecciona **Properties**.
+3. Haz clic en **Add Integer Property**.
+4. Nombra esta propiedad `PropPoliticaProduccion` (asegúrate de que el Default Value sea `1`).
+5. (*Opcional pero recomendado*) En la ventana de Properties a la derecha, usa la propiedad `Description` para anotar qué significa cada número:
+   * `1 = Híbrida/Secuencial`
+   * `2 = PULL (Kanban)`
+   * `3 = Dinámica (Criticidad)`
+   * `4 = Bloques Horarios`
+
+*(Debes hacer lo mismo creando `PropPoliticaSecuenciaHorno` para la Parte II).*
+
+#### Paso 2: Vincular la Propiedad a los Procesos
+Esto ya quedó implementado si seguiste las Fases C/B de las alternativas. Cada proceso (`ProcControlPull`, `ProcGenerarLoteCritico`, etc.) empieza con un **Step Decide** que evalúa si `Model.PropPoliticaProduccion` coincide con el número de su política correspondiente. Si no, termina (`EndProcess`).
+
+#### Paso 3: Agregar el Control a la ventana de Experimentos
+1. Ve a la pestaña **Project Home** y haz clic en **New Experiment** (o abre tu experimento existente).
+2. Arriba en el menú (Ribbon), busca el botón **Add Control** (generalmente agrupado con las Responses).
+3. Aparecerá un menú desplegable con todas las propiedades de tu modelo. Selecciona `PropPoliticaProduccion`.
+4. Verás que aparece una nueva columna en la grilla (tabla) de tus escenarios.
+
+#### Paso 4: Crear los Escenarios (Filas)
+Ahora puedes configurar cada fila para que simule una política distinta bajo las **mismas condiciones de recursos**.
+
+1. Haz clic derecho en la grilla y selecciona **Add Scenario** para crear 4 filas.
+2. Nómbralas para que sean fáciles de identificar.
+3. En la columna `PropPoliticaProduccion`, asigna el número correspondiente a cada política:
+
+| Name | Replications | PropPoliticaProduccion | (Otros recursos: Mezcladoras, Panaderos...) |
+| :--- | :--- | :--- | :--- |
+| **Esc 1: Híbrido (Base)** | 10 | **1** | 5 Mezcladoras, 9 Panaderos... |
+| **Esc 2: PULL Pura** | 10 | **2** | 5 Mezcladoras, 9 Panaderos... |
+| **Esc 3: Dinámica (JIT)** | 10 | **3** | 5 Mezcladoras, 9 Panaderos... |
+| **Esc 4: Bloques** | 10 | **4** | 5 Mezcladoras, 9 Panaderos... |
+
+#### Paso 5: Correr y Comparar
+1. Haz clic en el botón **Run** del experimento.
+2. Observa tus columnas de **Responses** (`QuiebreTotalKg`, `UtilMezcladora`).
+3. *Tip:* Haz clic en la pestaña **Measure Risk** o **Response Results** dentro del experimento para ver gráficos de caja (Box Plots). Esto te permitirá ver no solo qué política es mejor en promedio, sino cuál es menos variable o arriesgada.
 
 > **Recomendación**: La Alternativa 3 (Bloques Horarios) suele ser la más equilibrada en entornos reales de supermercados, pero la Alternativa 2 (Dinámica) te mostrará la cota superior del nivel de servicio que tu configuración de máquinas puede lograr.
 
