@@ -1,40 +1,40 @@
 <mxfile host="65bd71144e">
     <diagram name="BPMN 2.0 - Panadería Supermercado" id="bpmn1">
-        <mxGraphModel dx="1785" dy="1234" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="3500" pageHeight="2000" background="none" math="0" shadow="0">
+        <mxGraphModel dx="1953" dy="832" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="3500" pageHeight="2000" background="none" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="2" value="POOL 1: PRODUCCIÓN" style="shape=swimlane;horizontal=0;startSize=40;fillColor=#dae8fc;strokeColor=#666666;fontStyle=1;fontSize=13;whiteSpace=wrap;html=1;collapsible=0;swimlaneLine=1;fontColor=#050505;" parent="1" vertex="1">
-                    <mxGeometry x="-10" y="-170" width="2900" height="240" as="geometry"/>
+                    <mxGeometry x="-5" y="-20" width="1940" height="240" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="Inicio&#10;Jornada" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=9;fontColor=#000000;" parent="2" vertex="1">
+                <mxCell id="3" value="Inicio&#xa;Jornada" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=9;fontColor=#000000;" parent="2" vertex="1">
                     <mxGeometry x="60" y="92.5" width="45" height="45" as="geometry"/>
                 </mxCell>
-                <mxCell id="4" value="Pesado y&#10;Dosificación&#10;(5 min)&#10;👤 Panadero" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
+                <mxCell id="4" value="Pesado y&lt;br&gt;Dosificación&lt;br&gt;(5 min)&lt;br&gt;Panadero" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
                     <mxGeometry x="150" y="75" width="140" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="5" value="Carga ingredientes&#10;en Mezcladora&#10;(2 min)&#10;👤 Panadero" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
+                <mxCell id="5" value="Carga ingredientes&lt;br&gt;en Mezcladora&lt;br&gt;(2 min)&lt;br&gt;Panadero" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
                     <mxGeometry x="330" y="75" width="140" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="6" value="Mezclado&#10;Automático&#10;⚙️ Mezcladora" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
+                <mxCell id="6" value="Mezclado&lt;br&gt;Automático&lt;br&gt;Mezcladora" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
                     <mxGeometry x="510" y="75" width="140" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="7" value="Retiro de&#10;Masa&#10;(1 min)&#10;👤 Panadero" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
+                <mxCell id="7" value="Retiro de&lt;br&gt;Masa&lt;br&gt;(1 min)&lt;br&gt;Panadero" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
                     <mxGeometry x="690" y="75" width="140" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="8" value="Amasado&#10;Manual&#10;(10-15 min)&#10;👤 Panadero" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
+                <mxCell id="8" value="Amasado&lt;br&gt;Manual&lt;br&gt;(10-15 min)&lt;br&gt;Panadero" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
                     <mxGeometry x="870" y="75" width="140" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="9" value="Reposo /&#10;Fermentación&#10;en masa&#10;(15-30 min)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
+                <mxCell id="9" value="Reposo /&#xa;Fermentación&#xa;en masa&#xa;(15-30 min)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
                     <mxGeometry x="1050" y="75" width="140" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="10" value="Dividido y&#10;Formado&#10;(8-12 min)&#10;👤 Panadero" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
+                <mxCell id="10" value="Dividido y&lt;br&gt;Formado&lt;br&gt;(8-12 min)&lt;br&gt;Panadero" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
                     <mxGeometry x="1230" y="75" width="140" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="11" value="Fermentación&#10;Final&#10;(20-45 min)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
+                <mxCell id="11" value="Fermentación&#xa;Final&#xa;(20-45 min)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;fontColor=#000000;" parent="2" vertex="1">
                     <mxGeometry x="1410" y="75" width="140" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="12" value="Lote&#10;Listo" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=9;fontColor=#000000;" parent="2" vertex="1">
+                <mxCell id="12" value="Lote&#xa;Listo" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=9;fontColor=#000000;" parent="2" vertex="1">
                     <mxGeometry x="1600" y="95" width="45" height="45" as="geometry"/>
                 </mxCell>
                 <mxCell id="13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;" parent="1" source="3" target="4" edge="1">
@@ -66,55 +66,55 @@
                 </mxCell>
                 <UserObject label="POOL 2: GESTIÓN DE HORNOS" tags="sds" id="22">
                     <mxCell style="shape=swimlane;horizontal=0;startSize=40;fillColor=#fff2cc;strokeColor=#666666;fontStyle=1;fontSize=13;whiteSpace=wrap;html=1;collapsible=0;swimlaneLine=1;fontColor=#000000;" parent="1" vertex="1">
-                        <mxGeometry y="290" width="2900" height="520" as="geometry"/>
+                        <mxGeometry y="290" width="1930" height="520" as="geometry"/>
                     </mxCell>
                 </UserObject>
-                <mxCell id="23" value="Recibe&#10;Lote" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=9;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="23" value="Recibe&#xa;Lote" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=9;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="60" y="235" width="45" height="45" as="geometry"/>
                 </mxCell>
                 <mxCell id="24" value="¿Familia?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="160" y="230" width="55" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="25" value="Familia 1&#10;Horneado Corto&#10;14 min&#10;HotDog·Dobladita&#10;·Bocado" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="25" value="Familia 1&#xa;Horneado Corto&#xa;14 min&#xa;HotDog·Dobladita&#xa;·Bocado" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="270" y="40" width="160" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="26" value="Familia 2&#10;Horneado Medio&#10;18 min&#10;Marraqueta·Hallulla&#10;·Hall.Int·Amasado" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="26" value="Familia 2&#xa;Horneado Medio&#xa;18 min&#xa;Marraqueta·Hallulla&#xa;·Hall.Int·Amasado" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="270" y="220" width="160" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="27" value="Familia 3&#10;Horneado Largo&#10;21 min&#10;Marraq.Int·Ciabatta&#10;·Baguette" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="27" value="Familia 3&#xa;Horneado Largo&#xa;21 min&#xa;Marraq.Int·Ciabatta&#xa;·Baguette" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="270" y="400" width="160" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="28" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="480" y="230" width="55" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="36" value="¿Carga&#10;≥50%?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="36" value="¿Carga&#xa;≥50%?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="580" y="230" width="55" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="37" value="Esperar&#10;acumulación&#10;(máx 15 min)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="37" value="Esperar&#xa;acumulación&#xa;(máx 15 min)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="537.5" y="397.5" width="140" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="38" value="¿Timeout&#10;&amp;gt;15 min?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="38" value="¿Timeout&#xa;&amp;gt;15 min?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="720" y="400" width="55" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="43" value="¿Cambio&#10;familia?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="43" value="¿Cambio&#xa;familia?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="720" y="230" width="55" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="44" value="Setup&#10;cambio familia&#10;(5 min)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="44" value="Setup&#xa;cambio familia&#xa;(5 min)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="677.5" y="60" width="140" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="48" value="Carga Horno&#10;(5 min)&#10;👷 Manipulador" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="48" value="Carga Horno&lt;br&gt;(5 min)&lt;br&gt;Manipulador" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="890" y="220" width="150" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="49" value="HORNEADO&#10;BATCH&#10;14/18/21 min&#10;🔥 Máx 6 carros&#10;🚫 Sin retiro parcial" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="49" value="HORNEADO&lt;br&gt;BATCH&lt;br&gt;14/18/21 min&lt;br&gt;Máx 6 carros&lt;br&gt;Sin retiro parcial" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="1080" y="210" width="170" height="90" as="geometry"/>
                 </mxCell>
-                <mxCell id="50" value="Descarga&#10;Horno&#10;(5 min)&#10;👷 Manipulador" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="50" value="Descarga&lt;br&gt;Horno&lt;br&gt;(5 min)&lt;br&gt;Manipulador" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="1290" y="220" width="150" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="51" value="Enfriamiento&#10;(10-15 min)&#10;Sin intervención" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="51" value="Enfriamiento&#xa;(10-15 min)&#xa;Sin intervención" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="1480" y="220" width="150" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="52" value="Pan&#10;Listo" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=9;fontColor=#000000;" parent="22" vertex="1">
+                <mxCell id="52" value="Pan&#xa;Listo" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=9;fontColor=#000000;" parent="22" vertex="1">
                     <mxGeometry x="1680" y="235" width="45" height="45" as="geometry"/>
                 </mxCell>
                 <mxCell id="29" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;" parent="1" source="23" target="24" edge="1">
@@ -192,60 +192,60 @@
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="59" value="POOL 3: SALA DE VENTAS Y DEMANDA" style="shape=swimlane;horizontal=0;startSize=40;fillColor=#d5e8d4;strokeColor=#666666;fontStyle=1;fontSize=13;whiteSpace=wrap;html=1;collapsible=0;swimlaneLine=1;fontColor=#000000;" parent="1" vertex="1">
-                    <mxGeometry y="860" width="2900" height="540" as="geometry"/>
+                    <mxGeometry y="860" width="1930" height="540" as="geometry"/>
                 </mxCell>
-                <mxCell id="60" value="Recibe&#10;Pan" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=9;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="60" value="Recibe&#xa;Pan" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=9;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="60" y="65" width="45" height="45" as="geometry"/>
                 </mxCell>
-                <mxCell id="61" value="Reposición&#10;a Sala&#10;👷 Ayudante" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="61" value="Reposición&lt;br&gt;a Sala&lt;br&gt;Ayudante" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="160" y="50" width="140" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="62" value="Actualizar&#10;Inventario&#10;+Kg por tipo" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="62" value="Actualizar&#xa;Inventario&#xa;+Kg por tipo" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="350" y="50" width="140" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="63" value="Estado&#10;Inventario&#10;10 SKUs" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="63" value="Estado&#xa;Inventario&#xa;10 SKUs" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="540" y="50" width="130" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="67" value="Llegada&#10;Cliente" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=9;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="67" value="Llegada&#xa;Cliente" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=9;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="60" y="310" width="45" height="45" as="geometry"/>
                 </mxCell>
-                <mxCell id="68" value="¿Cuántos&#10;tipos?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="68" value="¿Cuántos&#xa;tipos?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="160" y="305" width="55" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="69" value="1 tipo&#10;(50%)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="69" value="1 tipo&#xa;(50%)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="270" y="210" width="100" height="45" as="geometry"/>
                 </mxCell>
-                <mxCell id="70" value="2 tipos&#10;(35%)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="70" value="2 tipos&#xa;(35%)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="270" y="310" width="100" height="45" as="geometry"/>
                 </mxCell>
-                <mxCell id="71" value="3 tipos&#10;(15%)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="71" value="3 tipos&#xa;(15%)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="270" y="410" width="100" height="45" as="geometry"/>
                 </mxCell>
                 <mxCell id="72" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="420" y="305" width="55" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="80" value="Selección tipo&#10;pan según prob.&#10;horaria" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="80" value="Selección tipo&#xa;pan según prob.&#xa;horaria" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="520" y="300" width="140" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="81" value="Determinar&#10;cantidad&#10;Triang(0.3,moda,máx)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="81" value="Determinar&#xa;cantidad&#xa;Triang(0.3,moda,máx)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="700" y="300" width="150" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="82" value="¿Stock&#10;&amp;gt; 0?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="82" value="¿Stock&#xa;&amp;gt; 0?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="900" y="305" width="55" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="83" value="✅ Venta&#10;Descontar Kg" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="83" value="✅ Venta&#xa;Descontar Kg" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="1010" y="220" width="130" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="84" value="🚨 Quiebre&#10;Venta perdida" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="84" value="Quiebre&lt;br&gt;Venta perdida" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="1010" y="400" width="130" height="50" as="geometry"/>
                 </mxCell>
                 <mxCell id="85" value="" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;" parent="59" vertex="1">
                     <mxGeometry x="1190" y="305" width="55" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="86" value="¿Compra&#10;más tipos?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="86" value="¿Compra&#xa;más tipos?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="1290" y="305" width="55" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="87" value="Fin&#10;Cliente" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=3;fontStyle=1;fontSize=9;fontColor=#000000;" parent="59" vertex="1">
+                <mxCell id="87" value="Fin&#xa;Cliente" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=3;fontStyle=1;fontSize=9;fontColor=#000000;" parent="59" vertex="1">
                     <mxGeometry x="1400" y="310" width="45" height="45" as="geometry"/>
                 </mxCell>
                 <mxCell id="64" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;" parent="1" source="60" target="61" edge="1">
@@ -329,7 +329,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="98" value="Lote listo&#10;para horneado" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;dashed=1;dashPattern=8 8;strokeColor=#666666;" parent="1" source="12" target="23" edge="1">
+                <mxCell id="98" value="Lote listo&#xa;para horneado" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;dashed=1;dashPattern=8 8;strokeColor=#666666;" parent="1" source="12" target="23" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="1623" y="30"/>
@@ -338,7 +338,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="99" value="Pan horneado&#10;y enfriado" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;dashed=1;dashPattern=8 8;strokeColor=#666666;" parent="1" source="52" target="60" edge="1">
+                <mxCell id="99" value="Pan horneado&#xa;y enfriado" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;dashed=1;dashPattern=8 8;strokeColor=#666666;" parent="1" source="52" target="60" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="1703" y="780"/>
@@ -346,41 +346,41 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="100" value="Señal stock&#10;bajo / quiebre" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;dashed=1;dashPattern=8 8;strokeColor=#666666;" parent="1" source="63" target="3" edge="1">
+                <mxCell id="100" value="Señal stock&#xa;bajo / quiebre" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;dashed=1;dashPattern=8 8;strokeColor=#666666;" parent="1" source="63" target="3" edge="1">
                     <mxGeometry x="0.0049" y="-20" relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="1810" y="945"/>
-                            <mxPoint x="1810" y="180"/>
-                            <mxPoint x="83" y="180"/>
+                            <mxPoint x="1810" y="250"/>
+                            <mxPoint x="83" y="250"/>
                         </Array>
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="101" value="GESTIÓN DE TURNOS (todos los RRHH)" style="shape=swimlane;horizontal=0;startSize=40;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;fontSize=13;whiteSpace=wrap;html=1;collapsible=0;swimlaneLine=1;fontColor=#000000;" parent="1" vertex="1">
-                    <mxGeometry y="1430" width="1800" height="370" as="geometry"/>
+                    <mxGeometry y="1430" width="1930" height="370" as="geometry"/>
                 </mxCell>
-                <mxCell id="102" value="Inicio&#10;Turno" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=9;fontColor=#000000;" parent="101" vertex="1">
+                <mxCell id="102" value="Inicio&#xa;Turno" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=9;fontColor=#000000;" parent="101" vertex="1">
                     <mxGeometry x="60" y="75" width="45" height="45" as="geometry"/>
                 </mxCell>
-                <mxCell id="103" value="Trabajo efectivo&#10;8 hrs diarias" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontColor=#000000;" parent="101" vertex="1">
+                <mxCell id="103" value="Trabajo efectivo&#xa;8 hrs diarias" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontColor=#000000;" parent="101" vertex="1">
                     <mxGeometry x="160" y="65" width="130" height="65" as="geometry"/>
                 </mxCell>
-                <mxCell id="104" value="¿Colación&#10;o descanso?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="101" vertex="1">
+                <mxCell id="104" value="¿Colación&#xa;o descanso?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="101" vertex="1">
                     <mxGeometry x="360" y="70" width="55" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="105" value="Colación&#10;45 min" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontColor=#000000;" parent="101" vertex="1">
+                <mxCell id="105" value="Colación&#xa;45 min" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontColor=#000000;" parent="101" vertex="1">
                     <mxGeometry x="460" y="75" width="110" height="45" as="geometry"/>
                 </mxCell>
-                <mxCell id="106" value="Descanso&#10;15 min × 2" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontColor=#000000;" parent="101" vertex="1">
+                <mxCell id="106" value="Descanso&#xa;15 min × 2" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontColor=#000000;" parent="101" vertex="1">
                     <mxGeometry x="460" y="210" width="110" height="45" as="geometry"/>
                 </mxCell>
-                <mxCell id="107" value="¿Cobertura&#10;mínima OK?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="101" vertex="1">
+                <mxCell id="107" value="¿Cobertura&#xa;mínima OK?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=9;fontStyle=1;fontColor=#000000;" parent="101" vertex="1">
                     <mxGeometry x="610" y="67" width="55" height="55" as="geometry"/>
                 </mxCell>
-                <mxCell id="108" value="Escalonar&#10;salidas" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontColor=#000000;" parent="101" vertex="1">
+                <mxCell id="108" value="Escalonar&#xa;salidas" style="rounded=1;whiteSpace=wrap;html=1;arcSize=20;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;fontColor=#000000;" parent="101" vertex="1">
                     <mxGeometry x="720" y="120" width="110" height="45" as="geometry"/>
                 </mxCell>
-                <mxCell id="109" value="Fin&#10;Turno" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=3;fontStyle=1;fontSize=9;fontColor=#000000;" parent="101" vertex="1">
+                <mxCell id="109" value="Fin&#xa;Turno" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=3;fontStyle=1;fontSize=9;fontColor=#000000;" parent="101" vertex="1">
                     <mxGeometry x="850" y="75" width="45" height="45" as="geometry"/>
                 </mxCell>
                 <mxCell id="110" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;fontSize=9;" parent="1" source="102" target="103" edge="1">

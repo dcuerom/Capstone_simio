@@ -309,15 +309,26 @@ Ir a **Definitions → States** y crear:
 
 En lugar de que los lotes vayan directamente de `SrvFermentacion` a `SrvCargaHorno`, se insertan tres servidores de espera — uno por familia — que actúan como compuertas.
 
+> **⚠️ Nota sobre Capacity Type**: SIMIO solo ofrece dos opciones en el dropdown Capacity Type: **Fixed** y **WorkSchedule**. No existe la opción "From State". El comportamiento equivalente se logra dejando Capacity Type = **Fixed** y escribiendo la expresión de estado directamente en el campo **Initial Capacity**, como se detalla a continuación.
+
 #### Nuevos servidores a arrastrar al Facility
 
-| Nombre | Processing Time | Capacity Type | Capacity State | Propósito |
+| Nombre | Processing Time | Capacity Type | Initial Capacity | Propósito |
 |---|---|---|---|---|
-| `SrvEsperaF1` | `0` | From State | `Model.MStaCapEspera[1]` | Retiene lotes de Familia 1 hasta que su corrida sea autorizada |
-| `SrvEsperaF2` | `0` | From State | `Model.MStaCapEspera[2]` | Retiene lotes de Familia 2 |
-| `SrvEsperaF3` | `0` | From State | `Model.MStaCapEspera[3]` | Retiene lotes de Familia 3 |
+| `SrvEsperaF1` | `0` | Fixed | `Model.MStaCapEspera[1]` | Retiene lotes de Familia 1 hasta que su corrida sea autorizada |
+| `SrvEsperaF2` | `0` | Fixed | `Model.MStaCapEspera[2]` | Retiene lotes de Familia 2 |
+| `SrvEsperaF3` | `0` | Fixed | `Model.MStaCapEspera[3]` | Retiene lotes de Familia 3 |
 
-> **Capacity Type = "From State"**: En las propiedades del servidor, cambiar **Capacity Type** de "Fixed" a "From State" y en **Capacity State** referenciar la variable correspondiente. Mientras el valor sea 0, ningún lote puede ser procesado — permanecen en el Input Buffer del servidor de espera.
+**Cómo configurar cada servidor:**
+1. Arrastrar un **Server** al Facility y nombrarlo `SrvEsperaF1`
+2. En el Property Inspector → **Processing Time** = `0`
+3. **Capacity Type** = `Fixed` (dejarlo en Fixed — no cambiarlo)
+4. En el campo **Initial Capacity**: borrar el `1` por defecto y escribir la expresión `Model.MStaCapEspera[1]`
+5. Repetir para `SrvEsperaF2` (`Model.MStaCapEspera[2]`) y `SrvEsperaF3` (`Model.MStaCapEspera[3]`)
+
+> **¿Cómo funciona?** Al escribir una expresión de estado en Initial Capacity, SIMIO evalúa esa expresión cada vez que la variable cambia. Como `MStaCapEspera` arranca en `0`, el servidor inicia bloqueado — ningún lote puede entrar ni ser procesado, y se acumulan en el Input Buffer. Cuando `ProcAbrirCargaHorno` asigna `MStaCapEspera[f] = 999`, SIMIO re-evalúa la capacidad del servidor correspondiente y libera todos los lotes retenidos.
+>
+> **Si SIMIO no re-evalúa dinámicamente la expresión** (puede ocurrir en versiones antiguas): el fallback es reemplazar `SrvEsperaFx` por **BasicNodes con Input Buffer ilimitado** y controlar el flujo mediante el peso de salida del conector hacia `SrvCargaHorno` — configurar el Selection Weight del link de salida como `Model.MStaCapEspera[f]`. Con valor `0` el link no se usa; con `999` los lotes fluyen. En este caso `MStaCapEspera` sigue siendo el mismo array, y `ProcAbrirCargaHorno` no cambia.
 >
 > **Processing Time = 0**: El servidor de espera no consume tiempo de simulación, solo actúa como compuerta.
 
