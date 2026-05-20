@@ -1,0 +1,50 @@
+\babel@toc {nil}{}\relax 
+\contentsline {section}{\numberline {1}Resumen Ejecutivo}{3}{section.1}%
+\contentsline {section}{\numberline {2}Descripci\'on del Sistema}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Operaci\'on General}{4}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Portafolio de Productos}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Flujo Productivo de Alto Nivel}{5}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Restricciones Clave del Sistema}{7}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Restricciones de Horneado}{7}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Restricciones de Turnos y Recursos Humanos}{7}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}Modelo Estoc\'astico de la Demanda}{8}{subsubsection.2.4.3}%
+\contentsline {section}{\numberline {3}Supuestos del Modelo}{10}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Nivel de Modelaci\'on y Granularidad}{10}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Supuestos del Sistema}{10}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Procesos Productivos}{11}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Capacidad e Infraestructura}{11}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Demanda e Inventario}{12}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}Turnos y Organizaci\'on del Trabajo}{12}{subsubsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.3}Alcance del Estudio}{12}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Dentro del Alcance}{12}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Fuera del Alcance}{13}{subsubsection.3.3.2}%
+\contentsline {section}{\numberline {4}Enfoque de Modelaci\'on}{14}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Filosof\'ia General del Modelo}{14}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Sistema de Producci\'on}{14}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Pol\'itica Plan Puro}{14}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Pol\'itica H\'ibrida (Plan + Reactivo)}{14}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.3}Pol\'itica PULL Puro (EOQ Estoc\'astico)}{14}{subsubsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.3}Sistema de Demanda y Clientes}{15}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Llegada de Clientes (NHPP)}{15}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}Selecci\'on de Canasta del Cliente}{15}{subsubsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.3}L\'ogica de Venta Todo-o-Nada}{15}{subsubsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.4}Sistema de Hornos}{15}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.1}Acumulaci\'on de Lotes y Disparo de Corrida}{15}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {4.4.2}Pol\'itica de Secuencia de Familia}{15}{subsubsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.5}Decisiones Representadas en el Modelo}{16}{subsection.4.5}%
+\contentsline {section}{\numberline {5}Escenarios Evaluados}{17}{section.5}%
+\contentsline {section}{\numberline {6}Resultados Principales}{18}{section.6}%
+\contentsline {section}{\numberline {7}An\'alisis de Sensibilidad}{19}{section.7}%
+\contentsline {section}{\numberline {8}Identificaci\'on de Cuellos de Botella}{20}{section.8}%
+\contentsline {section}{\numberline {9}Recomendaciones Operativas}{21}{section.9}%
+\contentsline {section}{\numberline {10}Conclusi\'on Final}{22}{section.10}%
+\contentsline {section}{\numberline {A}Algoritmos de los Subsistemas Modelados}{23}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Pol\'itica de Producci\'on Plan Puro}{23}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Pol\'itica H\'ibrida: Revisor de D\'eficit}{24}{subsection.A.2}%
+\contentsline {subsection}{\numberline {A.3}Pol\'itica PULL con EOQ Estoc\'astico}{25}{subsection.A.3}%
+\contentsline {subsection}{\numberline {A.4}Llegada de Clientes (NHPP)}{26}{subsection.A.4}%
+\contentsline {subsection}{\numberline {A.5}Composici\'on de Canasta del Cliente}{27}{subsection.A.5}%
+\contentsline {subsection}{\numberline {A.6}L\'ogica de Venta Todo-o-Nada}{28}{subsection.A.6}%
+\contentsline {subsection}{\numberline {A.7}Pol\'itica de Carga del Horno}{29}{subsection.A.7}%
+\contentsline {section}{\numberline {B}Matriz Maestra de Escenarios}{30}{appendix.B}%
+\contentsline {section}{\numberline {C}Tablas de Resultados Detallados}{31}{appendix.C}%
